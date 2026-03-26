@@ -96,6 +96,7 @@
           <span class="opacity-70">◉</span>
           Book / Change session
         </a>
+
         <a
           href="#/hall-ticket/${candidate.applicationId}"
           class="inline-flex items-center gap-2 h-10 px-4 rounded-xl border border-border bg-primary hover:bg-primary-light transition-colors"
@@ -103,6 +104,15 @@
         >
           <span class="opacity-80">◧</span>
           View hall ticket
+        </a>
+
+        <a
+          href="#/session/${session?.sessionId || sessionId}"
+          class="inline-flex items-center gap-2 h-10 px-4 rounded-xl border border-border bg-warning-muted hover:bg-accent-muted hover:text-warning transition-colors"
+          aria-label="Enter secure test player"
+        >
+          <span class="opacity-70">◲</span>
+          Enter Secure Test
         </a>
       </div>
     `;

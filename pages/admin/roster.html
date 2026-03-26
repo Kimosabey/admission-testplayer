@@ -1,9 +1,226 @@
-<div class="p-8 max-w-6xl mx-auto" data-page="roster">
-  <h1 class="font-display text-4xl text-primary mb-2">Candidate Roster</h1>
-  <p class="text-ink-2 mb-8">Week 7/10 support surface. Placeholder for sortable/filterable roster table.</p>
+<div class="p-8 max-w-screen-2xl mx-auto" data-page="roster">
+  <header class="mb-8">
+    <p class="font-mono text-xs uppercase track-xxl text-ink-3">OPERATIONS</p>
+    <div class="mt-2 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+      <div>
+        <h1 class="font-display text-4xl text-primary">Candidate Roster</h1>
+        <p class="mt-2 max-w-2xl text-ink-2">Filter by center, session, and program. Click headers to sort.</p>
+      </div>
+      <a
+        href="#/check-in"
+        class="inline-flex items-center gap-2 h-10 px-4 rounded-xl border border-border bg-surface hover:bg-primary-muted hover:text-primary transition-colors"
+      >
+        <span class="opacity-70">◱</span>
+        Proctor Check-in
+      </a>
+    </div>
+  </header>
 
-  <div class="card">
-    <h2 class="card-title">Coming soon</h2>
-    <p class="card-subtitle">Sortable headers, filter by center/session/program, and quick status pills.</p>
-  </div>
+  <section class="card" aria-label="Filters">
+    <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+      <div>
+        <p class="font-mono text-xs uppercase track-xl text-ink-3">Filters</p>
+        <h2 class="mt-2 font-display text-3xl text-primary">Roster controls</h2>
+      </div>
+      <p id="roster-count" class="font-mono text-xs text-ink-3">—</p>
+    </div>
+
+    <div class="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <label class="block">
+        <span class="font-mono text-xs uppercase track-md text-ink-3">Center</span>
+        <select id="flt-center" class="mt-2 w-full h-10 rounded-xl border border-border bg-surface px-3 text-sm text-ink-2"></select>
+      </label>
+
+      <label class="block">
+        <span class="font-mono text-xs uppercase track-md text-ink-3">Session</span>
+        <select id="flt-session" class="mt-2 w-full h-10 rounded-xl border border-border bg-surface px-3 text-sm text-ink-2"></select>
+      </label>
+
+      <label class="block">
+        <span class="font-mono text-xs uppercase track-md text-ink-3">Program</span>
+        <select id="flt-program" class="mt-2 w-full h-10 rounded-xl border border-border bg-surface px-3 text-sm text-ink-2"></select>
+      </label>
+
+      <label class="block">
+        <span class="font-mono text-xs uppercase track-md text-ink-3">Search</span>
+        <input
+          id="flt-q"
+          class="mt-2 w-full h-10 rounded-xl border border-border bg-surface px-3 text-sm text-ink-2"
+          placeholder="App ID or name"
+        />
+      </label>
+    </div>
+  </section>
+
+  <section class="mt-6" aria-label="Roster table">
+    <div id="roster-table"></div>
+  </section>
 </div>
+
+<script data-page-init type="text/javascript">
+  (async function () {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const { fetchData, formatDate } = await import('/js/utils.js');
+    const { StatusPill } = await import('/components/status-pill.js');
+    const { buildTable } = await import('/components/data-table.js');
+
+    const root = document.querySelector('[data-page="roster"]');
+    if (!root) return;
+
+    const els = {
+      count: root.querySelector('#roster-count'),
+      table: root.querySelector('#roster-table'),
+      center: root.querySelector('#flt-center'),
+      session: root.querySelector('#flt-session'),
+      program: root.querySelector('#flt-program'),
+      q: root.querySelector('#flt-q'),
+    };
+
+    const STATUS_KEY = 'atp_candidate_status';
+
+    function readMap(key) {
+      try {
+        const raw = localStorage.getItem(key);
+        const parsed = raw ? JSON.parse(raw) : {};
+        return parsed && typeof parsed === 'object' ? parsed : {};
+      } catch {
+        return {};
+      }
+    }
+
+    const statusMap = readMap(STATUS_KEY);
+
+    function statusFor(c) {
+      return statusMap[c.applicationId] || c.status;
+    }
+
+    const [candidates, centers, sessions] = await Promise.all([
+      fetchData('candidates'),
+      fetchData('centers'),
+      fetchData('sessions'),
+    ]);
+
+    const centerById = new Map(centers.map((c) => [c.centerId, c]));
+    const sessionById = new Map(sessions.map((s) => [s.sessionId, s]));
+
+    function uniq(arr) {
+      return Array.from(new Set(arr.filter(Boolean)));
+    }
+
+    function renderFilterOptions() {
+      els.center.innerHTML = [
+        '<option value="all">All</option>',
+        ...centers
+          .slice()
+          .sort((a, b) => (a.city + a.name).localeCompare(b.city + b.name))
+          .map((c) => `<option value="${c.centerId}">${c.city} · ${c.name}</option>`),
+      ].join('');
+
+      els.session.innerHTML = [
+        '<option value="all">All</option>',
+        ...sessions
+          .slice()
+          .sort((a, b) => (a.date + a.startTime).localeCompare(b.date + b.startTime))
+          .map((s) => {
+            const c = centerById.get(s.centerId);
+            const label = `${formatDate(s.date)} · ${s.startTime}–${s.endTime} · ${c?.city || ''}`;
+            return `<option value="${s.sessionId}">${s.sessionId} · ${label}</option>`;
+          }),
+      ].join('');
+
+      const programs = uniq(candidates.flatMap((c) => c.programs || []));
+      els.program.innerHTML = ['<option value="all">All</option>', ...programs.sort().map((p) => `<option value="${p}">${p}</option>`)].join('');
+    }
+
+    function filtered() {
+      const centerId = els.center.value || 'all';
+      const sessionId = els.session.value || 'all';
+      const program = els.program.value || 'all';
+      const q = (els.q.value || '').trim().toLowerCase();
+
+      return candidates.filter((c) => {
+        if (centerId !== 'all' && c.centerId !== centerId) return false;
+        if (sessionId !== 'all' && c.sessionId !== sessionId) return false;
+        if (program !== 'all' && !(c.programs || []).includes(program)) return false;
+
+        if (q) {
+          const hay = `${c.applicationId} ${c.name}`.toLowerCase();
+          if (!hay.includes(q)) return false;
+        }
+
+        return true;
+      });
+    }
+
+    function renderTable() {
+      const list = filtered();
+      els.count.textContent = `${list.length} candidates`;
+
+      if (!list.length) {
+        els.table.innerHTML = `
+          <div class="rounded-2xl border border-border bg-surface-sunken px-5 py-5">
+            <p class="text-sm text-ink-2">No candidates match filters.</p>
+          </div>
+        `;
+        return;
+      }
+
+      const rows = list.map((c) => {
+        const s = sessionById.get(c.sessionId);
+        const ctr = centerById.get(c.centerId);
+
+        return {
+          applicationId: c.applicationId,
+          name: c.name,
+          program: (c.programs || []).join(', '),
+          sessionId: c.sessionId,
+          center: ctr ? `${ctr.city} · ${ctr.name}` : c.centerId,
+          seat: c.seatNumber || '—',
+          status: statusFor(c),
+          _raw: c,
+        };
+      });
+
+      const table = buildTable({
+        columns: [
+          { key: 'applicationId', label: 'App ID', render: (v) => `<span class="font-mono text-xs text-ink-3">${v}</span>` },
+          { key: 'name', label: 'Name' },
+          { key: 'program', label: 'Program' },
+          { key: 'sessionId', label: 'Session', render: (v) => `<span class="font-mono text-xs text-ink-3">${v}</span>` },
+          { key: 'center', label: 'Center' },
+          { key: 'seat', label: 'Seat', render: (v) => `<span class="font-mono text-xs text-ink-3">${v}</span>` },
+          { key: 'status', label: 'Status', render: (v) => StatusPill(v, 'sm') },
+        ],
+        rows,
+      });
+
+      els.table.innerHTML = '';
+      els.table.appendChild(table);
+
+      if (!prefersReducedMotion && window.gsap && window.ScrollTrigger) {
+        window.gsap.fromTo(
+          table.querySelectorAll('tbody tr') || [],
+          { opacity: 0, y: 14 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.6,
+            ease: 'power2.out',
+            stagger: 0.02,
+            scrollTrigger: { trigger: table, start: 'top 85%' },
+          },
+        );
+      }
+    }
+
+    renderFilterOptions();
+    renderTable();
+
+    ;[els.center, els.session, els.program].forEach((x) => x.addEventListener('change', renderTable));
+    els.q.addEventListener('input', () => {
+      window.clearTimeout(els.q.__t);
+      els.q.__t = window.setTimeout(renderTable, 90);
+    });
+  })();
+</script>

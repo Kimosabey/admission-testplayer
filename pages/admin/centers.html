@@ -1,9 +1,251 @@
-<div class="p-8 max-w-6xl mx-auto" data-page="centers">
-  <h1 class="font-display text-4xl text-primary mb-2">Centers</h1>
-  <p class="text-ink-2 mb-8">Week 2 shell placeholder. Week 3+ adds charts and capacity visuals.</p>
+<div class="p-8 max-w-screen-2xl mx-auto" data-page="centers">
+  <header class="mb-8">
+    <p class="font-mono text-xs uppercase track-xxl text-ink-3">ADMIN</p>
+    <div class="mt-2 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+      <div>
+        <h1 class="font-display text-4xl text-primary">Centers</h1>
+        <p class="mt-2 max-w-2xl text-ink-2">Capacity overview with per-center fill donuts and session summaries.</p>
+      </div>
+      <a
+        href="#/calendar"
+        class="inline-flex items-center gap-2 h-10 px-4 rounded-xl border border-border bg-surface hover:bg-primary-muted hover:text-primary transition-colors"
+      >
+        <span class="opacity-70">◰</span>
+        Calendar
+      </a>
+    </div>
+  </header>
 
-  <div class="card">
-    <h2 class="card-title">Coming soon</h2>
-    <p class="card-subtitle">Center cards with capacity donuts (Chart.js) and session assignment view.</p>
-  </div>
+  <section class="card" aria-label="Center filters">
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+      <div>
+        <p class="font-mono text-xs uppercase track-xl text-ink-3">Filters</p>
+        <h2 class="mt-2 font-display text-3xl text-primary">Browse centers</h2>
+      </div>
+      <p id="centers-count" class="font-mono text-xs text-ink-3">—</p>
+    </div>
+
+    <div class="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <label class="block">
+        <span class="font-mono text-xs uppercase track-md text-ink-3">City</span>
+        <select id="flt-city" class="mt-2 w-full h-10 rounded-xl border border-border bg-surface px-3 text-sm text-ink-2"></select>
+      </label>
+
+      <label class="block">
+        <span class="font-mono text-xs uppercase track-md text-ink-3">Search</span>
+        <input id="flt-q" class="mt-2 w-full h-10 rounded-xl border border-border bg-surface px-3 text-sm text-ink-2" placeholder="Center ID or name" />
+      </label>
+
+      <div class="rounded-2xl border border-border bg-surface-sunken px-4 py-3">
+        <p class="font-mono text-xs uppercase track-md text-ink-3">Legend</p>
+        <div class="mt-2 flex flex-wrap items-center gap-2 text-xs">
+          <span class="inline-flex items-center gap-2"><span class="h-2 w-2 rounded-full bg-success"></span><span class="text-ink-2">&lt;60%</span></span>
+          <span class="inline-flex items-center gap-2"><span class="h-2 w-2 rounded-full bg-warning"></span><span class="text-ink-2">60–85%</span></span>
+          <span class="inline-flex items-center gap-2"><span class="h-2 w-2 rounded-full bg-danger"></span><span class="text-ink-2">&gt;85%</span></span>
+        </div>
+      </div>
+
+      <div class="rounded-2xl border border-border bg-surface px-4 py-3">
+        <p class="font-mono text-xs uppercase track-md text-ink-3">Note</p>
+        <p class="mt-2 text-xs text-ink-3">Static demo data. No backend mutations.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-6" aria-label="Center cards">
+    <div id="centers-grid" class="grid gap-6 lg:grid-cols-2 xl:grid-cols-3"></div>
+  </section>
 </div>
+
+<script data-page-init type="text/javascript">
+  (async function () {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const { fetchData, formatDate } = await import('/js/utils.js');
+    const root = document.querySelector('[data-page="centers"]');
+    if (!root) return;
+
+    const els = {
+      count: root.querySelector('#centers-count'),
+      city: root.querySelector('#flt-city'),
+      q: root.querySelector('#flt-q'),
+      grid: root.querySelector('#centers-grid'),
+    };
+
+    const [centers, sessions] = await Promise.all([fetchData('centers'), fetchData('sessions')]);
+
+    const sessionsByCenter = new Map();
+    sessions.forEach((s) => {
+      const list = sessionsByCenter.get(s.centerId) || [];
+      list.push(s);
+      sessionsByCenter.set(s.centerId, list);
+    });
+
+    function uniq(arr) {
+      return Array.from(new Set(arr.filter(Boolean)));
+    }
+
+    function fillRatio(s) {
+      const cap = Number(s.capacity || 0);
+      const en = Number(s.enrolled || 0);
+      if (!cap) return 0;
+      return Math.max(0, Math.min(1, en / cap));
+    }
+
+    function severityColor(r) {
+      if (r > 0.85) return { dot: 'bg-danger', text: 'text-danger', label: 'High' };
+      if (r > 0.6) return { dot: 'bg-warning', text: 'text-warning', label: 'Moderate' };
+      return { dot: 'bg-success', text: 'text-success', label: 'Normal' };
+    }
+
+    function renderFilterOptions() {
+      const cities = uniq(centers.map((c) => c.city)).sort();
+      els.city.innerHTML = ['<option value="all">All</option>', ...cities.map((c) => `<option value="${c}">${c}</option>`)].join('');
+    }
+
+    function filteredCenters() {
+      const city = els.city.value || 'all';
+      const q = (els.q.value || '').trim().toLowerCase();
+
+      return centers.filter((c) => {
+        if (city !== 'all' && c.city !== city) return false;
+        if (q) {
+          const hay = `${c.centerId} ${c.name} ${c.city}`.toLowerCase();
+          if (!hay.includes(q)) return false;
+        }
+        return true;
+      });
+    }
+
+    function centerCard(center) {
+      const list = (sessionsByCenter.get(center.centerId) || []).slice().sort((a, b) => (a.date + a.startTime).localeCompare(b.date + b.startTime));
+      const ratios = list.map(fillRatio);
+      const avg = ratios.length ? ratios.reduce((a, b) => a + b, 0) / ratios.length : 0;
+      const sev = severityColor(avg);
+
+      const next = list[0];
+      const avgPct = Math.round(avg * 100);
+
+      const canvasId = `ctr_${center.centerId.replace(/[^a-zA-Z0-9]/g, '_')}`;
+
+      return `
+        <article class="card center-card" data-center-card data-canvas="${canvasId}">
+          <div class="flex items-start justify-between gap-4">
+            <div>
+              <p class="font-mono text-xs text-ink-3">${center.centerId}</p>
+              <h3 class="mt-2 font-display text-3xl text-primary">${center.city}</h3>
+              <p class="mt-2 text-sm text-ink-2">${center.name}</p>
+              <p class="mt-1 text-xs text-ink-3">${center.address || ''}</p>
+            </div>
+
+            <div class="w-24 h-24 rounded-2xl border border-border bg-surface flex items-center justify-center">
+              <canvas id="${canvasId}" width="86" height="86" aria-label="Capacity donut"></canvas>
+            </div>
+          </div>
+
+          <div class="mt-5 grid gap-3 sm:grid-cols-3">
+            <div class="rounded-2xl border border-border bg-surface px-4 py-4">
+              <p class="font-mono text-xs uppercase track-md text-ink-3">Seats</p>
+              <p class="mt-2 font-mono text-sm text-ink-2">${center.totalSeats}</p>
+            </div>
+            <div class="rounded-2xl border border-border bg-surface px-4 py-4">
+              <p class="font-mono text-xs uppercase track-md text-ink-3">Sessions</p>
+              <p class="mt-2 font-mono text-sm text-ink-2">${list.length}</p>
+            </div>
+            <div class="rounded-2xl border border-border bg-surface px-4 py-4">
+              <p class="font-mono text-xs uppercase track-md text-ink-3">Avg fill</p>
+              <p class="mt-2 font-mono text-sm ${sev.text}">${avgPct}%</p>
+            </div>
+          </div>
+
+          <div class="mt-5 rounded-2xl border border-border bg-surface-sunken px-5 py-4">
+            <div class="flex items-center justify-between gap-4">
+              <p class="font-mono text-xs uppercase track-md text-ink-3">Next session</p>
+              <span class="inline-flex items-center gap-2 text-xs">
+                <span class="h-2 w-2 rounded-full ${sev.dot}"></span>
+                <span class="font-mono text-ink-3">${sev.label}</span>
+              </span>
+            </div>
+            <p class="mt-2 text-sm text-ink-2">${next ? `${formatDate(next.date)} · ${next.startTime}–${next.endTime}` : '—'}</p>
+            <p class="mt-1 text-xs text-ink-3">${next ? `${next.enrolled}/${next.capacity} enrolled` : ''}</p>
+          </div>
+        </article>
+      `;
+    }
+
+    function render() {
+      const list = filteredCenters();
+      els.count.textContent = `${list.length} center(s)`;
+
+      els.grid.innerHTML = list.length
+        ? list.map(centerCard).join('')
+        : `
+          <div class="rounded-2xl border border-border bg-surface-sunken px-5 py-5 lg:col-span-2 xl:col-span-3">
+            <p class="text-sm text-ink-2">No centers match filters.</p>
+          </div>
+        `;
+
+      if (window.Chart) {
+        const css = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+        const primary = css('--color-primary');
+        const border = css('--color-border');
+        const muted = css('--color-surface-sunken');
+
+        list.forEach((center) => {
+          const listSessions = (sessionsByCenter.get(center.centerId) || []);
+          const ratios = listSessions.map(fillRatio);
+          const avg = ratios.length ? ratios.reduce((a, b) => a + b, 0) / ratios.length : 0;
+
+          const id = `ctr_${center.centerId.replace(/[^a-zA-Z0-9]/g, '_')}`;
+          const canvas = document.getElementById(id);
+          if (!canvas) return;
+
+          // eslint-disable-next-line no-undef
+          new Chart(canvas.getContext('2d'), {
+            type: 'doughnut',
+            data: {
+              labels: ['Filled', 'Available'],
+              datasets: [
+                {
+                  data: [Math.round(avg * 100), Math.max(0, 100 - Math.round(avg * 100))],
+                  backgroundColor: [primary, muted],
+                  borderColor: [border, border],
+                  borderWidth: 0,
+                },
+              ],
+            },
+            options: {
+              responsive: false,
+              cutout: '74%',
+              plugins: { legend: { display: false }, tooltip: { enabled: false } },
+            },
+          });
+        });
+      }
+
+      if (!prefersReducedMotion && window.gsap && window.ScrollTrigger) {
+        window.gsap.fromTo(
+          els.grid.querySelectorAll('.center-card') || [],
+          { opacity: 0, y: 18 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.7,
+            ease: 'power2.out',
+            stagger: 0.06,
+            scrollTrigger: { trigger: els.grid, start: 'top 85%' },
+          },
+        );
+      }
+    }
+
+    renderFilterOptions();
+    render();
+
+    els.city.addEventListener('change', render);
+    els.q.addEventListener('input', () => {
+      window.clearTimeout(els.q.__t);
+      els.q.__t = window.setTimeout(render, 90);
+    });
+  })();
+</script>
