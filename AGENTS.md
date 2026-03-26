@@ -1202,12 +1202,12 @@ export const store = {
 
 **Goal:** Question bank Kanban with lifecycle columns, filtering, and item detail.
 
-- [ ] `pages/qbms/items.html` — loads `questions.json`, renders 7-column Kanban
-- [ ] Item cards: type badge, domain label, difficulty colour dot, author, exposure count
-- [ ] Filter sidebar: checkboxes for domain, type, difficulty, Bloom level, year, status. Pure JS array filter.
-- [ ] GSAP: staggered card entrance per column on load (`stagger: 0.06`)
-- [ ] `pages/qbms/item-detail.html` — full item: body, options (correct highlighted), all metadata, review history horizontal timeline, version log
-- [ ] `pages/qbms/blueprints.html` — blueprint cards + detail slide-out panel with Chart.js stacked horizontal bar (difficulty distribution per section)
+- [x] `pages/qbms/items.html` — loads `questions.json`, renders 7-column Kanban
+- [x] Item cards: type badge, domain label, difficulty colour dot, author, exposure count
+- [x] Filter sidebar: checkboxes for domain, type, difficulty, Bloom level, year, status. Pure JS array filter.
+- [x] GSAP: staggered card entrance per column on load (`stagger: 0.06`)
+- [x] `pages/qbms/item-detail.html` — full item: body, options (correct highlighted), all metadata, review history horizontal timeline, version log
+- [x] `pages/qbms/blueprints.html` — blueprint cards + detail slide-out panel with Chart.js stacked horizontal bar (difficulty distribution per section)
 
 **Deliverable:** Kanban visible and filterable. Blueprint difficulty chart renders.
 

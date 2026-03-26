@@ -1,9 +1,227 @@
-<div class="p-8 max-w-6xl mx-auto" data-page="blueprints">
-  <h1 class="font-display text-4xl text-primary mb-2">Blueprints</h1>
-  <p class="text-ink-2 mb-8">Week 5 deliverable. Placeholder for blueprint cards + difficulty charts.</p>
+<div class="p-8 max-w-screen-2xl mx-auto" data-page="blueprints">
+  <header class="mb-8">
+    <p class="font-mono text-xs uppercase track-xxl text-ink-3">QBMS</p>
+    <div class="mt-2 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+      <div>
+        <h1 class="font-display text-4xl text-primary">Blueprints</h1>
+        <p class="mt-2 max-w-2xl text-ink-2">Blueprint cards with a slide-out detail panel and a stacked difficulty distribution chart.</p>
+      </div>
+      <a
+        href="#/items"
+        class="inline-flex items-center gap-2 h-10 px-4 rounded-xl border border-border bg-surface hover:bg-primary-muted hover:text-primary transition-colors"
+      >
+        <span class="opacity-70">◳</span>
+        Questions
+      </a>
+    </div>
+  </header>
 
-  <div class="card">
-    <h2 class="card-title">Coming soon</h2>
-    <p class="card-subtitle">Slide-out detail panel with Chart.js stacked bars per section.</p>
+  <section>
+    <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3" id="bp-grid" aria-label="Blueprint list"></div>
+  </section>
+
+  <div aria-hidden="true">
+    <div id="bp-overlay" class="fixed inset-0 z-40 bg-ink/40 opacity-0 pointer-events-none transition-opacity"></div>
+
+    <aside
+      id="bp-drawer"
+      class="fixed right-0 top-0 z-50 h-screen w-96 max-w-full bg-surface border-l border-border shadow-sm
+             translate-x-full transition-transform duration-300"
+      aria-label="Blueprint detail"
+    >
+      <div class="h-full flex flex-col">
+        <div class="p-6 border-b border-border flex items-start justify-between gap-4">
+          <div>
+            <p class="font-mono text-xs uppercase track-xl text-ink-3">Blueprint</p>
+            <h2 id="bp-title" class="mt-2 font-display text-3xl text-primary">—</h2>
+            <p id="bp-sub" class="mt-2 text-sm text-ink-2">—</p>
+          </div>
+
+          <button
+            id="bp-close"
+            type="button"
+            class="h-10 w-10 rounded-xl border border-border bg-surface hover:bg-primary-muted hover:text-primary transition-colors"
+            aria-label="Close"
+          >
+            ×
+          </button>
+        </div>
+
+        <div class="flex-1 overflow-auto p-6 space-y-6">
+          <div class="rounded-2xl border border-border bg-surface px-5 py-5">
+            <p class="font-mono text-xs uppercase track-md text-ink-3">Rules</p>
+            <div class="mt-3 grid gap-2 text-sm text-ink-2">
+              <p><span class="text-ink-3">Navigation:</span> <span id="bp-nav">—</span></p>
+              <p><span class="text-ink-3">Calculator:</span> <span id="bp-calc">—</span></p>
+            </div>
+          </div>
+
+          <div class="rounded-2xl border border-border bg-surface px-5 py-5">
+            <p class="font-mono text-xs uppercase track-md text-ink-3">Sections</p>
+            <div id="bp-sections" class="mt-4 grid gap-3"></div>
+          </div>
+
+          <div class="rounded-2xl border border-border bg-surface px-5 py-5">
+            <p class="font-mono text-xs uppercase track-md text-ink-3">Difficulty distribution</p>
+            <div class="mt-4">
+              <canvas id="bp-chart" height="180"></canvas>
+            </div>
+            <p class="mt-3 text-xs text-ink-3">Stacked bars per section: easy/medium/hard.</p>
+          </div>
+        </div>
+      </div>
+    </aside>
   </div>
 </div>
+
+<script data-page-init type="text/javascript">
+  (async function () {
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    const { fetchData } = await import("/js/utils.js");
+
+    const root = document.querySelector('[data-page="blueprints"]');
+    if (!root) return;
+
+    const els = {
+      grid: root.querySelector("#bp-grid"),
+      overlay: root.querySelector("#bp-overlay"),
+      drawer: root.querySelector("#bp-drawer"),
+      close: root.querySelector("#bp-close"),
+      title: root.querySelector("#bp-title"),
+      sub: root.querySelector("#bp-sub"),
+      nav: root.querySelector("#bp-nav"),
+      calc: root.querySelector("#bp-calc"),
+      sections: root.querySelector("#bp-sections"),
+      canvas: root.querySelector("#bp-chart"),
+    };
+
+    const blueprints = await fetchData("blueprints");
+
+    let chart = null;
+
+    function cssVar(name) {
+      return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    }
+
+    const palette = {
+      easy: cssVar("--color-success"),
+      medium: cssVar("--color-warning"),
+      hard: cssVar("--color-danger"),
+      border: cssVar("--color-border"),
+      text: cssVar("--color-text-muted"),
+    };
+
+    function openDrawer() {
+      els.overlay.classList.remove("pointer-events-none");
+      els.overlay.classList.add("opacity-100");
+      els.drawer.classList.remove("translate-x-full");
+    }
+
+    function closeDrawer() {
+      els.overlay.classList.add("pointer-events-none");
+      els.overlay.classList.remove("opacity-100");
+      els.drawer.classList.add("translate-x-full");
+    }
+
+    function renderCard(bp) {
+      const programs = (bp.programs || []).join(", ") || "—";
+      const sectionCount = (bp.sections || []).length;
+
+      return `
+        <button
+          type="button"
+          data-bp="${bp.id}"
+          class="text-left rounded-2xl border border-border bg-surface px-5 py-5 hover:bg-primary-muted hover:text-primary transition-colors"
+        >
+          <p class="font-mono text-xs text-ink-3">${bp.id}</p>
+          <h3 class="mt-2 font-display text-2xl text-primary">${bp.name}</h3>
+          <p class="mt-2 text-sm text-ink-2">Programs: ${programs}</p>
+          <p class="mt-1 text-sm text-ink-2">Sections: ${sectionCount}</p>
+        </button>
+      `;
+    }
+
+    function renderGrid() {
+      els.grid.innerHTML = blueprints.map(renderCard).join("");
+      els.grid.querySelectorAll("[data-bp]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const id = btn.getAttribute("data-bp");
+          const bp = blueprints.find((b) => b.id === id);
+          if (bp) show(bp);
+        });
+      });
+
+      if (!prefersReducedMotion && window.gsap) {
+        window.gsap.fromTo(
+          els.grid.children,
+          { opacity: 0, y: 18 },
+          { opacity: 1, y: 0, duration: 0.6, ease: "power2.out", stagger: 0.06 },
+        );
+      }
+    }
+
+    function show(bp) {
+      els.title.textContent = bp.name;
+      els.sub.textContent = `ID: ${bp.id} · Programs: ${(bp.programs || []).join(", ") || "—"}`;
+      els.nav.textContent = bp.navigationRules || "—";
+      els.calc.textContent = bp.calculatorAllowed ? "Allowed" : "Not allowed";
+
+      els.sections.innerHTML = (bp.sections || [])
+        .map((s) => {
+          const dist = s.difficultyDistribution || {};
+          return `
+            <div class="rounded-2xl border border-border bg-surface-sunken px-4 py-4">
+              <p class="font-medium text-ink">${s.name}</p>
+              <p class="mt-1 text-sm text-ink-2">${s.itemCount} items · ${s.timeMinutes} minutes</p>
+              <p class="mt-2 text-xs text-ink-3 font-mono">easy ${dist.easy ?? 0} · medium ${dist.medium ?? 0} · hard ${dist.hard ?? 0}</p>
+            </div>
+          `;
+        })
+        .join("");
+
+      const labels = (bp.sections || []).map((s) => s.name);
+      const easy = (bp.sections || []).map((s) => s.difficultyDistribution?.easy ?? 0);
+      const medium = (bp.sections || []).map((s) => s.difficultyDistribution?.medium ?? 0);
+      const hard = (bp.sections || []).map((s) => s.difficultyDistribution?.hard ?? 0);
+
+      if (chart) {
+        chart.destroy();
+        chart = null;
+      }
+
+      // Chart is global from CDN.
+      // eslint-disable-next-line no-undef
+      chart = new Chart(els.canvas.getContext("2d"), {
+        type: "bar",
+        data: {
+          labels,
+          datasets: [
+            { label: "easy", data: easy, backgroundColor: palette.easy, borderWidth: 0, stack: "d" },
+            { label: "medium", data: medium, backgroundColor: palette.medium, borderWidth: 0, stack: "d" },
+            { label: "hard", data: hard, backgroundColor: palette.hard, borderWidth: 0, stack: "d" },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: "bottom", labels: { color: palette.text, boxWidth: 12 } },
+            tooltip: { enabled: true },
+          },
+          scales: {
+            x: { stacked: true, ticks: { color: palette.text }, grid: { color: palette.border } },
+            y: { stacked: true, ticks: { color: palette.text }, grid: { color: palette.border } },
+          },
+        },
+      });
+
+      openDrawer();
+    }
+
+    els.close.addEventListener("click", closeDrawer);
+    els.overlay.addEventListener("click", closeDrawer);
+
+    renderGrid();
+  })();
+</script>

@@ -1,9 +1,301 @@
-<div class="p-8 max-w-6xl mx-auto" data-page="items">
-  <h1 class="font-display text-4xl text-primary mb-2">Question Bank</h1>
-  <p class="text-ink-2 mb-8">Week 5 deliverable. Placeholder for lifecycle Kanban + filtering.</p>
+<div class="p-8 max-w-screen-2xl mx-auto" data-page="items">
+  <header class="mb-8">
+    <p class="font-mono text-xs uppercase track-xxl text-ink-3">QBMS</p>
+    <div class="mt-2 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+      <div>
+        <h1 class="font-display text-4xl text-primary">Question Bank</h1>
+        <p class="mt-2 max-w-2xl text-ink-2">
+          Lifecycle Kanban with surgical filtering. Data is fetched from <span class="font-mono text-xs">/data/questions.json</span>.
+        </p>
+      </div>
 
-  <div class="card">
-    <h2 class="card-title">Coming soon</h2>
-    <p class="card-subtitle">7-column Kanban by status. Staggered card entrances per column.</p>
+      <div class="flex items-center gap-3">
+        <label class="flex items-center gap-2">
+          <span class="font-mono text-xs uppercase track-md text-ink-3">Search</span>
+          <input
+            id="q-search"
+            type="text"
+            placeholder="ID, body, domain…"
+            class="h-10 w-72 rounded-xl border border-border bg-surface px-3 text-sm text-ink-2"
+          />
+        </label>
+      </div>
+    </div>
+  </header>
+
+  <div class="grid gap-6 lg:grid-cols-[20rem_1fr]">
+    <aside class="card" aria-label="Filters">
+      <div class="flex items-start justify-between gap-4">
+        <div>
+          <p class="font-mono text-xs uppercase track-xl text-ink-3">Filters</p>
+          <p class="mt-2 text-sm text-ink-2">Select any combination. Empty = no restriction.</p>
+        </div>
+        <button
+          id="clear-filters"
+          type="button"
+          class="h-9 px-3 rounded-xl border border-border bg-surface hover:bg-primary-muted hover:text-primary transition-colors text-sm"
+        >
+          Clear
+        </button>
+      </div>
+
+      <div id="filters" class="mt-6 space-y-6"></div>
+
+      <div class="mt-6 rounded-2xl border border-border bg-surface-sunken px-4 py-4">
+        <p class="font-mono text-xs uppercase track-md text-ink-3">Result set</p>
+        <p class="mt-2 text-sm text-ink-2">
+          <span id="result-count" class="font-mono text-xs">—</span> items
+        </p>
+      </div>
+    </aside>
+
+    <section>
+      <div class="flex items-center justify-between gap-4">
+        <p class="font-mono text-xs uppercase track-xl text-ink-3">Lifecycle</p>
+        <p class="text-sm text-ink-3">Click a card to open item detail.</p>
+      </div>
+
+      <div
+        id="kanban"
+        class="mt-4 flex gap-4 overflow-x-auto pb-4"
+        aria-label="Question Kanban"
+      ></div>
+    </section>
   </div>
 </div>
+
+<script data-page-init type="text/javascript">
+  (async function () {
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    const { fetchData, QUESTION_STATUSES } = await import("/js/utils.js");
+
+    const root = document.querySelector('[data-page="items"]');
+    if (!root) return;
+
+    const els = {
+      filters: root.querySelector("#filters"),
+      clear: root.querySelector("#clear-filters"),
+      search: root.querySelector("#q-search"),
+      kanban: root.querySelector("#kanban"),
+      resultCount: root.querySelector("#result-count"),
+    };
+
+    const questions = await fetchData("questions");
+
+    const uniq = (arr) => Array.from(new Set(arr.filter(Boolean))).sort();
+
+    const facets = {
+      domain: uniq(questions.map((q) => q.domain)),
+      type: uniq(questions.map((q) => q.type)),
+      difficulty: uniq(questions.map((q) => q.difficulty)),
+      bloomLevel: uniq(questions.map((q) => q.bloomLevel)),
+      year: uniq(questions.map((q) => q.year)).sort((a, b) => b - a),
+      status: QUESTION_STATUSES.slice(),
+    };
+
+    const selected = {
+      domain: new Set(),
+      type: new Set(),
+      difficulty: new Set(),
+      bloomLevel: new Set(),
+      year: new Set(),
+      status: new Set(),
+    };
+
+    let searchText = "";
+
+    function section(title, key, values) {
+      const checkboxes = values
+        .map((v) => {
+          const id = `f_${key}_${String(v).replace(/\W+/g, "_")}`;
+          return `
+            <label class="flex items-center gap-3 py-1.5">
+              <input
+                type="checkbox"
+                id="${id}"
+                data-filter="${key}"
+                value="${v}"
+                class="h-4 w-4"
+                style="accent-color: var(--color-primary);"
+              />
+              <span class="text-sm text-ink-2">${v}</span>
+            </label>
+          `;
+        })
+        .join("");
+
+      return `
+        <div>
+          <p class="font-mono text-xs uppercase track-md text-ink-3">${title}</p>
+          <div class="mt-2">${checkboxes}</div>
+        </div>
+      `;
+    }
+
+    function renderFilters() {
+      els.filters.innerHTML = [
+        section("Domain", "domain", facets.domain),
+        section("Type", "type", facets.type),
+        section("Difficulty", "difficulty", facets.difficulty),
+        section("Bloom", "bloomLevel", facets.bloomLevel),
+        section("Year", "year", facets.year),
+        section("Status", "status", facets.status),
+      ].join("");
+
+      els.filters.querySelectorAll("input[type=checkbox][data-filter]").forEach((cb) => {
+        cb.addEventListener("change", () => {
+          const key = cb.getAttribute("data-filter");
+          const v = cb.value;
+          if (cb.checked) selected[key].add(v);
+          else selected[key].delete(v);
+          render();
+        });
+      });
+    }
+
+    function matches(q) {
+      const test = (key, value) => {
+        const set = selected[key];
+        if (!set.size) return true;
+        return set.has(String(value));
+      };
+
+      const ok =
+        test("domain", q.domain) &&
+        test("type", q.type) &&
+        test("difficulty", q.difficulty) &&
+        test("bloomLevel", q.bloomLevel) &&
+        test("year", q.year) &&
+        test("status", q.status);
+
+      if (!ok) return false;
+
+      if (!searchText) return true;
+
+      const hay = [q.id, q.body, q.domain, q.subdomain, q.authorId]
+        .map((x) => String(x || "").toLowerCase())
+        .join(" ");
+      return hay.includes(searchText);
+    }
+
+    function difficultyDot(d) {
+      if (d === "easy") return "bg-success";
+      if (d === "hard") return "bg-danger";
+      return "bg-warning";
+    }
+
+    function card(q) {
+      return `
+        <button
+          type="button"
+          data-qid="${q.id}"
+          class="q-card text-left w-full rounded-2xl border border-border bg-surface px-4 py-4
+                 hover:bg-primary-muted hover:text-primary transition-colors"
+        >
+          <div class="flex items-start justify-between gap-3">
+            <div>
+              <p class="font-mono text-xs text-ink-3">${q.id}</p>
+              <p class="mt-1 text-sm font-medium text-ink">${q.body}</p>
+            </div>
+            <span class="mt-1.5 h-2.5 w-2.5 rounded-full ${difficultyDot(q.difficulty)}"></span>
+          </div>
+
+          <div class="mt-3 flex flex-wrap items-center gap-2">
+            <span class="inline-flex items-center rounded-full border border-border bg-surface-sunken px-2.5 py-1 text-xs font-mono text-ink-3">${q.type}</span>
+            <span class="text-xs text-ink-3">${q.domain}</span>
+            <span class="text-xs text-ink-3">·</span>
+            <span class="text-xs text-ink-3">Exposure ${q.exposureCount}</span>
+          </div>
+        </button>
+      `;
+    }
+
+    function column(status, list) {
+      const label = status.replace(/-/g, " ");
+      return `
+        <div class="kan-col w-80 shrink-0">
+          <div class="rounded-2xl border border-border bg-surface px-4 py-4">
+            <div class="flex items-start justify-between gap-3">
+              <div>
+                <p class="font-mono text-xs uppercase track-md text-ink-3">${label}</p>
+                <p class="mt-1 text-sm text-ink-2"><span class="font-mono text-xs">${list.length}</span> items</p>
+              </div>
+              <span class="inline-flex items-center rounded-full border border-border bg-surface-sunken px-2.5 py-1 text-xs font-mono text-ink-3">${status}</span>
+            </div>
+          </div>
+
+          <div class="mt-3 grid gap-3">${list.map(card).join("")}</div>
+        </div>
+      `;
+    }
+
+    function wireCardClicks() {
+      els.kanban.querySelectorAll("[data-qid]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const id = btn.getAttribute("data-qid");
+          location.hash = `#/items/${id}`;
+        });
+      });
+    }
+
+    function animateColumns() {
+      if (prefersReducedMotion || !window.gsap || !window.ScrollTrigger) return;
+
+      els.kanban.querySelectorAll(".kan-col").forEach((col) => {
+        const cards = col.querySelectorAll(".q-card");
+        if (!cards.length) return;
+
+        window.gsap.fromTo(
+          cards,
+          { opacity: 0, y: 24 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.7,
+            ease: "power2.out",
+            stagger: 0.06,
+            scrollTrigger: { trigger: col, start: "top 85%" },
+          },
+        );
+      });
+    }
+
+    function render() {
+      const filtered = questions.filter(matches);
+      els.resultCount.textContent = String(filtered.length);
+
+      const grouped = new Map(facets.status.map((s) => [s, []]));
+      filtered.forEach((q) => {
+        const list = grouped.get(q.status) || grouped.get("draft");
+        list.push(q);
+      });
+
+      els.kanban.innerHTML = facets.status
+        .map((s) => {
+          const list = grouped.get(s) || [];
+          return column(s, list);
+        })
+        .join("");
+
+      wireCardClicks();
+      animateColumns();
+    }
+
+    els.search.addEventListener("input", () => {
+      searchText = els.search.value.trim().toLowerCase();
+      render();
+    });
+
+    els.clear.addEventListener("click", () => {
+      Object.values(selected).forEach((set) => set.clear());
+      els.search.value = "";
+      searchText = "";
+      renderFilters();
+      render();
+    });
+
+    renderFilters();
+    render();
+  })();
+</script>
