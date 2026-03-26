@@ -71,6 +71,50 @@ body {
   outline-offset: 3px;
 }
 
+
+/* Tailwind token class overrides (enables theme switching via CSS vars). */
+.bg-parchment {
+  background-color: var(--color-bg) !important;
+}
+
+.bg-surface {
+  background-color: var(--color-surface) !important;
+}
+
+.bg-surface-raised {
+  background-color: var(--color-surface-raised) !important;
+}
+
+.bg-surface-sunken {
+  background-color: var(--color-surface-sunken) !important;
+}
+
+.text-ink {
+  color: var(--color-text-primary) !important;
+}
+
+.text-ink-2 {
+  color: var(--color-text-secondary) !important;
+}
+
+.text-ink-3 {
+  color: var(--color-text-muted) !important;
+}
+
+.border-border {
+  border-color: var(--color-border) !important;
+}
+
+.border-border-strong {
+  border-color: var(--color-border-strong) !important;
+}
+
+/* Test player must be chrome-less (sidebar/navbar hidden). */
+[data-chrome="hidden"] #navbar-mount,
+[data-chrome="hidden"] #sidebar-mount {
+  display: none !important;
+}
+
 @media print {
   #navbar-mount,
   #sidebar-mount {

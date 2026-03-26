@@ -78,124 +78,18 @@
     </script>
   </head>
 
-  <body class="bg-parchment font-body text-ink">
+  <body class="font-body">
     <div id="navbar-mount"></div>
 
     <div class="flex">
       <div id="sidebar-mount"></div>
-
-      <main id="app" class="flex-1 min-h-screen">
-        <div class="mx-auto max-w-6xl px-6 py-10">
-          <header class="mb-10">
-            <p class="font-mono text-xs tracking-[0.32em] text-ink-3">ADMISSION TEST PLATFORM</p>
-            <h1 class="mt-2 font-display text-5xl text-primary">Institutional Precision</h1>
-            <p class="mt-4 max-w-2xl text-ink-2">
-              Week 1 scaffold: tokens, typography, components, and the canonical Lenis + GSAP scroll stack.
-              This page is intentionally content-heavy to validate scroll feel.
-            </p>
-          </header>
-
-          <section class="grid gap-6 md:grid-cols-2">
-            <article class="card">
-              <h2 class="card-title">Design direction</h2>
-              <p class="card-subtitle">
-                Refined, editorial, and authoritative: forest-green structure, gold accents, parchment substrate.
-                Borders are deliberate; contrast is calm; motion is restrained.
-              </p>
-              <div class="mt-6 flex flex-wrap gap-2">
-                <span class="badge">Cormorant Garamond</span>
-                <span class="badge">DM Sans</span>
-                <span class="badge badge-mono">JetBrains Mono</span>
-              </div>
-            </article>
-
-            <article class="card">
-              <h2 class="card-title">Scroll validation</h2>
-              <p class="card-subtitle">
-                Lenis owns scroll, GSAP owns RAF. No CSS smooth scrolling. No observer-based scroll triggers.
-              </p>
-              <div class="mt-6 grid grid-cols-2 gap-3">
-                <div class="stat">
-                  <div class="stat-k">Lerp</div>
-                  <div class="stat-v">0.08</div>
-                </div>
-                <div class="stat">
-                  <div class="stat-k">autoRaf</div>
-                  <div class="stat-v">false</div>
-                </div>
-                <div class="stat">
-                  <div class="stat-k">Ticker</div>
-                  <div class="stat-v">GSAP</div>
-                </div>
-                <div class="stat">
-                  <div class="stat-k">Theme</div>
-                  <div class="stat-v">Parchment</div>
-                </div>
-              </div>
-            </article>
-          </section>
-
-          <section class="mt-12">
-            <div class="flex items-end justify-between gap-4">
-              <h2 class="font-display text-3xl text-primary">System cards</h2>
-              <p class="text-sm text-ink-3">Scroll down to confirm momentum and typography.</p>
-            </div>
-
-            <div class="mt-6 grid gap-4 md:grid-cols-3">
-              <div class="card card-compact">
-                <h3 class="card-title-sm">Candidate Booking</h3>
-                <p class="card-body">3-step wizard with capacity cues and policy clarity.</p>
-              </div>
-              <div class="card card-compact">
-                <h3 class="card-title-sm">QBMS Lifecycle</h3>
-                <p class="card-body">Draft → review → publish with exposure tracking.</p>
-              </div>
-              <div class="card card-compact">
-                <h3 class="card-title-sm">NOC Command View</h3>
-                <p class="card-body">Pinned stats, live health grid, alert triage.</p>
-              </div>
-            </div>
-          </section>
-
-          <section class="mt-12">
-            <h2 class="font-display text-3xl text-primary">Long form</h2>
-            <p class="mt-3 max-w-3xl text-ink-2">
-              This section exists to ensure the scroll stack feels weighty and consistent across large vertical ranges.
-              In week 2 we’ll wire the router, store, and navigation shell.
-            </p>
-
-            <div class="mt-8 space-y-4">
-              <div class="prose-block">
-                <h3 class="prose-title">Operational seriousness</h3>
-                <p class="prose-body">
-                  The interface should feel like it belongs in a national exam control room: decisive layouts, disciplined typography,
-                  and carefully rationed ornamentation.
-                </p>
-              </div>
-              <div class="prose-block">
-                <h3 class="prose-title">Information density</h3>
-                <p class="prose-body">
-                  Prioritise scanability. Use mono for identifiers and hashes. Keep surfaces warm and light; reserve saturation for state.
-                </p>
-              </div>
-              <div class="prose-block">
-                <h3 class="prose-title">Motion restraint</h3>
-                <p class="prose-body">
-                  Animate transforms and opacity only. Scroll-linked motion must be GSAP + ScrollTrigger; UI state changes can be CSS.
-                </p>
-              </div>
-            </div>
-
-            <div class="mt-10 grid gap-3">
-              <div class="divider"></div>
-              <p class="font-mono text-xs text-ink-3">END OF WEEK 1 SCROLL RUNWAY</p>
-              <div class="h-[70vh]"></div>
-            </div>
-          </section>
-        </div>
-      </main>
+      <main id="app" class="flex-1 min-h-screen"></main>
     </div>
 
     <script type="module" src="/js/scroll.js"></script>
+    <script type="module" src="/js/store.js"></script>
+    <script type="module" src="/js/router.js"></script>
+    <script type="module" src="/components/navbar.js"></script>
+    <script type="module" src="/components/sidebar.js"></script>
   </body>
 </html>

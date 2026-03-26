@@ -1,0 +1,73 @@
+<div class="h-screen w-full bg-surface-sunken" data-page="test-player">
+  <div class="h-full flex flex-col">
+    <div class="bg-warning-muted border-b border-border px-6 py-3">
+      <p class="text-sm text-warning font-medium">🔒 Secure Mode Active</p>
+    </div>
+
+    <div class="flex-1 min-h-0 flex">
+      <aside class="w-72 border-r border-border bg-surface px-5 py-6 overflow-auto">
+        <p class="font-mono text-xs tracking-[0.18em] text-ink-3">PALETTE</p>
+        <div id="palette-grid" class="mt-4 grid grid-cols-5 gap-2"></div>
+      </aside>
+
+      <main class="flex-1 min-h-0 overflow-auto px-8 py-8">
+        <p class="font-mono text-xs tracking-[0.18em] text-ink-3">QUESTION</p>
+        <h1 class="mt-3 font-display text-4xl text-primary">Placeholder Session</h1>
+        <p class="mt-3 text-ink-2 max-w-2xl">
+          Week 9 will implement the secure test player (timer, palette state, autosave, submit modal). This placeholder already
+          runs without chrome and stops Lenis.
+        </p>
+
+        <div class="mt-8 card">
+          <h2 class="card-title">Sample prompt</h2>
+          <p class="card-subtitle">If 3x + 7 = 22, what is x?</p>
+
+          <div id="options-list" class="mt-6 grid gap-3"></div>
+
+          <div class="mt-8 flex items-center gap-3">
+            <button type="button" class="h-10 px-4 rounded-xl border border-border bg-surface hover:bg-primary-muted hover:text-primary transition-colors">
+              Mark for review
+            </button>
+            <button type="button" class="h-10 px-4 rounded-xl border border-border bg-primary hover:bg-primary-light transition-colors" style="color: var(--color-text-inverse);">
+              Submit
+            </button>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+</div>
+
+<script data-page-init type="text/javascript">
+  (function () {
+    window.__lenis?.stop();
+
+    const pal = document.getElementById("palette-grid");
+    if (pal) {
+      pal.innerHTML = Array.from({ length: 25 })
+        .map(
+          (_, i) => `
+            <button type="button" class="h-9 rounded-lg border border-border bg-surface hover:bg-primary-muted hover:text-primary transition-colors text-sm">
+              ${i + 1}
+            </button>
+          `,
+        )
+        .join("");
+    }
+
+    const opts = document.getElementById("options-list");
+    if (opts) {
+      const values = ["3", "4", "5", "6"];
+      opts.innerHTML = values
+        .map(
+          (opt, idx) => `
+            <label class="flex items-center gap-3 rounded-xl border border-border bg-surface px-4 py-3 hover:bg-primary-muted transition-colors cursor-pointer">
+              <input type="radio" name="q1" style="accent-color: var(--color-primary);" />
+              <span class="text-ink-2">${String.fromCharCode(65 + idx)}. ${opt}</span>
+            </label>
+          `,
+        )
+        .join("");
+    }
+  })();
+</script>
