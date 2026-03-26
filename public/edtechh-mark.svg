@@ -1,0 +1,9 @@
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="EDTECHH">
+  <defs>
+    <linearGradient id="g" x1="26" y1="44" x2="92" y2="90" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#22C55E" />
+      <stop offset="1" stop-color="#16A34A" />
+    </linearGradient>
+  </defs>
+  <path d="M24 64 L50 90 L98 32" stroke="url(#g)" stroke-width="18" stroke-linecap="round" stroke-linejoin="round" />
+</svg>

@@ -2,6 +2,7 @@ const STORAGE_KEYS = {
   theme: "atp_theme",
   persona: "atp_persona",
   center: "atp_center_id",
+  sidebarCollapsed: "atp_sidebar_collapsed",
 };
 
 function readStoredTheme() {
@@ -33,6 +34,10 @@ function readStoredCenterId() {
   return localStorage.getItem(STORAGE_KEYS.center) || null;
 }
 
+function readStoredSidebarCollapsed() {
+  return localStorage.getItem(STORAGE_KEYS.sidebarCollapsed) === "true";
+}
+
 function applyTheme(darkMode) {
   document.documentElement.setAttribute("data-theme", darkMode ? "dark" : "light");
 }
@@ -43,6 +48,7 @@ const _state = {
   activeSessionId: null,
   activeCenterId: null,
   sidebarOpen: true,
+  sidebarCollapsed: false,
   alertCount: 0,
   darkMode: false,
 };
@@ -59,6 +65,7 @@ export const store = {
     const themeChanged = next.darkMode !== _state.darkMode;
     const personaChanged = next.persona !== _state.persona;
     const centerChanged = next.activeCenterId !== _state.activeCenterId;
+    const sidebarCollapsedChanged = next.sidebarCollapsed !== _state.sidebarCollapsed;
 
     Object.assign(_state, patch);
 
@@ -76,6 +83,9 @@ export const store = {
       else localStorage.removeItem(STORAGE_KEYS.center);
     }
 
+    if (sidebarCollapsedChanged) {
+      localStorage.setItem(STORAGE_KEYS.sidebarCollapsed, _state.sidebarCollapsed ? "true" : "false");
+    }
 
     _listeners.forEach((fn) => fn(_state));
   },
@@ -96,11 +106,15 @@ export const store = {
 
     const isMobile = window.matchMedia("(max-width: 767px)").matches;
     _state.sidebarOpen = !isMobile;
+
+    _state.sidebarCollapsed = readStoredSidebarCollapsed();
+
   } catch {
     _state.darkMode = false;
     _state.persona = "candidate";
     _state.activeCenterId = null;
     _state.sidebarOpen = true;
+    _state.sidebarCollapsed = false;
   }
 
   applyTheme(_state.darkMode);

@@ -1,9 +1,259 @@
-<div class="p-8 max-w-6xl mx-auto" data-page="calendar">
-  <h1 class="font-display text-4xl text-primary mb-2">Calendar</h1>
-  <p class="text-ink-2 mb-8">Placeholder for month/week grid with session blocks.</p>
+<div class="p-8 max-w-screen-2xl mx-auto" data-page="calendar">
+  <header class="mb-8">
+    <p class="font-mono text-xs uppercase track-xxl text-ink-3">ADMISSIONS</p>
+    <div class="mt-2 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+      <div>
+        <h1 class="font-display text-4xl text-primary">Calendar</h1>
+        <p class="mt-2 max-w-2xl text-ink-2">Month view of sessions with capacity bands. Hover a block for details.</p>
+      </div>
 
-  <div class="card">
-    <h2 class="card-title">Coming soon</h2>
-    <p class="card-subtitle">Color-coded session blocks by capacity fill, with hover detail panels.</p>
-  </div>
+      <div class="flex flex-wrap items-center gap-3">
+        <button
+          id="cal-prev"
+          type="button"
+          class="h-10 px-4 rounded-xl border border-border bg-surface hover:bg-primary-muted hover:text-primary transition-colors"
+          aria-label="Previous month"
+        >
+          <span class="opacity-70">«</span>
+          Prev
+        </button>
+        <div class="h-10 px-4 rounded-xl border border-border bg-surface flex items-center">
+          <p id="cal-title" class="font-mono text-xs text-ink-3">—</p>
+        </div>
+        <button
+          id="cal-next"
+          type="button"
+          class="h-10 px-4 rounded-xl border border-border bg-surface hover:bg-primary-muted hover:text-primary transition-colors"
+          aria-label="Next month"
+        >
+          Next
+          <span class="opacity-70">»</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <section class="grid gap-6 lg:grid-cols-[1fr_22rem]">
+    <article class="card min-w-0" aria-label="Month grid">
+      <div class="grid grid-cols-7 gap-2 text-xs font-mono text-ink-3" aria-hidden="true">
+        <div class="px-2 py-2">Mon</div>
+        <div class="px-2 py-2">Tue</div>
+        <div class="px-2 py-2">Wed</div>
+        <div class="px-2 py-2">Thu</div>
+        <div class="px-2 py-2">Fri</div>
+        <div class="px-2 py-2">Sat</div>
+        <div class="px-2 py-2">Sun</div>
+      </div>
+
+      <div id="cal-grid" class="mt-2 grid grid-cols-7 gap-2"></div>
+    </article>
+
+    <aside class="grid gap-6">
+      <div class="card" aria-label="Legend">
+        <p class="font-mono text-xs uppercase track-xl text-ink-3">Capacity bands</p>
+        <div class="mt-4 grid gap-2">
+          <div class="flex items-center justify-between gap-4 rounded-2xl border border-border bg-surface px-4 py-3">
+            <div class="flex items-center gap-2">
+              <span class="h-2.5 w-2.5 rounded-full" style="background: var(--color-success);"></span>
+              <p class="text-sm text-ink-2">Available</p>
+            </div>
+            <p class="font-mono text-xs text-ink-3">&lt; 60%</p>
+          </div>
+          <div class="flex items-center justify-between gap-4 rounded-2xl border border-border bg-surface px-4 py-3">
+            <div class="flex items-center gap-2">
+              <span class="h-2.5 w-2.5 rounded-full" style="background: var(--color-warning);"></span>
+              <p class="text-sm text-ink-2">Filling</p>
+            </div>
+            <p class="font-mono text-xs text-ink-3">60–85%</p>
+          </div>
+          <div class="flex items-center justify-between gap-4 rounded-2xl border border-border bg-surface px-4 py-3">
+            <div class="flex items-center gap-2">
+              <span class="h-2.5 w-2.5 rounded-full" style="background: var(--color-danger);"></span>
+              <p class="text-sm text-ink-2">Near full</p>
+            </div>
+            <p class="font-mono text-xs text-ink-3">&gt; 85%</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" aria-label="Quick stats">
+        <p class="font-mono text-xs uppercase track-xl text-ink-3">Month summary</p>
+        <div id="cal-stats" class="mt-4 grid gap-3"></div>
+      </div>
+    </aside>
+  </section>
 </div>
+
+<script data-page-init type="text/javascript">
+  (async function () {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const { fetchData, formatDate } = await import('/js/utils.js');
+
+    const root = document.querySelector('[data-page="calendar"]');
+    if (!root) return;
+
+    const els = {
+      title: root.querySelector('#cal-title'),
+      prev: root.querySelector('#cal-prev'),
+      next: root.querySelector('#cal-next'),
+      grid: root.querySelector('#cal-grid'),
+      stats: root.querySelector('#cal-stats'),
+    };
+
+    const [sessions, centers] = await Promise.all([fetchData('sessions'), fetchData('centers')]);
+    const centerById = new Map((centers || []).map((c) => [c.centerId, c]));
+
+    const sortedSessions = (sessions || [])
+      .slice()
+      .sort((a, b) => (a.date + a.startTime).localeCompare(b.date + b.startTime));
+
+    function monthKey(d) {
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+    }
+
+    function firstMonthDate() {
+      const seed = sortedSessions[0]?.date ? new Date(sortedSessions[0].date) : new Date();
+      return new Date(seed.getFullYear(), seed.getMonth(), 1);
+    }
+
+    let activeMonth = firstMonthDate();
+
+    function clampMonth() {
+      if (!(activeMonth instanceof Date) || Number.isNaN(activeMonth.getTime())) activeMonth = firstMonthDate();
+    }
+
+    function capBand(s) {
+      const fill = s.capacity ? s.enrolled / s.capacity : 0;
+      if (fill > 0.85) return { bg: 'bg-danger-muted', text: 'text-danger', dot: 'var(--color-danger)' };
+      if (fill >= 0.6) return { bg: 'bg-warning-muted', text: 'text-warning', dot: 'var(--color-warning)' };
+      return { bg: 'bg-success-muted', text: 'text-success', dot: 'var(--color-success)' };
+    }
+
+    function sessionsForDay(iso) {
+      return sortedSessions.filter((s) => s.date === iso);
+    }
+
+    function dayCell(dateObj) {
+      const iso = dateObj.toISOString().slice(0, 10);
+      const list = sessionsForDay(iso);
+      const dayNum = dateObj.getDate();
+
+      const blocks = list
+        .slice(0, 4)
+        .map((s) => {
+          const c = centerById.get(s.centerId);
+          const band = capBand(s);
+          const title = `${formatDate(s.date)} · ${s.startTime}–${s.endTime}\n${c?.name || s.centerId}\n${s.enrolled}/${s.capacity} seats`;
+
+          return `
+            <div
+              class="cal-block relative rounded-xl border border-border ${band.bg} px-2.5 py-2 text-xs ${band.text}"
+              title="${title.replace(/"/g, '&quot;')}"
+            >
+              <div class="flex items-center justify-between gap-2">
+                <p class="font-mono text-[11px]">${s.startTime}</p>
+                <span class="h-1.5 w-1.5 rounded-full" style="background:${band.dot}"></span>
+              </div>
+              <p class="mt-1 line-clamp-2">${c?.city || s.centerId}</p>
+            </div>
+          `;
+        })
+        .join('');
+
+      const more = list.length > 4 ? `<p class="mt-2 text-[11px] text-ink-3 font-mono">+${list.length - 4} more</p>` : '';
+
+      return `
+        <div class="rounded-2xl border border-border bg-surface-sunken px-3 py-3 min-h-[7.5rem]">
+          <div class="flex items-start justify-between gap-2">
+            <p class="font-mono text-xs text-ink-3">${dayNum}</p>
+          </div>
+          <div class="mt-2 grid gap-2">${blocks}${more}</div>
+        </div>
+      `;
+    }
+
+    function emptyCell() {
+      return `<div class="rounded-2xl border border-border bg-surface-sunken/40 min-h-[7.5rem]"></div>`;
+    }
+
+    function renderStats(monthSessions) {
+      const total = monthSessions.length;
+      const seats = monthSessions.reduce((a, s) => a + (Number(s.capacity) || 0), 0);
+      const enrolled = monthSessions.reduce((a, s) => a + (Number(s.enrolled) || 0), 0);
+      const avgFill = seats ? Math.round((enrolled / seats) * 100) : 0;
+
+      els.stats.innerHTML = `
+        <div class="rounded-2xl border border-border bg-surface px-4 py-4">
+          <p class="font-mono text-xs uppercase track-md text-ink-3">Sessions</p>
+          <p class="mt-2 font-mono text-xl text-ink">${total}</p>
+        </div>
+        <div class="rounded-2xl border border-border bg-surface px-4 py-4">
+          <p class="font-mono text-xs uppercase track-md text-ink-3">Enrolled</p>
+          <p class="mt-2 font-mono text-xl text-ink">${enrolled}</p>
+        </div>
+        <div class="rounded-2xl border border-border bg-surface px-4 py-4">
+          <p class="font-mono text-xs uppercase track-md text-ink-3">Capacity</p>
+          <p class="mt-2 font-mono text-xl text-ink">${seats}</p>
+        </div>
+        <div class="rounded-2xl border border-border bg-surface px-4 py-4">
+          <p class="font-mono text-xs uppercase track-md text-ink-3">Avg fill</p>
+          <p class="mt-2 font-mono text-xl text-ink">${avgFill}%</p>
+        </div>
+      `;
+    }
+
+    function render() {
+      clampMonth();
+      const y = activeMonth.getFullYear();
+      const m = activeMonth.getMonth();
+
+      els.title.textContent = new Intl.DateTimeFormat('en-IN', { month: 'long', year: 'numeric' }).format(activeMonth);
+
+      const start = new Date(y, m, 1);
+      const end = new Date(y, m + 1, 0);
+      const daysInMonth = end.getDate();
+
+      // Monday=0 ... Sunday=6
+      const mondayIndex = (start.getDay() + 6) % 7;
+
+      const cells = [];
+      for (let i = 0; i < mondayIndex; i += 1) cells.push(emptyCell());
+
+      for (let d = 1; d <= daysInMonth; d += 1) {
+        const dt = new Date(y, m, d);
+        cells.push(dayCell(dt));
+      }
+
+      while (cells.length % 7 !== 0) cells.push(emptyCell());
+      els.grid.innerHTML = cells.join('');
+
+      const mk = monthKey(activeMonth);
+      const monthSessions = sortedSessions.filter((s) => {
+        const d = new Date(s.date);
+        return monthKey(d) === mk;
+      });
+      renderStats(monthSessions);
+
+      if (!prefersReducedMotion && window.gsap) {
+        window.gsap.fromTo(
+          root.querySelectorAll('.cal-block'),
+          { opacity: 0, y: 10 },
+          { opacity: 1, y: 0, duration: 0.55, ease: 'power2.out', stagger: 0.01 },
+        );
+      }
+    }
+
+    els.prev.addEventListener('click', () => {
+      activeMonth = new Date(activeMonth.getFullYear(), activeMonth.getMonth() - 1, 1);
+      render();
+    });
+
+    els.next.addEventListener('click', () => {
+      activeMonth = new Date(activeMonth.getFullYear(), activeMonth.getMonth() + 1, 1);
+      render();
+    });
+
+    render();
+  })();
+</script>

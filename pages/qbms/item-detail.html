@@ -44,8 +44,22 @@
       versions: root.querySelector("#item-versions"),
     };
 
+    const AUTH_KEY = "atp_authored_questions";
+
+    function readJSON(key, fallback) {
+      try {
+        const raw = localStorage.getItem(key);
+        const parsed = raw ? JSON.parse(raw) : fallback;
+        return parsed ?? fallback;
+      } catch {
+        return fallback;
+      }
+    }
+
     const id = window.__route?.params?.id;
-    const questions = await fetchData("questions");
+    const baseQuestions = await fetchData("questions");
+    const authored = readJSON(AUTH_KEY, []);
+    const questions = [...(Array.isArray(authored) ? authored : []), ...(baseQuestions || [])];
     const q = questions.find((x) => x.id === id) || questions[0];
     if (!q) return;
 
@@ -65,17 +79,22 @@
     }
 
     function renderOptions() {
-      if (q.type === "NUM") {
+      const type = String(q.type || "MCQ").toUpperCase();
+
+      if (type === "NUM" || type === "SA") {
         return `
           <div class="mt-5 rounded-2xl border border-border bg-surface-sunken px-5 py-5">
             <p class="font-mono text-xs uppercase track-md text-ink-3">Answer</p>
-            <p class="mt-3 font-mono text-sm text-ink-2">${q.answer}</p>
+            <p class="mt-3 font-mono text-sm text-ink-2">${q.answer ?? "—"}</p>
           </div>
         `;
       }
 
+      const optsRaw = Array.isArray(q.options) ? q.options : [];
+      const opts = type === "TF" && !optsRaw.length ? ["True", "False"] : optsRaw;
+
       const correct = Array.isArray(q.answer) ? new Set(q.answer) : new Set([Number(q.answer)]);
-      const opts = (q.options || []).map((o, idx) => {
+      const lines = (opts || []).map((o, idx) => {
         const prefix = String.fromCharCode(65 + idx);
         const state = correct.has(idx) ? "correct" : "neutral";
         return optionLine(`<span class="font-mono text-xs text-ink-3">${prefix}.</span> ${o}`, state);
@@ -84,7 +103,7 @@
       return `
         <div class="mt-5">
           <p class="font-mono text-xs uppercase track-md text-ink-3">Options</p>
-          <div class="mt-3 grid gap-3">${opts.join("")}</div>
+          <div class="mt-3 grid gap-3">${lines.join("")}</div>
         </div>
       `;
     }

@@ -9,7 +9,17 @@
         </p>
       </div>
 
-      <div class="flex items-center gap-3">
+      <div class="flex flex-wrap items-center gap-3">
+        <button
+          id="q-new"
+          type="button"
+          class="hidden h-10 px-4 rounded-xl border border-border bg-primary hover:bg-primary-light transition-colors"
+          style="color: var(--color-text-inverse);"
+        >
+          <span class="opacity-80">＋</span>
+          New question
+        </button>
+
         <label class="flex items-center gap-2">
           <span class="font-mono text-xs uppercase track-md text-ink-3">Search</span>
           <input
@@ -53,6 +63,8 @@
       <div class="flex items-center justify-between gap-4">
         <p class="font-mono text-xs uppercase track-xl text-ink-3">Lifecycle</p>
         <p class="text-sm text-ink-3">Click a card to open item detail.</p>
+
+
       </div>
 
       <div
@@ -64,14 +76,120 @@
   </div>
 </div>
 
+  <!-- Authoring modal (localStorage only) -->
+  <div id="q-modal" class="fixed inset-0 z-50 hidden" role="dialog" aria-modal="true" aria-label="New question">
+    <div class="absolute inset-0 bg-ink/40" data-close="true"></div>
+    <div class="absolute inset-0 flex items-end sm:items-center justify-center p-4">
+      <div class="w-full max-w-3xl rounded-3xl border border-border bg-surface shadow-lg">
+        <div class="p-6 border-b border-border flex items-start justify-between gap-4">
+          <div>
+            <p class="font-mono text-xs uppercase track-xl text-ink-3">Item author</p>
+            <h2 class="mt-2 font-display text-3xl text-primary">Create question</h2>
+            <p class="mt-2 text-sm text-ink-2">Saved locally for this demo. Appears in the Kanban under <span class="font-mono text-xs">draft</span>.</p>
+          </div>
+          <button
+            type="button"
+            class="h-10 w-10 rounded-xl border border-border bg-surface hover:bg-primary-muted hover:text-primary transition-colors"
+            data-close="true"
+            aria-label="Close"
+          >
+            <span class="font-mono text-sm">×</span>
+          </button>
+        </div>
+
+        <form id="q-form" class="p-6 grid gap-5">
+          <div class="grid gap-4 sm:grid-cols-2">
+            <label class="block">
+              <span class="font-mono text-xs uppercase track-md text-ink-3">Type</span>
+              <select id="qf-type" class="mt-2 w-full h-10 rounded-xl border border-border bg-surface px-3 text-sm text-ink-2">
+                <option value="MCQ">MCQ</option>
+                <option value="MSQ">MSQ</option>
+                <option value="NUM">NUM</option>
+                <option value="TF">TF</option>
+                <option value="SA">SA</option>
+              </select>
+            </label>
+
+            <label class="block">
+              <span class="font-mono text-xs uppercase track-md text-ink-3">Difficulty</span>
+              <select id="qf-diff" class="mt-2 w-full h-10 rounded-xl border border-border bg-surface px-3 text-sm text-ink-2">
+                <option value="easy">easy</option>
+                <option value="medium" selected>medium</option>
+                <option value="hard">hard</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="grid gap-4 sm:grid-cols-2">
+            <label class="block">
+              <span class="font-mono text-xs uppercase track-md text-ink-3">Domain</span>
+              <input id="qf-domain" type="text" placeholder="Quantitative Aptitude" class="mt-2 w-full h-10 rounded-xl border border-border bg-surface px-3 text-sm text-ink-2" />
+            </label>
+            <label class="block">
+              <span class="font-mono text-xs uppercase track-md text-ink-3">Subdomain</span>
+              <input id="qf-sub" type="text" placeholder="Arithmetic" class="mt-2 w-full h-10 rounded-xl border border-border bg-surface px-3 text-sm text-ink-2" />
+            </label>
+          </div>
+
+          <label class="block">
+            <span class="font-mono text-xs uppercase track-md text-ink-3">Prompt</span>
+            <textarea id="qf-body" rows="4" placeholder="Write the question stem…" class="mt-2 w-full rounded-xl border border-border bg-surface px-3 py-2 text-sm text-ink-2"></textarea>
+          </label>
+
+          <div id="qf-options-wrap" class="grid gap-3">
+            <p class="font-mono text-xs uppercase track-md text-ink-3">Options</p>
+            <div class="grid gap-3 sm:grid-cols-2">
+              <input id="qf-opt-a" type="text" placeholder="Option A" class="h-10 rounded-xl border border-border bg-surface px-3 text-sm text-ink-2" />
+              <input id="qf-opt-b" type="text" placeholder="Option B" class="h-10 rounded-xl border border-border bg-surface px-3 text-sm text-ink-2" />
+              <input id="qf-opt-c" type="text" placeholder="Option C" class="h-10 rounded-xl border border-border bg-surface px-3 text-sm text-ink-2" />
+              <input id="qf-opt-d" type="text" placeholder="Option D" class="h-10 rounded-xl border border-border bg-surface px-3 text-sm text-ink-2" />
+            </div>
+            <p class="text-xs text-ink-3">For <span class="font-mono">TF</span> you can leave options empty (defaults to True/False).</p>
+          </div>
+
+          <label class="block">
+            <span class="font-mono text-xs uppercase track-md text-ink-3">Answer</span>
+            <input id="qf-answer" type="text" placeholder="Example: 2 or 1,3 or 5.5" class="mt-2 w-full h-10 rounded-xl border border-border bg-surface px-3 text-sm text-ink-2" />
+            <p class="mt-2 text-xs text-ink-3">MCQ/TF: index (0=A). MSQ: comma list (e.g., 0,2). NUM/SA: literal value.</p>
+          </label>
+
+          <p id="qf-error" class="hidden text-sm text-danger"></p>
+
+          <div class="flex items-center justify-end gap-3">
+            <button type="button" class="h-10 px-4 rounded-xl border border-border bg-surface hover:bg-primary-muted hover:text-primary transition-colors" data-close="true">Cancel</button>
+            <button type="submit" class="h-10 px-4 rounded-xl border border-border bg-primary hover:bg-primary-light transition-colors" style="color: var(--color-text-inverse);">Save draft</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+
 <script data-page-init type="text/javascript">
   (async function () {
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     const { fetchData, QUESTION_STATUSES } = await import("/js/utils.js");
+    const { store } = await import("/js/store.js");
 
     const root = document.querySelector('[data-page="items"]');
     if (!root) return;
+
+    const AUTH_KEY = "atp_authored_questions";
+
+    function readJSON(key, fallback) {
+      try {
+        const raw = localStorage.getItem(key);
+        const parsed = raw ? JSON.parse(raw) : fallback;
+        return parsed ?? fallback;
+      } catch {
+        return fallback;
+      }
+    }
+
+    function writeJSON(key, value) {
+      localStorage.setItem(key, JSON.stringify(value));
+    }
 
     const els = {
       filters: root.querySelector("#filters"),
@@ -79,20 +197,58 @@
       search: root.querySelector("#q-search"),
       kanban: root.querySelector("#kanban"),
       resultCount: root.querySelector("#result-count"),
+      newBtn: root.querySelector("#q-new"),
+      modal: document.getElementById("q-modal"),
+      form: document.getElementById("q-form"),
+      type: document.getElementById("qf-type"),
+      diff: document.getElementById("qf-diff"),
+      domain: document.getElementById("qf-domain"),
+      sub: document.getElementById("qf-sub"),
+      body: document.getElementById("qf-body"),
+      optWrap: document.getElementById("qf-options-wrap"),
+      optA: document.getElementById("qf-opt-a"),
+      optB: document.getElementById("qf-opt-b"),
+      optC: document.getElementById("qf-opt-c"),
+      optD: document.getElementById("qf-opt-d"),
+      answer: document.getElementById("qf-answer"),
+      error: document.getElementById("qf-error"),
     };
 
-    const questions = await fetchData("questions");
+    const baseQuestions = await fetchData("questions");
+    const authored = Array.isArray(readJSON(AUTH_KEY, [])) ? readJSON(AUTH_KEY, []) : [];
+
+    function dedupeById(list) {
+      const seen = new Set();
+      const out = [];
+      list.forEach((q) => {
+        if (!q || !q.id || seen.has(q.id)) return;
+        seen.add(q.id);
+        out.push(q);
+      });
+      return out;
+    }
+
+    let questions = dedupeById([...(authored || []), ...(baseQuestions || [])]);
 
     const uniq = (arr) => Array.from(new Set(arr.filter(Boolean))).sort();
 
-    const facets = {
-      domain: uniq(questions.map((q) => q.domain)),
-      type: uniq(questions.map((q) => q.type)),
-      difficulty: uniq(questions.map((q) => q.difficulty)),
-      bloomLevel: uniq(questions.map((q) => q.bloomLevel)),
-      year: uniq(questions.map((q) => q.year)).sort((a, b) => b - a),
-      status: QUESTION_STATUSES.slice(),
-    };
+    function buildFacets(list) {
+      return {
+        domain: uniq(list.map((q) => q.domain)),
+        type: uniq(list.map((q) => q.type)),
+        difficulty: uniq(list.map((q) => q.difficulty)),
+        bloomLevel: uniq(list.map((q) => q.bloomLevel)),
+        year: uniq(list.map((q) => q.year)).sort((a, b) => b - a),
+        status: QUESTION_STATUSES.slice(),
+      };
+    }
+
+    let facets = buildFacets(questions);
+
+    if (store.getState().persona === "itemAuthor") {
+      els.newBtn?.classList.remove("hidden");
+    }
+
 
     const selected = {
       domain: new Set(),
@@ -104,6 +260,131 @@
     };
 
     let searchText = "";
+
+
+    function openModal() {
+      if (!els.modal) return;
+      if (els.error) {
+        els.error.classList.add("hidden");
+        els.error.textContent = "";
+      }
+      els.form?.reset();
+      syncOptionVisibility();
+      els.modal.classList.remove("hidden");
+      setTimeout(() => els.domain?.focus(), 0);
+    }
+
+    function closeModal() {
+      els.modal?.classList.add("hidden");
+    }
+
+    function syncOptionVisibility() {
+      const t = String(els.type?.value || "MCQ").toUpperCase();
+      const show = t === "MCQ" || t === "MSQ" || t === "TF";
+      if (els.optWrap) {
+        els.optWrap.classList.toggle("hidden", !show);
+      }
+    }
+
+    function parseAnswer(type, raw) {
+      const t = String(type || "MCQ").toUpperCase();
+      const s = String(raw || "").trim();
+      if (!s) return null;
+
+      if (t === "MCQ" || t === "TF") {
+        const n = Number(s);
+        return Number.isFinite(n) ? n : null;
+      }
+
+      if (t === "MSQ") {
+        const parts = s
+          .split(",")
+          .map((x) => x.trim())
+          .filter(Boolean)
+          .map((x) => Number(x))
+          .filter((x) => Number.isFinite(x));
+        return parts.length ? parts : null;
+      }
+
+      if (t === "NUM") {
+        const n = Number(s);
+        return Number.isFinite(n) ? n : s;
+      }
+
+      return s;
+    }
+
+    function refreshData(nextQuestions) {
+      questions = dedupeById(nextQuestions);
+      facets = buildFacets(questions);
+      renderFilters();
+      render();
+    }
+
+    function showError(msg) {
+      if (!els.error) return;
+      els.error.textContent = msg;
+      els.error.classList.remove("hidden");
+    }
+
+    function collectOptions() {
+      const opts = [els.optA?.value, els.optB?.value, els.optC?.value, els.optD?.value]
+        .map((x) => String(x || "").trim())
+        .filter(Boolean);
+      return opts;
+    }
+
+    els.newBtn?.addEventListener("click", openModal);
+    els.type?.addEventListener("change", syncOptionVisibility);
+
+    els.modal?.querySelectorAll("[data-close]").forEach((x) => {
+      x.addEventListener("click", closeModal);
+    });
+
+    els.form?.addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      if (store.getState().persona !== "itemAuthor") return;
+
+      const type = String(els.type?.value || "MCQ").toUpperCase();
+      const domain = String(els.domain?.value || "").trim();
+      const subdomain = String(els.sub?.value || "").trim();
+      const body = String(els.body?.value || "").trim();
+      const difficulty = String(els.diff?.value || "medium").trim();
+      const options = type === "TF" && !collectOptions().length ? ["True", "False"] : collectOptions();
+      const answer = parseAnswer(type, els.answer?.value);
+
+      if (!domain) return showError("Domain is required.");
+      if (!body) return showError("Prompt is required.");
+      if ((type === "MCQ" || type === "MSQ" || type === "TF") && options.length < 2) {
+        return showError("Provide at least two options.");
+      }
+
+      const next = {
+        id: `Q-AUTH-${Date.now().toString(36).toUpperCase()}`,
+        type,
+        domain,
+        subdomain,
+        difficulty,
+        bloomLevel: "Application",
+        language: "English",
+        exposureCount: 0,
+        status: "draft",
+        body,
+        options,
+        answer,
+        authorId: "USR-AUTHOR-LOCAL",
+        year: new Date().getFullYear(),
+      };
+
+      const existing = readJSON(AUTH_KEY, []);
+      const list = Array.isArray(existing) ? existing : [];
+      writeJSON(AUTH_KEY, [next, ...list].slice(0, 200));
+
+      refreshData([next, ...questions]);
+      closeModal();
+    });
+
 
     function section(title, key, values) {
       const checkboxes = values

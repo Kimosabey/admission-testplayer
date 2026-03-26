@@ -20,8 +20,13 @@ function render() {
               <span class="font-mono text-sm">≡</span>
             </button>
 
-            <a href="#/" class="flex items-baseline gap-2 group">
-              <span class="font-display text-2xl text-primary tracking-tight">ATP</span>
+            <a href="#/" class="flex items-center gap-3 group" aria-label="Home">
+              <img
+                src="/public/edtechh-logo.svg"
+                alt="EDTECHH"
+                class="h-7 w-auto"
+                style="filter: drop-shadow(0 1px 0 rgba(0,0,0,0.04));"
+              />
               <span class="hidden sm:inline font-mono text-xs track-xl text-ink-3 group-hover:text-primary transition-colors">
                 ADMISSION TEST
               </span>
@@ -31,6 +36,8 @@ function render() {
           <div class="flex items-center gap-3">
             <div id="persona-switcher"></div>
 
+            <!-- Theme toggle temporarily disabled -->
+            <!--
             <button
               id="theme-toggle"
               class="inline-flex items-center gap-2 h-9 px-3 rounded-xl border border-border bg-surface
@@ -43,6 +50,7 @@ function render() {
               <span class="font-mono text-xs track-md text-ink-3">THEME</span>
               <span class="font-mono text-xs text-ink-2">${darkMode ? "DARK" : "LIGHT"}</span>
             </button>
+            -->
 
             <div class="relative">
               <a
@@ -73,11 +81,12 @@ function render() {
 
   mountPersonaSwitcher(document.getElementById("persona-switcher"));
 
-  const themeBtn = document.getElementById("theme-toggle");
-  themeBtn.addEventListener("click", () => {
-    const { darkMode: dm } = store.getState();
-    store.setState({ darkMode: !dm });
-  });
+  // Theme toggle temporarily disabled.
+  // const themeBtn = document.getElementById("theme-toggle");
+  // themeBtn?.addEventListener("click", () => {
+  //   const { darkMode: dm } = store.getState();
+  //   store.setState({ darkMode: !dm });
+  // });
 
   const sideBtn = document.getElementById("sidebar-toggle");
   sideBtn?.addEventListener("click", () => {
