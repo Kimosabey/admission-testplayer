@@ -1,0 +1,242 @@
+[
+  {
+    "sessionId": "SES-2024-D01-AM",
+    "centerId": "CTR-HYD-02",
+    "date": "2024-11-15",
+    "startTime": "09:00",
+    "endTime": "12:00",
+    "capacity": 80,
+    "enrolled": 28,
+    "status": "scheduled"
+  },
+  {
+    "sessionId": "SES-2024-D01-PM",
+    "centerId": "CTR-DEL-05",
+    "date": "2024-11-15",
+    "startTime": "14:00",
+    "endTime": "17:00",
+    "capacity": 100,
+    "enrolled": 79,
+    "status": "live"
+  },
+  {
+    "sessionId": "SES-2024-D02-AM",
+    "centerId": "CTR-CHE-03",
+    "date": "2024-11-16",
+    "startTime": "09:00",
+    "endTime": "12:00",
+    "capacity": 120,
+    "enrolled": 85,
+    "status": "scheduled"
+  },
+  {
+    "sessionId": "SES-2024-D02-PM",
+    "centerId": "CTR-PUN-06",
+    "date": "2024-11-16",
+    "startTime": "14:00",
+    "endTime": "17:00",
+    "capacity": 100,
+    "enrolled": 44,
+    "status": "scheduled"
+  },
+  {
+    "sessionId": "SES-2024-D03-AM",
+    "centerId": "CTR-MUM-04",
+    "date": "2024-11-17",
+    "startTime": "09:00",
+    "endTime": "12:00",
+    "capacity": 100,
+    "enrolled": 83,
+    "status": "scheduled"
+  },
+  {
+    "sessionId": "SES-2024-D03-PM",
+    "centerId": "CTR-KOL-07",
+    "date": "2024-11-17",
+    "startTime": "14:00",
+    "endTime": "17:00",
+    "capacity": 80,
+    "enrolled": 34,
+    "status": "scheduled"
+  },
+  {
+    "sessionId": "SES-2024-D04-AM",
+    "centerId": "CTR-DEL-05",
+    "date": "2024-11-18",
+    "startTime": "09:00",
+    "endTime": "12:00",
+    "capacity": 100,
+    "enrolled": 59,
+    "status": "scheduled"
+  },
+  {
+    "sessionId": "SES-2024-D04-PM",
+    "centerId": "CTR-AHM-08",
+    "date": "2024-11-18",
+    "startTime": "14:00",
+    "endTime": "17:00",
+    "capacity": 80,
+    "enrolled": 50,
+    "status": "scheduled"
+  },
+  {
+    "sessionId": "SES-2024-D05-AM",
+    "centerId": "CTR-PUN-06",
+    "date": "2024-11-19",
+    "startTime": "09:00",
+    "endTime": "12:00",
+    "capacity": 100,
+    "enrolled": 73,
+    "status": "scheduled"
+  },
+  {
+    "sessionId": "SES-2024-D05-PM",
+    "centerId": "CTR-JAI-09",
+    "date": "2024-11-19",
+    "startTime": "14:00",
+    "endTime": "17:00",
+    "capacity": 150,
+    "enrolled": 57,
+    "status": "live"
+  },
+  {
+    "sessionId": "SES-2024-D06-AM",
+    "centerId": "CTR-KOL-07",
+    "date": "2024-11-20",
+    "startTime": "09:00",
+    "endTime": "12:00",
+    "capacity": 80,
+    "enrolled": 62,
+    "status": "scheduled"
+  },
+  {
+    "sessionId": "SES-2024-D06-PM",
+    "centerId": "CTR-KOC-10",
+    "date": "2024-11-20",
+    "startTime": "14:00",
+    "endTime": "17:00",
+    "capacity": 80,
+    "enrolled": 52,
+    "status": "scheduled"
+  },
+  {
+    "sessionId": "SES-2024-D07-AM",
+    "centerId": "CTR-AHM-08",
+    "date": "2024-11-21",
+    "startTime": "09:00",
+    "endTime": "12:00",
+    "capacity": 80,
+    "enrolled": 63,
+    "status": "scheduled"
+  },
+  {
+    "sessionId": "SES-2024-D07-PM",
+    "centerId": "CTR-IND-11",
+    "date": "2024-11-21",
+    "startTime": "14:00",
+    "endTime": "17:00",
+    "capacity": 80,
+    "enrolled": 68,
+    "status": "scheduled"
+  },
+  {
+    "sessionId": "SES-2024-D08-AM",
+    "centerId": "CTR-JAI-09",
+    "date": "2024-11-22",
+    "startTime": "09:00",
+    "endTime": "12:00",
+    "capacity": 150,
+    "enrolled": 125,
+    "status": "scheduled"
+  },
+  {
+    "sessionId": "SES-2024-D08-PM",
+    "centerId": "CTR-LKO-12",
+    "date": "2024-11-22",
+    "startTime": "14:00",
+    "endTime": "17:00",
+    "capacity": 80,
+    "enrolled": 73,
+    "status": "scheduled"
+  },
+  {
+    "sessionId": "SES-2024-D09-AM",
+    "centerId": "CTR-KOC-10",
+    "date": "2024-11-23",
+    "startTime": "09:00",
+    "endTime": "12:00",
+    "capacity": 80,
+    "enrolled": 30,
+    "status": "scheduled"
+  },
+  {
+    "sessionId": "SES-2024-D09-PM",
+    "centerId": "CTR-BLR-13",
+    "date": "2024-11-23",
+    "startTime": "14:00",
+    "endTime": "17:00",
+    "capacity": 100,
+    "enrolled": 84,
+    "status": "scheduled"
+  },
+  {
+    "sessionId": "SES-2024-D10-AM",
+    "centerId": "CTR-IND-11",
+    "date": "2024-11-24",
+    "startTime": "09:00",
+    "endTime": "12:00",
+    "capacity": 80,
+    "enrolled": 33,
+    "status": "scheduled"
+  },
+  {
+    "sessionId": "SES-2024-D10-PM",
+    "centerId": "CTR-HYD-14",
+    "date": "2024-11-24",
+    "startTime": "14:00",
+    "endTime": "17:00",
+    "capacity": 100,
+    "enrolled": 90,
+    "status": "scheduled"
+  },
+  {
+    "sessionId": "SES-2024-D11-AM",
+    "centerId": "CTR-LKO-12",
+    "date": "2024-11-25",
+    "startTime": "09:00",
+    "endTime": "12:00",
+    "capacity": 80,
+    "enrolled": 52,
+    "status": "scheduled"
+  },
+  {
+    "sessionId": "SES-2024-D11-PM",
+    "centerId": "CTR-CHE-15",
+    "date": "2024-11-25",
+    "startTime": "14:00",
+    "endTime": "17:00",
+    "capacity": 80,
+    "enrolled": 57,
+    "status": "scheduled"
+  },
+  {
+    "sessionId": "SES-2024-D12-AM",
+    "centerId": "CTR-BLR-13",
+    "date": "2024-11-26",
+    "startTime": "09:00",
+    "endTime": "12:00",
+    "capacity": 100,
+    "enrolled": 45,
+    "status": "scheduled"
+  },
+  {
+    "sessionId": "SES-2024-D12-PM",
+    "centerId": "CTR-MUM-16",
+    "date": "2024-11-26",
+    "startTime": "14:00",
+    "endTime": "17:00",
+    "capacity": 100,
+    "enrolled": 57,
+    "status": "scheduled"
+  }
+]

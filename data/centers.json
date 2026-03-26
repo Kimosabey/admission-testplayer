@@ -1,0 +1,241 @@
+[
+  {
+    "centerId": "CTR-BLR-01",
+    "name": "Bangalore Center 01",
+    "city": "Bangalore",
+    "address": "11 MG Road, Bangalore 560001",
+    "totalSeats": 80,
+    "timezone": "Asia/Kolkata",
+    "contact": "center-bangalore-01@testplatform.in",
+    "sessions": []
+  },
+  {
+    "centerId": "CTR-HYD-02",
+    "name": "Hyderabad Center 02",
+    "city": "Hyderabad",
+    "address": "12 MG Road, Hyderabad 560002",
+    "totalSeats": 80,
+    "timezone": "Asia/Kolkata",
+    "contact": "center-hyderabad-02@testplatform.in",
+    "sessions": [
+      "SES-2024-D01-AM"
+    ]
+  },
+  {
+    "centerId": "CTR-CHE-03",
+    "name": "Chennai Center 03",
+    "city": "Chennai",
+    "address": "13 MG Road, Chennai 560003",
+    "totalSeats": 120,
+    "timezone": "Asia/Kolkata",
+    "contact": "center-chennai-03@testplatform.in",
+    "sessions": [
+      "SES-2024-D02-AM"
+    ]
+  },
+  {
+    "centerId": "CTR-MUM-04",
+    "name": "Mumbai Center 04",
+    "city": "Mumbai",
+    "address": "14 MG Road, Mumbai 560004",
+    "totalSeats": 100,
+    "timezone": "Asia/Kolkata",
+    "contact": "center-mumbai-04@testplatform.in",
+    "sessions": [
+      "SES-2024-D03-AM"
+    ]
+  },
+  {
+    "centerId": "CTR-DEL-05",
+    "name": "Delhi Center 05",
+    "city": "Delhi",
+    "address": "15 MG Road, Delhi 560005",
+    "totalSeats": 100,
+    "timezone": "Asia/Kolkata",
+    "contact": "center-delhi-05@testplatform.in",
+    "sessions": [
+      "SES-2024-D01-PM",
+      "SES-2024-D04-AM"
+    ]
+  },
+  {
+    "centerId": "CTR-PUN-06",
+    "name": "Pune Center 06",
+    "city": "Pune",
+    "address": "16 MG Road, Pune 560006",
+    "totalSeats": 100,
+    "timezone": "Asia/Kolkata",
+    "contact": "center-pune-06@testplatform.in",
+    "sessions": [
+      "SES-2024-D02-PM",
+      "SES-2024-D05-AM"
+    ]
+  },
+  {
+    "centerId": "CTR-KOL-07",
+    "name": "Kolkata Center 07",
+    "city": "Kolkata",
+    "address": "17 MG Road, Kolkata 560007",
+    "totalSeats": 80,
+    "timezone": "Asia/Kolkata",
+    "contact": "center-kolkata-07@testplatform.in",
+    "sessions": [
+      "SES-2024-D03-PM",
+      "SES-2024-D06-AM"
+    ]
+  },
+  {
+    "centerId": "CTR-AHM-08",
+    "name": "Ahmedabad Center 08",
+    "city": "Ahmedabad",
+    "address": "18 MG Road, Ahmedabad 560008",
+    "totalSeats": 80,
+    "timezone": "Asia/Kolkata",
+    "contact": "center-ahmedabad-08@testplatform.in",
+    "sessions": [
+      "SES-2024-D04-PM",
+      "SES-2024-D07-AM"
+    ]
+  },
+  {
+    "centerId": "CTR-JAI-09",
+    "name": "Jaipur Center 09",
+    "city": "Jaipur",
+    "address": "19 MG Road, Jaipur 560009",
+    "totalSeats": 150,
+    "timezone": "Asia/Kolkata",
+    "contact": "center-jaipur-09@testplatform.in",
+    "sessions": [
+      "SES-2024-D05-PM",
+      "SES-2024-D08-AM"
+    ]
+  },
+  {
+    "centerId": "CTR-KOC-10",
+    "name": "Kochi Center 10",
+    "city": "Kochi",
+    "address": "20 MG Road, Kochi 560010",
+    "totalSeats": 80,
+    "timezone": "Asia/Kolkata",
+    "contact": "center-kochi-10@testplatform.in",
+    "sessions": [
+      "SES-2024-D06-PM",
+      "SES-2024-D09-AM"
+    ]
+  },
+  {
+    "centerId": "CTR-IND-11",
+    "name": "Indore Center 11",
+    "city": "Indore",
+    "address": "21 MG Road, Indore 560011",
+    "totalSeats": 80,
+    "timezone": "Asia/Kolkata",
+    "contact": "center-indore-11@testplatform.in",
+    "sessions": [
+      "SES-2024-D07-PM",
+      "SES-2024-D10-AM"
+    ]
+  },
+  {
+    "centerId": "CTR-LKO-12",
+    "name": "Lucknow Center 12",
+    "city": "Lucknow",
+    "address": "22 MG Road, Lucknow 560012",
+    "totalSeats": 80,
+    "timezone": "Asia/Kolkata",
+    "contact": "center-lucknow-12@testplatform.in",
+    "sessions": [
+      "SES-2024-D08-PM",
+      "SES-2024-D11-AM"
+    ]
+  },
+  {
+    "centerId": "CTR-BLR-13",
+    "name": "Bangalore Center 13",
+    "city": "Bangalore",
+    "address": "23 MG Road, Bangalore 560013",
+    "totalSeats": 100,
+    "timezone": "Asia/Kolkata",
+    "contact": "center-bangalore-13@testplatform.in",
+    "sessions": [
+      "SES-2024-D09-PM",
+      "SES-2024-D12-AM"
+    ]
+  },
+  {
+    "centerId": "CTR-HYD-14",
+    "name": "Hyderabad Center 14",
+    "city": "Hyderabad",
+    "address": "24 MG Road, Hyderabad 560014",
+    "totalSeats": 100,
+    "timezone": "Asia/Kolkata",
+    "contact": "center-hyderabad-14@testplatform.in",
+    "sessions": [
+      "SES-2024-D10-PM"
+    ]
+  },
+  {
+    "centerId": "CTR-CHE-15",
+    "name": "Chennai Center 15",
+    "city": "Chennai",
+    "address": "25 MG Road, Chennai 560015",
+    "totalSeats": 80,
+    "timezone": "Asia/Kolkata",
+    "contact": "center-chennai-15@testplatform.in",
+    "sessions": [
+      "SES-2024-D11-PM"
+    ]
+  },
+  {
+    "centerId": "CTR-MUM-16",
+    "name": "Mumbai Center 16",
+    "city": "Mumbai",
+    "address": "26 MG Road, Mumbai 560016",
+    "totalSeats": 100,
+    "timezone": "Asia/Kolkata",
+    "contact": "center-mumbai-16@testplatform.in",
+    "sessions": [
+      "SES-2024-D12-PM"
+    ]
+  },
+  {
+    "centerId": "CTR-DEL-17",
+    "name": "Delhi Center 17",
+    "city": "Delhi",
+    "address": "27 MG Road, Delhi 560017",
+    "totalSeats": 150,
+    "timezone": "Asia/Kolkata",
+    "contact": "center-delhi-17@testplatform.in",
+    "sessions": []
+  },
+  {
+    "centerId": "CTR-PUN-18",
+    "name": "Pune Center 18",
+    "city": "Pune",
+    "address": "28 MG Road, Pune 560018",
+    "totalSeats": 100,
+    "timezone": "Asia/Kolkata",
+    "contact": "center-pune-18@testplatform.in",
+    "sessions": []
+  },
+  {
+    "centerId": "CTR-KOL-19",
+    "name": "Kolkata Center 19",
+    "city": "Kolkata",
+    "address": "29 MG Road, Kolkata 560019",
+    "totalSeats": 150,
+    "timezone": "Asia/Kolkata",
+    "contact": "center-kolkata-19@testplatform.in",
+    "sessions": []
+  },
+  {
+    "centerId": "CTR-AHM-20",
+    "name": "Ahmedabad Center 20",
+    "city": "Ahmedabad",
+    "address": "30 MG Road, Ahmedabad 560020",
+    "totalSeats": 120,
+    "timezone": "Asia/Kolkata",
+    "contact": "center-ahmedabad-20@testplatform.in",
+    "sessions": []
+  }
+]

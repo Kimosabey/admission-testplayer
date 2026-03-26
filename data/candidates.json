@@ -1,0 +1,466 @@
+[
+  {
+    "applicationId": "APP-2024-00001",
+    "name": "Ananya Gupta",
+    "photo": "/public/photos/APP-2024-00001.jpg",
+    "programs": [
+      "MTech"
+    ],
+    "attemptCount": 1,
+    "cycle": "Cycle2",
+    "sessionId": "SES-2024-D07-PM",
+    "centerId": "CTR-IND-11",
+    "seatNumber": "D-07",
+    "status": "checked-in",
+    "hallTicketId": "HT-2024-00001"
+  },
+  {
+    "applicationId": "APP-2024-00002",
+    "name": "Ishita Das",
+    "photo": "/public/photos/APP-2024-00002.jpg",
+    "programs": [
+      "BBA",
+      "MFA"
+    ],
+    "attemptCount": 2,
+    "cycle": "Cycle1",
+    "sessionId": "SES-2024-D12-PM",
+    "centerId": "CTR-MUM-16",
+    "seatNumber": "E-18",
+    "status": "booked",
+    "hallTicketId": "HT-2024-00002"
+  },
+  {
+    "applicationId": "APP-2024-00003",
+    "name": "Ananya Gupta",
+    "photo": "/public/photos/APP-2024-00003.jpg",
+    "programs": [
+      "BBA"
+    ],
+    "attemptCount": 1,
+    "cycle": "Cycle2",
+    "sessionId": "SES-2024-D03-PM",
+    "centerId": "CTR-KOL-07",
+    "seatNumber": "D-14",
+    "status": "booked",
+    "hallTicketId": "HT-2024-00003"
+  },
+  {
+    "applicationId": "APP-2024-00004",
+    "name": "Neha Patel",
+    "photo": "/public/photos/APP-2024-00004.jpg",
+    "programs": [
+      "MFA"
+    ],
+    "attemptCount": 2,
+    "cycle": "Cycle2",
+    "sessionId": "SES-2024-D08-PM",
+    "centerId": "CTR-LKO-12",
+    "seatNumber": "E-16",
+    "status": "completed",
+    "hallTicketId": "HT-2024-00004"
+  },
+  {
+    "applicationId": "APP-2024-00005",
+    "name": "Rahul Rao",
+    "photo": "/public/photos/APP-2024-00005.jpg",
+    "programs": [
+      "MTech",
+      "MFA"
+    ],
+    "attemptCount": 1,
+    "cycle": "Cycle2",
+    "sessionId": "SES-2024-D07-PM",
+    "centerId": "CTR-IND-11",
+    "seatNumber": "E-22",
+    "status": "booked",
+    "hallTicketId": "HT-2024-00005"
+  },
+  {
+    "applicationId": "APP-2024-00006",
+    "name": "Arjun Singh",
+    "photo": "/public/photos/APP-2024-00006.jpg",
+    "programs": [
+      "MFA",
+      "MBA"
+    ],
+    "attemptCount": 1,
+    "cycle": "Cycle2",
+    "sessionId": "SES-2024-D12-PM",
+    "centerId": "CTR-MUM-16",
+    "seatNumber": "D-18",
+    "status": "completed",
+    "hallTicketId": "HT-2024-00006"
+  },
+  {
+    "applicationId": "APP-2024-00007",
+    "name": "Priya Singh",
+    "photo": "/public/photos/APP-2024-00007.jpg",
+    "programs": [
+      "MTech"
+    ],
+    "attemptCount": 1,
+    "cycle": "Cycle1",
+    "sessionId": "SES-2024-D01-PM",
+    "centerId": "CTR-DEL-05",
+    "seatNumber": "E-19",
+    "status": "completed",
+    "hallTicketId": "HT-2024-00007"
+  },
+  {
+    "applicationId": "APP-2024-00008",
+    "name": "Vikram Gupta",
+    "photo": "/public/photos/APP-2024-00008.jpg",
+    "programs": [
+      "MBA"
+    ],
+    "attemptCount": 1,
+    "cycle": "Cycle1",
+    "sessionId": "SES-2024-D08-PM",
+    "centerId": "CTR-LKO-12",
+    "seatNumber": "A-05",
+    "status": "checked-in",
+    "hallTicketId": "HT-2024-00008"
+  },
+  {
+    "applicationId": "APP-2024-00009",
+    "name": "Arjun Singh",
+    "photo": "/public/photos/APP-2024-00009.jpg",
+    "programs": [
+      "MFA"
+    ],
+    "attemptCount": 2,
+    "cycle": "Cycle2",
+    "sessionId": "SES-2024-D08-AM",
+    "centerId": "CTR-JAI-09",
+    "seatNumber": "D-20",
+    "status": "completed",
+    "hallTicketId": "HT-2024-00009"
+  },
+  {
+    "applicationId": "APP-2024-00010",
+    "name": "Rahul Patel",
+    "photo": "/public/photos/APP-2024-00010.jpg",
+    "programs": [
+      "MBA"
+    ],
+    "attemptCount": 1,
+    "cycle": "Cycle1",
+    "sessionId": "SES-2024-D04-PM",
+    "centerId": "CTR-AHM-08",
+    "seatNumber": "B-36",
+    "status": "booked",
+    "hallTicketId": "HT-2024-00010"
+  },
+  {
+    "applicationId": "APP-2024-00011",
+    "name": "Rahul Rao",
+    "photo": "/public/photos/APP-2024-00011.jpg",
+    "programs": [
+      "MTech",
+      "BBA"
+    ],
+    "attemptCount": 2,
+    "cycle": "Cycle1",
+    "sessionId": "SES-2024-D02-AM",
+    "centerId": "CTR-CHE-03",
+    "seatNumber": "B-17",
+    "status": "completed",
+    "hallTicketId": "HT-2024-00011"
+  },
+  {
+    "applicationId": "APP-2024-00012",
+    "name": "Meera Sharma",
+    "photo": "/public/photos/APP-2024-00012.jpg",
+    "programs": [
+      "MFA"
+    ],
+    "attemptCount": 1,
+    "cycle": "Cycle2",
+    "sessionId": "SES-2024-D10-PM",
+    "centerId": "CTR-HYD-14",
+    "seatNumber": "E-19",
+    "status": "checked-in",
+    "hallTicketId": "HT-2024-00012"
+  },
+  {
+    "applicationId": "APP-2024-00013",
+    "name": "Vikram Sharma",
+    "photo": "/public/photos/APP-2024-00013.jpg",
+    "programs": [
+      "MBA",
+      "MFA"
+    ],
+    "attemptCount": 1,
+    "cycle": "Cycle1",
+    "sessionId": "SES-2024-D10-PM",
+    "centerId": "CTR-HYD-14",
+    "seatNumber": "C-02",
+    "status": "booked",
+    "hallTicketId": "HT-2024-00013"
+  },
+  {
+    "applicationId": "APP-2024-00014",
+    "name": "Vikram Rao",
+    "photo": "/public/photos/APP-2024-00014.jpg",
+    "programs": [
+      "BBA"
+    ],
+    "attemptCount": 2,
+    "cycle": "Cycle2",
+    "sessionId": "SES-2024-D02-AM",
+    "centerId": "CTR-CHE-03",
+    "seatNumber": "D-23",
+    "status": "checked-in",
+    "hallTicketId": "HT-2024-00014"
+  },
+  {
+    "applicationId": "APP-2024-00015",
+    "name": "Ananya Singh",
+    "photo": "/public/photos/APP-2024-00015.jpg",
+    "programs": [
+      "BBA"
+    ],
+    "attemptCount": 1,
+    "cycle": "Cycle2",
+    "sessionId": "SES-2024-D06-AM",
+    "centerId": "CTR-KOL-07",
+    "seatNumber": "C-21",
+    "status": "booked",
+    "hallTicketId": "HT-2024-00015"
+  },
+  {
+    "applicationId": "APP-2024-00016",
+    "name": "Neha Gupta",
+    "photo": "/public/photos/APP-2024-00016.jpg",
+    "programs": [
+      "BBA",
+      "MTech"
+    ],
+    "attemptCount": 2,
+    "cycle": "Cycle2",
+    "sessionId": "SES-2024-D01-PM",
+    "centerId": "CTR-DEL-05",
+    "seatNumber": "B-18",
+    "status": "checked-in",
+    "hallTicketId": "HT-2024-00016"
+  },
+  {
+    "applicationId": "APP-2024-00017",
+    "name": "Meera Rao",
+    "photo": "/public/photos/APP-2024-00017.jpg",
+    "programs": [
+      "MBA",
+      "MTech"
+    ],
+    "attemptCount": 2,
+    "cycle": "Cycle1",
+    "sessionId": "SES-2024-D02-AM",
+    "centerId": "CTR-CHE-03",
+    "seatNumber": "B-08",
+    "status": "checked-in",
+    "hallTicketId": "HT-2024-00017"
+  },
+  {
+    "applicationId": "APP-2024-00018",
+    "name": "Ananya Kapoor",
+    "photo": "/public/photos/APP-2024-00018.jpg",
+    "programs": [
+      "MFA"
+    ],
+    "attemptCount": 2,
+    "cycle": "Cycle1",
+    "sessionId": "SES-2024-D09-PM",
+    "centerId": "CTR-BLR-13",
+    "seatNumber": "B-25",
+    "status": "booked",
+    "hallTicketId": "HT-2024-00018"
+  },
+  {
+    "applicationId": "APP-2024-00019",
+    "name": "Ishita Rao",
+    "photo": "/public/photos/APP-2024-00019.jpg",
+    "programs": [
+      "BBA",
+      "MBA"
+    ],
+    "attemptCount": 2,
+    "cycle": "Cycle2",
+    "sessionId": "SES-2024-D09-PM",
+    "centerId": "CTR-BLR-13",
+    "seatNumber": "D-23",
+    "status": "booked",
+    "hallTicketId": "HT-2024-00019"
+  },
+  {
+    "applicationId": "APP-2024-00020",
+    "name": "Ananya Menon",
+    "photo": "/public/photos/APP-2024-00020.jpg",
+    "programs": [
+      "BBA"
+    ],
+    "attemptCount": 2,
+    "cycle": "Cycle1",
+    "sessionId": "SES-2024-D07-AM",
+    "centerId": "CTR-AHM-08",
+    "seatNumber": "B-32",
+    "status": "no-show",
+    "hallTicketId": "HT-2024-00020"
+  },
+  {
+    "applicationId": "APP-2024-00021",
+    "name": "Meera Nair",
+    "photo": "/public/photos/APP-2024-00021.jpg",
+    "programs": [
+      "MFA",
+      "MBA"
+    ],
+    "attemptCount": 2,
+    "cycle": "Cycle1",
+    "sessionId": "SES-2024-D05-AM",
+    "centerId": "CTR-PUN-06",
+    "seatNumber": "C-40",
+    "status": "completed",
+    "hallTicketId": "HT-2024-00021"
+  },
+  {
+    "applicationId": "APP-2024-00022",
+    "name": "Vikram Singh",
+    "photo": "/public/photos/APP-2024-00022.jpg",
+    "programs": [
+      "MBA"
+    ],
+    "attemptCount": 1,
+    "cycle": "Cycle2",
+    "sessionId": "SES-2024-D11-AM",
+    "centerId": "CTR-LKO-12",
+    "seatNumber": "C-15",
+    "status": "completed",
+    "hallTicketId": "HT-2024-00022"
+  },
+  {
+    "applicationId": "APP-2024-00023",
+    "name": "Ishita Menon",
+    "photo": "/public/photos/APP-2024-00023.jpg",
+    "programs": [
+      "MTech"
+    ],
+    "attemptCount": 1,
+    "cycle": "Cycle1",
+    "sessionId": "SES-2024-D05-PM",
+    "centerId": "CTR-JAI-09",
+    "seatNumber": "C-24",
+    "status": "checked-in",
+    "hallTicketId": "HT-2024-00023"
+  },
+  {
+    "applicationId": "APP-2024-00024",
+    "name": "Sanjay Nair",
+    "photo": "/public/photos/APP-2024-00024.jpg",
+    "programs": [
+      "MFA",
+      "BBA"
+    ],
+    "attemptCount": 1,
+    "cycle": "Cycle1",
+    "sessionId": "SES-2024-D04-PM",
+    "centerId": "CTR-AHM-08",
+    "seatNumber": "D-17",
+    "status": "checked-in",
+    "hallTicketId": "HT-2024-00024"
+  },
+  {
+    "applicationId": "APP-2024-00025",
+    "name": "Karan Das",
+    "photo": "/public/photos/APP-2024-00025.jpg",
+    "programs": [
+      "BBA"
+    ],
+    "attemptCount": 1,
+    "cycle": "Cycle2",
+    "sessionId": "SES-2024-D08-AM",
+    "centerId": "CTR-JAI-09",
+    "seatNumber": "C-13",
+    "status": "no-show",
+    "hallTicketId": "HT-2024-00025"
+  },
+  {
+    "applicationId": "APP-2024-00026",
+    "name": "Ishita Menon",
+    "photo": "/public/photos/APP-2024-00026.jpg",
+    "programs": [
+      "BBA",
+      "MFA"
+    ],
+    "attemptCount": 1,
+    "cycle": "Cycle2",
+    "sessionId": "SES-2024-D10-AM",
+    "centerId": "CTR-IND-11",
+    "seatNumber": "A-39",
+    "status": "completed",
+    "hallTicketId": "HT-2024-00026"
+  },
+  {
+    "applicationId": "APP-2024-00027",
+    "name": "Ishita Iyer",
+    "photo": "/public/photos/APP-2024-00027.jpg",
+    "programs": [
+      "MBA",
+      "MTech"
+    ],
+    "attemptCount": 1,
+    "cycle": "Cycle1",
+    "sessionId": "SES-2024-D05-PM",
+    "centerId": "CTR-JAI-09",
+    "seatNumber": "D-03",
+    "status": "in-progress",
+    "hallTicketId": "HT-2024-00027"
+  },
+  {
+    "applicationId": "APP-2024-00028",
+    "name": "Neha Gupta",
+    "photo": "/public/photos/APP-2024-00028.jpg",
+    "programs": [
+      "MTech",
+      "MBA"
+    ],
+    "attemptCount": 1,
+    "cycle": "Cycle2",
+    "sessionId": "SES-2024-D08-PM",
+    "centerId": "CTR-LKO-12",
+    "seatNumber": "C-22",
+    "status": "completed",
+    "hallTicketId": "HT-2024-00028"
+  },
+  {
+    "applicationId": "APP-2024-00029",
+    "name": "Ananya Menon",
+    "photo": "/public/photos/APP-2024-00029.jpg",
+    "programs": [
+      "MBA"
+    ],
+    "attemptCount": 2,
+    "cycle": "Cycle2",
+    "sessionId": "SES-2024-D06-PM",
+    "centerId": "CTR-KOC-10",
+    "seatNumber": "C-38",
+    "status": "checked-in",
+    "hallTicketId": "HT-2024-00029"
+  },
+  {
+    "applicationId": "APP-2024-00030",
+    "name": "Sanjay Patel",
+    "photo": "/public/photos/APP-2024-00030.jpg",
+    "programs": [
+      "MBA",
+      "MTech"
+    ],
+    "attemptCount": 2,
+    "cycle": "Cycle1",
+    "sessionId": "SES-2024-D12-AM",
+    "centerId": "CTR-BLR-13",
+    "seatNumber": "C-27",
+    "status": "booked",
+    "hallTicketId": "HT-2024-00030"
+  }
+]

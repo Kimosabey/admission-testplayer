@@ -1,0 +1,422 @@
+[
+  {
+    "hallTicketId": "HT-2024-00001",
+    "applicationId": "APP-2024-00001",
+    "qrData": "HT-2024-00001|APP-2024-00001|SES-2024-D07-PM|D-07",
+    "reportingTime": "13:30",
+    "centerMapUrl": "/public/maps/CTR-IND-11.png",
+    "permissibleItems": [
+      "HB Pencil",
+      "Eraser",
+      "Water bottle (transparent)",
+      "Photo ID (Aadhaar/Passport)"
+    ],
+    "examSession": "SES-2024-D07-PM"
+  },
+  {
+    "hallTicketId": "HT-2024-00002",
+    "applicationId": "APP-2024-00002",
+    "qrData": "HT-2024-00002|APP-2024-00002|SES-2024-D12-PM|E-18",
+    "reportingTime": "13:30",
+    "centerMapUrl": "/public/maps/CTR-MUM-16.png",
+    "permissibleItems": [
+      "HB Pencil",
+      "Eraser",
+      "Water bottle (transparent)",
+      "Photo ID (Aadhaar/Passport)"
+    ],
+    "examSession": "SES-2024-D12-PM"
+  },
+  {
+    "hallTicketId": "HT-2024-00003",
+    "applicationId": "APP-2024-00003",
+    "qrData": "HT-2024-00003|APP-2024-00003|SES-2024-D03-PM|D-14",
+    "reportingTime": "13:30",
+    "centerMapUrl": "/public/maps/CTR-KOL-07.png",
+    "permissibleItems": [
+      "HB Pencil",
+      "Eraser",
+      "Water bottle (transparent)",
+      "Photo ID (Aadhaar/Passport)"
+    ],
+    "examSession": "SES-2024-D03-PM"
+  },
+  {
+    "hallTicketId": "HT-2024-00004",
+    "applicationId": "APP-2024-00004",
+    "qrData": "HT-2024-00004|APP-2024-00004|SES-2024-D08-PM|E-16",
+    "reportingTime": "13:30",
+    "centerMapUrl": "/public/maps/CTR-LKO-12.png",
+    "permissibleItems": [
+      "HB Pencil",
+      "Eraser",
+      "Water bottle (transparent)",
+      "Photo ID (Aadhaar/Passport)"
+    ],
+    "examSession": "SES-2024-D08-PM"
+  },
+  {
+    "hallTicketId": "HT-2024-00005",
+    "applicationId": "APP-2024-00005",
+    "qrData": "HT-2024-00005|APP-2024-00005|SES-2024-D07-PM|E-22",
+    "reportingTime": "13:30",
+    "centerMapUrl": "/public/maps/CTR-IND-11.png",
+    "permissibleItems": [
+      "HB Pencil",
+      "Eraser",
+      "Water bottle (transparent)",
+      "Photo ID (Aadhaar/Passport)"
+    ],
+    "examSession": "SES-2024-D07-PM"
+  },
+  {
+    "hallTicketId": "HT-2024-00006",
+    "applicationId": "APP-2024-00006",
+    "qrData": "HT-2024-00006|APP-2024-00006|SES-2024-D12-PM|D-18",
+    "reportingTime": "13:30",
+    "centerMapUrl": "/public/maps/CTR-MUM-16.png",
+    "permissibleItems": [
+      "HB Pencil",
+      "Eraser",
+      "Water bottle (transparent)",
+      "Photo ID (Aadhaar/Passport)"
+    ],
+    "examSession": "SES-2024-D12-PM"
+  },
+  {
+    "hallTicketId": "HT-2024-00007",
+    "applicationId": "APP-2024-00007",
+    "qrData": "HT-2024-00007|APP-2024-00007|SES-2024-D01-PM|E-19",
+    "reportingTime": "13:30",
+    "centerMapUrl": "/public/maps/CTR-DEL-05.png",
+    "permissibleItems": [
+      "HB Pencil",
+      "Eraser",
+      "Water bottle (transparent)",
+      "Photo ID (Aadhaar/Passport)"
+    ],
+    "examSession": "SES-2024-D01-PM"
+  },
+  {
+    "hallTicketId": "HT-2024-00008",
+    "applicationId": "APP-2024-00008",
+    "qrData": "HT-2024-00008|APP-2024-00008|SES-2024-D08-PM|A-05",
+    "reportingTime": "13:30",
+    "centerMapUrl": "/public/maps/CTR-LKO-12.png",
+    "permissibleItems": [
+      "HB Pencil",
+      "Eraser",
+      "Water bottle (transparent)",
+      "Photo ID (Aadhaar/Passport)"
+    ],
+    "examSession": "SES-2024-D08-PM"
+  },
+  {
+    "hallTicketId": "HT-2024-00009",
+    "applicationId": "APP-2024-00009",
+    "qrData": "HT-2024-00009|APP-2024-00009|SES-2024-D08-AM|D-20",
+    "reportingTime": "08:30",
+    "centerMapUrl": "/public/maps/CTR-JAI-09.png",
+    "permissibleItems": [
+      "HB Pencil",
+      "Eraser",
+      "Water bottle (transparent)",
+      "Photo ID (Aadhaar/Passport)"
+    ],
+    "examSession": "SES-2024-D08-AM"
+  },
+  {
+    "hallTicketId": "HT-2024-00010",
+    "applicationId": "APP-2024-00010",
+    "qrData": "HT-2024-00010|APP-2024-00010|SES-2024-D04-PM|B-36",
+    "reportingTime": "13:30",
+    "centerMapUrl": "/public/maps/CTR-AHM-08.png",
+    "permissibleItems": [
+      "HB Pencil",
+      "Eraser",
+      "Water bottle (transparent)",
+      "Photo ID (Aadhaar/Passport)"
+    ],
+    "examSession": "SES-2024-D04-PM"
+  },
+  {
+    "hallTicketId": "HT-2024-00011",
+    "applicationId": "APP-2024-00011",
+    "qrData": "HT-2024-00011|APP-2024-00011|SES-2024-D02-AM|B-17",
+    "reportingTime": "08:30",
+    "centerMapUrl": "/public/maps/CTR-CHE-03.png",
+    "permissibleItems": [
+      "HB Pencil",
+      "Eraser",
+      "Water bottle (transparent)",
+      "Photo ID (Aadhaar/Passport)"
+    ],
+    "examSession": "SES-2024-D02-AM"
+  },
+  {
+    "hallTicketId": "HT-2024-00012",
+    "applicationId": "APP-2024-00012",
+    "qrData": "HT-2024-00012|APP-2024-00012|SES-2024-D10-PM|E-19",
+    "reportingTime": "13:30",
+    "centerMapUrl": "/public/maps/CTR-HYD-14.png",
+    "permissibleItems": [
+      "HB Pencil",
+      "Eraser",
+      "Water bottle (transparent)",
+      "Photo ID (Aadhaar/Passport)"
+    ],
+    "examSession": "SES-2024-D10-PM"
+  },
+  {
+    "hallTicketId": "HT-2024-00013",
+    "applicationId": "APP-2024-00013",
+    "qrData": "HT-2024-00013|APP-2024-00013|SES-2024-D10-PM|C-02",
+    "reportingTime": "13:30",
+    "centerMapUrl": "/public/maps/CTR-HYD-14.png",
+    "permissibleItems": [
+      "HB Pencil",
+      "Eraser",
+      "Water bottle (transparent)",
+      "Photo ID (Aadhaar/Passport)"
+    ],
+    "examSession": "SES-2024-D10-PM"
+  },
+  {
+    "hallTicketId": "HT-2024-00014",
+    "applicationId": "APP-2024-00014",
+    "qrData": "HT-2024-00014|APP-2024-00014|SES-2024-D02-AM|D-23",
+    "reportingTime": "08:30",
+    "centerMapUrl": "/public/maps/CTR-CHE-03.png",
+    "permissibleItems": [
+      "HB Pencil",
+      "Eraser",
+      "Water bottle (transparent)",
+      "Photo ID (Aadhaar/Passport)"
+    ],
+    "examSession": "SES-2024-D02-AM"
+  },
+  {
+    "hallTicketId": "HT-2024-00015",
+    "applicationId": "APP-2024-00015",
+    "qrData": "HT-2024-00015|APP-2024-00015|SES-2024-D06-AM|C-21",
+    "reportingTime": "08:30",
+    "centerMapUrl": "/public/maps/CTR-KOL-07.png",
+    "permissibleItems": [
+      "HB Pencil",
+      "Eraser",
+      "Water bottle (transparent)",
+      "Photo ID (Aadhaar/Passport)"
+    ],
+    "examSession": "SES-2024-D06-AM"
+  },
+  {
+    "hallTicketId": "HT-2024-00016",
+    "applicationId": "APP-2024-00016",
+    "qrData": "HT-2024-00016|APP-2024-00016|SES-2024-D01-PM|B-18",
+    "reportingTime": "13:30",
+    "centerMapUrl": "/public/maps/CTR-DEL-05.png",
+    "permissibleItems": [
+      "HB Pencil",
+      "Eraser",
+      "Water bottle (transparent)",
+      "Photo ID (Aadhaar/Passport)"
+    ],
+    "examSession": "SES-2024-D01-PM"
+  },
+  {
+    "hallTicketId": "HT-2024-00017",
+    "applicationId": "APP-2024-00017",
+    "qrData": "HT-2024-00017|APP-2024-00017|SES-2024-D02-AM|B-08",
+    "reportingTime": "08:30",
+    "centerMapUrl": "/public/maps/CTR-CHE-03.png",
+    "permissibleItems": [
+      "HB Pencil",
+      "Eraser",
+      "Water bottle (transparent)",
+      "Photo ID (Aadhaar/Passport)"
+    ],
+    "examSession": "SES-2024-D02-AM"
+  },
+  {
+    "hallTicketId": "HT-2024-00018",
+    "applicationId": "APP-2024-00018",
+    "qrData": "HT-2024-00018|APP-2024-00018|SES-2024-D09-PM|B-25",
+    "reportingTime": "13:30",
+    "centerMapUrl": "/public/maps/CTR-BLR-13.png",
+    "permissibleItems": [
+      "HB Pencil",
+      "Eraser",
+      "Water bottle (transparent)",
+      "Photo ID (Aadhaar/Passport)"
+    ],
+    "examSession": "SES-2024-D09-PM"
+  },
+  {
+    "hallTicketId": "HT-2024-00019",
+    "applicationId": "APP-2024-00019",
+    "qrData": "HT-2024-00019|APP-2024-00019|SES-2024-D09-PM|D-23",
+    "reportingTime": "13:30",
+    "centerMapUrl": "/public/maps/CTR-BLR-13.png",
+    "permissibleItems": [
+      "HB Pencil",
+      "Eraser",
+      "Water bottle (transparent)",
+      "Photo ID (Aadhaar/Passport)"
+    ],
+    "examSession": "SES-2024-D09-PM"
+  },
+  {
+    "hallTicketId": "HT-2024-00020",
+    "applicationId": "APP-2024-00020",
+    "qrData": "HT-2024-00020|APP-2024-00020|SES-2024-D07-AM|B-32",
+    "reportingTime": "08:30",
+    "centerMapUrl": "/public/maps/CTR-AHM-08.png",
+    "permissibleItems": [
+      "HB Pencil",
+      "Eraser",
+      "Water bottle (transparent)",
+      "Photo ID (Aadhaar/Passport)"
+    ],
+    "examSession": "SES-2024-D07-AM"
+  },
+  {
+    "hallTicketId": "HT-2024-00021",
+    "applicationId": "APP-2024-00021",
+    "qrData": "HT-2024-00021|APP-2024-00021|SES-2024-D05-AM|C-40",
+    "reportingTime": "08:30",
+    "centerMapUrl": "/public/maps/CTR-PUN-06.png",
+    "permissibleItems": [
+      "HB Pencil",
+      "Eraser",
+      "Water bottle (transparent)",
+      "Photo ID (Aadhaar/Passport)"
+    ],
+    "examSession": "SES-2024-D05-AM"
+  },
+  {
+    "hallTicketId": "HT-2024-00022",
+    "applicationId": "APP-2024-00022",
+    "qrData": "HT-2024-00022|APP-2024-00022|SES-2024-D11-AM|C-15",
+    "reportingTime": "08:30",
+    "centerMapUrl": "/public/maps/CTR-LKO-12.png",
+    "permissibleItems": [
+      "HB Pencil",
+      "Eraser",
+      "Water bottle (transparent)",
+      "Photo ID (Aadhaar/Passport)"
+    ],
+    "examSession": "SES-2024-D11-AM"
+  },
+  {
+    "hallTicketId": "HT-2024-00023",
+    "applicationId": "APP-2024-00023",
+    "qrData": "HT-2024-00023|APP-2024-00023|SES-2024-D05-PM|C-24",
+    "reportingTime": "13:30",
+    "centerMapUrl": "/public/maps/CTR-JAI-09.png",
+    "permissibleItems": [
+      "HB Pencil",
+      "Eraser",
+      "Water bottle (transparent)",
+      "Photo ID (Aadhaar/Passport)"
+    ],
+    "examSession": "SES-2024-D05-PM"
+  },
+  {
+    "hallTicketId": "HT-2024-00024",
+    "applicationId": "APP-2024-00024",
+    "qrData": "HT-2024-00024|APP-2024-00024|SES-2024-D04-PM|D-17",
+    "reportingTime": "13:30",
+    "centerMapUrl": "/public/maps/CTR-AHM-08.png",
+    "permissibleItems": [
+      "HB Pencil",
+      "Eraser",
+      "Water bottle (transparent)",
+      "Photo ID (Aadhaar/Passport)"
+    ],
+    "examSession": "SES-2024-D04-PM"
+  },
+  {
+    "hallTicketId": "HT-2024-00025",
+    "applicationId": "APP-2024-00025",
+    "qrData": "HT-2024-00025|APP-2024-00025|SES-2024-D08-AM|C-13",
+    "reportingTime": "08:30",
+    "centerMapUrl": "/public/maps/CTR-JAI-09.png",
+    "permissibleItems": [
+      "HB Pencil",
+      "Eraser",
+      "Water bottle (transparent)",
+      "Photo ID (Aadhaar/Passport)"
+    ],
+    "examSession": "SES-2024-D08-AM"
+  },
+  {
+    "hallTicketId": "HT-2024-00026",
+    "applicationId": "APP-2024-00026",
+    "qrData": "HT-2024-00026|APP-2024-00026|SES-2024-D10-AM|A-39",
+    "reportingTime": "08:30",
+    "centerMapUrl": "/public/maps/CTR-IND-11.png",
+    "permissibleItems": [
+      "HB Pencil",
+      "Eraser",
+      "Water bottle (transparent)",
+      "Photo ID (Aadhaar/Passport)"
+    ],
+    "examSession": "SES-2024-D10-AM"
+  },
+  {
+    "hallTicketId": "HT-2024-00027",
+    "applicationId": "APP-2024-00027",
+    "qrData": "HT-2024-00027|APP-2024-00027|SES-2024-D05-PM|D-03",
+    "reportingTime": "13:30",
+    "centerMapUrl": "/public/maps/CTR-JAI-09.png",
+    "permissibleItems": [
+      "HB Pencil",
+      "Eraser",
+      "Water bottle (transparent)",
+      "Photo ID (Aadhaar/Passport)"
+    ],
+    "examSession": "SES-2024-D05-PM"
+  },
+  {
+    "hallTicketId": "HT-2024-00028",
+    "applicationId": "APP-2024-00028",
+    "qrData": "HT-2024-00028|APP-2024-00028|SES-2024-D08-PM|C-22",
+    "reportingTime": "13:30",
+    "centerMapUrl": "/public/maps/CTR-LKO-12.png",
+    "permissibleItems": [
+      "HB Pencil",
+      "Eraser",
+      "Water bottle (transparent)",
+      "Photo ID (Aadhaar/Passport)"
+    ],
+    "examSession": "SES-2024-D08-PM"
+  },
+  {
+    "hallTicketId": "HT-2024-00029",
+    "applicationId": "APP-2024-00029",
+    "qrData": "HT-2024-00029|APP-2024-00029|SES-2024-D06-PM|C-38",
+    "reportingTime": "13:30",
+    "centerMapUrl": "/public/maps/CTR-KOC-10.png",
+    "permissibleItems": [
+      "HB Pencil",
+      "Eraser",
+      "Water bottle (transparent)",
+      "Photo ID (Aadhaar/Passport)"
+    ],
+    "examSession": "SES-2024-D06-PM"
+  },
+  {
+    "hallTicketId": "HT-2024-00030",
+    "applicationId": "APP-2024-00030",
+    "qrData": "HT-2024-00030|APP-2024-00030|SES-2024-D12-AM|C-27",
+    "reportingTime": "08:30",
+    "centerMapUrl": "/public/maps/CTR-BLR-13.png",
+    "permissibleItems": [
+      "HB Pencil",
+      "Eraser",
+      "Water bottle (transparent)",
+      "Photo ID (Aadhaar/Passport)"
+    ],
+    "examSession": "SES-2024-D12-AM"
+  }
+]

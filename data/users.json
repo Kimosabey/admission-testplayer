@@ -1,0 +1,208 @@
+[
+  {
+    "userId": "USR-001",
+    "name": "Sanjay Gupta",
+    "role": "candidate",
+    "persona": "candidate",
+    "email": "sanjay.gupta@example.com",
+    "assignedCenters": [],
+    "assignedPrograms": [
+      "MFA"
+    ]
+  },
+  {
+    "userId": "USR-002",
+    "name": "Ananya Iyer",
+    "role": "superAdmin",
+    "persona": "superAdmin",
+    "email": "ananya.iyer@example.com",
+    "assignedCenters": [],
+    "assignedPrograms": []
+  },
+  {
+    "userId": "USR-003",
+    "name": "Neha Gupta",
+    "role": "callCenter",
+    "persona": "callCenter",
+    "email": "neha.gupta@example.com",
+    "assignedCenters": [],
+    "assignedPrograms": []
+  },
+  {
+    "userId": "USR-004",
+    "name": "Neha Singh",
+    "role": "callCenter",
+    "persona": "callCenter",
+    "email": "neha.singh@example.com",
+    "assignedCenters": [],
+    "assignedPrograms": []
+  },
+  {
+    "userId": "USR-005",
+    "name": "Neha Singh",
+    "role": "noc",
+    "persona": "noc",
+    "email": "neha.singh@example.com",
+    "assignedCenters": [
+      "CTR-BLR-01"
+    ],
+    "assignedPrograms": []
+  },
+  {
+    "userId": "USR-006",
+    "name": "Vikram Menon",
+    "role": "examOps",
+    "persona": "examOps",
+    "email": "vikram.menon@example.com",
+    "assignedCenters": [],
+    "assignedPrograms": [
+      "BBA"
+    ]
+  },
+  {
+    "userId": "USR-007",
+    "name": "Ishita Menon",
+    "role": "itemAuthor",
+    "persona": "itemAuthor",
+    "email": "ishita.menon@example.com",
+    "assignedCenters": [],
+    "assignedPrograms": [
+      "MTech"
+    ]
+  },
+  {
+    "userId": "USR-008",
+    "name": "Karan Patel",
+    "role": "callCenter",
+    "persona": "callCenter",
+    "email": "karan.patel@example.com",
+    "assignedCenters": [],
+    "assignedPrograms": []
+  },
+  {
+    "userId": "USR-009",
+    "name": "Sanjay Gupta",
+    "role": "callCenter",
+    "persona": "callCenter",
+    "email": "sanjay.gupta@example.com",
+    "assignedCenters": [],
+    "assignedPrograms": []
+  },
+  {
+    "userId": "USR-010",
+    "name": "Priya Gupta",
+    "role": "bookingAdmin",
+    "persona": "bookingAdmin",
+    "email": "priya.gupta@example.com",
+    "assignedCenters": [],
+    "assignedPrograms": []
+  },
+  {
+    "userId": "USR-011",
+    "name": "Karan Iyer",
+    "role": "noc",
+    "persona": "noc",
+    "email": "karan.iyer@example.com",
+    "assignedCenters": [
+      "CTR-CHE-15"
+    ],
+    "assignedPrograms": []
+  },
+  {
+    "userId": "USR-012",
+    "name": "Meera Iyer",
+    "role": "scoreAnalyst",
+    "persona": "scoreAnalyst",
+    "email": "meera.iyer@example.com",
+    "assignedCenters": [],
+    "assignedPrograms": [
+      "MBA"
+    ]
+  },
+  {
+    "userId": "USR-013",
+    "name": "Priya Rao",
+    "role": "scoreAnalyst",
+    "persona": "scoreAnalyst",
+    "email": "priya.rao@example.com",
+    "assignedCenters": [],
+    "assignedPrograms": [
+      "MFA"
+    ]
+  },
+  {
+    "userId": "USR-014",
+    "name": "Rahul Menon",
+    "role": "candidate",
+    "persona": "candidate",
+    "email": "rahul.menon@example.com",
+    "assignedCenters": [],
+    "assignedPrograms": [
+      "MTech"
+    ]
+  },
+  {
+    "userId": "USR-015",
+    "name": "Neha Nair",
+    "role": "proctor",
+    "persona": "proctor",
+    "email": "neha.nair@example.com",
+    "assignedCenters": [
+      "CTR-PUN-18"
+    ],
+    "assignedPrograms": []
+  },
+  {
+    "userId": "USR-016",
+    "name": "Ishita Menon",
+    "role": "scoreAnalyst",
+    "persona": "scoreAnalyst",
+    "email": "ishita.menon@example.com",
+    "assignedCenters": [],
+    "assignedPrograms": [
+      "MFA"
+    ]
+  },
+  {
+    "userId": "USR-017",
+    "name": "Karan Menon",
+    "role": "proctor",
+    "persona": "proctor",
+    "email": "karan.menon@example.com",
+    "assignedCenters": [
+      "CTR-IND-11"
+    ],
+    "assignedPrograms": []
+  },
+  {
+    "userId": "USR-018",
+    "name": "Arjun Gupta",
+    "role": "proctor",
+    "persona": "proctor",
+    "email": "arjun.gupta@example.com",
+    "assignedCenters": [
+      "CTR-HYD-14"
+    ],
+    "assignedPrograms": []
+  },
+  {
+    "userId": "USR-019",
+    "name": "Vikram Nair",
+    "role": "examOps",
+    "persona": "examOps",
+    "email": "vikram.nair@example.com",
+    "assignedCenters": [],
+    "assignedPrograms": [
+      "MTech"
+    ]
+  },
+  {
+    "userId": "USR-020",
+    "name": "Vikram Kapoor",
+    "role": "bookingAdmin",
+    "persona": "bookingAdmin",
+    "email": "vikram.kapoor@example.com",
+    "assignedCenters": [],
+    "assignedPrograms": []
+  }
+]

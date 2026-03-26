@@ -1,0 +1,106 @@
+.card {
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border);
+  border-radius: 18px;
+  box-shadow: var(--shadow-1);
+  padding: 24px;
+}
+
+.card-compact {
+  padding: 18px;
+}
+
+.card-title {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: 1.65rem;
+  line-height: 1.2;
+  color: var(--color-primary);
+}
+
+.card-title-sm {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.card-subtitle {
+  margin-top: 10px;
+  color: var(--color-text-secondary);
+  line-height: 1.55;
+}
+
+.card-body {
+  margin-top: 8px;
+  color: var(--color-text-secondary);
+  line-height: 1.55;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  font-size: 0.8rem;
+  line-height: 1;
+  font-weight: 500;
+}
+
+.badge-mono {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  letter-spacing: 0.02em;
+}
+
+.stat {
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  border-radius: 14px;
+  padding: 12px 12px;
+}
+
+.stat-k {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.stat-v {
+  margin-top: 6px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.prose-block {
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  padding: 18px 20px;
+}
+
+.prose-title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.prose-body {
+  margin-top: 8px;
+  color: var(--color-text-secondary);
+  line-height: 1.65;
+}
+
+.divider {
+  height: 1px;
+  width: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(216, 212, 200, 0.9),
+    transparent
+  );
+}

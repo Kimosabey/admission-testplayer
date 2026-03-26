@@ -1,0 +1,632 @@
+[
+  {
+    "applicationId": "APP-2024-00001",
+    "sessionId": "SES-2024-D07-PM",
+    "program": "MTech",
+    "attempt": 1,
+    "rawScore": 49,
+    "sectionScores": [
+      {
+        "section": "General Awareness",
+        "score": 23,
+        "max": 30
+      },
+      {
+        "section": "Logical Reasoning",
+        "score": 26,
+        "max": 30
+      }
+    ],
+    "totalScore": 49,
+    "exportedToCRM": true
+  },
+  {
+    "applicationId": "APP-2024-00002",
+    "sessionId": "SES-2024-D12-PM",
+    "program": "BBA",
+    "attempt": 2,
+    "rawScore": 49,
+    "sectionScores": [
+      {
+        "section": "Quantitative Aptitude",
+        "score": 19,
+        "max": 35
+      },
+      {
+        "section": "Verbal Ability",
+        "score": 30,
+        "max": 35
+      }
+    ],
+    "totalScore": 49,
+    "exportedToCRM": true
+  },
+  {
+    "applicationId": "APP-2024-00003",
+    "sessionId": "SES-2024-D03-PM",
+    "program": "BBA",
+    "attempt": 1,
+    "rawScore": 65,
+    "sectionScores": [
+      {
+        "section": "Logical Reasoning",
+        "score": 36,
+        "max": 40
+      },
+      {
+        "section": "Verbal Ability",
+        "score": 29,
+        "max": 35
+      }
+    ],
+    "totalScore": 65,
+    "exportedToCRM": false
+  },
+  {
+    "applicationId": "APP-2024-00004",
+    "sessionId": "SES-2024-D08-PM",
+    "program": "MFA",
+    "attempt": 2,
+    "rawScore": 41,
+    "sectionScores": [
+      {
+        "section": "General Awareness",
+        "score": 19,
+        "max": 30
+      },
+      {
+        "section": "Quantitative Aptitude",
+        "score": 22,
+        "max": 30
+      }
+    ],
+    "totalScore": 41,
+    "exportedToCRM": true
+  },
+  {
+    "applicationId": "APP-2024-00005",
+    "sessionId": "SES-2024-D07-PM",
+    "program": "MTech",
+    "attempt": 1,
+    "rawScore": 35,
+    "sectionScores": [
+      {
+        "section": "Logical Reasoning",
+        "score": 19,
+        "max": 35
+      },
+      {
+        "section": "Verbal Ability",
+        "score": 16,
+        "max": 30
+      }
+    ],
+    "totalScore": 35,
+    "exportedToCRM": false
+  },
+  {
+    "applicationId": "APP-2024-00006",
+    "sessionId": "SES-2024-D12-PM",
+    "program": "MFA",
+    "attempt": 1,
+    "rawScore": 36,
+    "sectionScores": [
+      {
+        "section": "Quantitative Aptitude",
+        "score": 19,
+        "max": 35
+      },
+      {
+        "section": "General Awareness",
+        "score": 17,
+        "max": 35
+      }
+    ],
+    "totalScore": 36,
+    "exportedToCRM": false
+  },
+  {
+    "applicationId": "APP-2024-00007",
+    "sessionId": "SES-2024-D01-PM",
+    "program": "MTech",
+    "attempt": 1,
+    "rawScore": 55,
+    "sectionScores": [
+      {
+        "section": "General Awareness",
+        "score": 28,
+        "max": 30
+      },
+      {
+        "section": "Quantitative Aptitude",
+        "score": 27,
+        "max": 35
+      }
+    ],
+    "totalScore": 55,
+    "exportedToCRM": false
+  },
+  {
+    "applicationId": "APP-2024-00008",
+    "sessionId": "SES-2024-D08-PM",
+    "program": "MBA",
+    "attempt": 1,
+    "rawScore": 42,
+    "sectionScores": [
+      {
+        "section": "Quantitative Aptitude",
+        "score": 28,
+        "max": 30
+      },
+      {
+        "section": "General Awareness",
+        "score": 14,
+        "max": 35
+      }
+    ],
+    "totalScore": 42,
+    "exportedToCRM": false
+  },
+  {
+    "applicationId": "APP-2024-00009",
+    "sessionId": "SES-2024-D08-AM",
+    "program": "MFA",
+    "attempt": 2,
+    "rawScore": 52,
+    "sectionScores": [
+      {
+        "section": "Logical Reasoning",
+        "score": 15,
+        "max": 40
+      },
+      {
+        "section": "General Awareness",
+        "score": 37,
+        "max": 40
+      }
+    ],
+    "totalScore": 52,
+    "exportedToCRM": false
+  },
+  {
+    "applicationId": "APP-2024-00010",
+    "sessionId": "SES-2024-D04-PM",
+    "program": "MBA",
+    "attempt": 1,
+    "rawScore": 54,
+    "sectionScores": [
+      {
+        "section": "General Awareness",
+        "score": 33,
+        "max": 40
+      },
+      {
+        "section": "Verbal Ability",
+        "score": 21,
+        "max": 35
+      }
+    ],
+    "totalScore": 54,
+    "exportedToCRM": false
+  },
+  {
+    "applicationId": "APP-2024-00011",
+    "sessionId": "SES-2024-D02-AM",
+    "program": "MTech",
+    "attempt": 2,
+    "rawScore": 39,
+    "sectionScores": [
+      {
+        "section": "General Awareness",
+        "score": 21,
+        "max": 40
+      },
+      {
+        "section": "Quantitative Aptitude",
+        "score": 18,
+        "max": 40
+      }
+    ],
+    "totalScore": 39,
+    "exportedToCRM": false
+  },
+  {
+    "applicationId": "APP-2024-00012",
+    "sessionId": "SES-2024-D10-PM",
+    "program": "MFA",
+    "attempt": 1,
+    "rawScore": 51,
+    "sectionScores": [
+      {
+        "section": "Logical Reasoning",
+        "score": 20,
+        "max": 35
+      },
+      {
+        "section": "General Awareness",
+        "score": 31,
+        "max": 40
+      }
+    ],
+    "totalScore": 51,
+    "exportedToCRM": false
+  },
+  {
+    "applicationId": "APP-2024-00013",
+    "sessionId": "SES-2024-D10-PM",
+    "program": "MBA",
+    "attempt": 1,
+    "rawScore": 43,
+    "sectionScores": [
+      {
+        "section": "Logical Reasoning",
+        "score": 15,
+        "max": 30
+      },
+      {
+        "section": "General Awareness",
+        "score": 28,
+        "max": 35
+      }
+    ],
+    "totalScore": 43,
+    "exportedToCRM": true
+  },
+  {
+    "applicationId": "APP-2024-00014",
+    "sessionId": "SES-2024-D02-AM",
+    "program": "BBA",
+    "attempt": 2,
+    "rawScore": 54,
+    "sectionScores": [
+      {
+        "section": "Quantitative Aptitude",
+        "score": 25,
+        "max": 35
+      },
+      {
+        "section": "General Awareness",
+        "score": 29,
+        "max": 40
+      }
+    ],
+    "totalScore": 54,
+    "exportedToCRM": false
+  },
+  {
+    "applicationId": "APP-2024-00015",
+    "sessionId": "SES-2024-D06-AM",
+    "program": "BBA",
+    "attempt": 1,
+    "rawScore": 41,
+    "sectionScores": [
+      {
+        "section": "Quantitative Aptitude",
+        "score": 28,
+        "max": 40
+      },
+      {
+        "section": "Logical Reasoning",
+        "score": 13,
+        "max": 35
+      }
+    ],
+    "totalScore": 41,
+    "exportedToCRM": false
+  },
+  {
+    "applicationId": "APP-2024-00016",
+    "sessionId": "SES-2024-D01-PM",
+    "program": "BBA",
+    "attempt": 2,
+    "rawScore": 32,
+    "sectionScores": [
+      {
+        "section": "General Awareness",
+        "score": 15,
+        "max": 35
+      },
+      {
+        "section": "Logical Reasoning",
+        "score": 17,
+        "max": 30
+      }
+    ],
+    "totalScore": 32,
+    "exportedToCRM": true
+  },
+  {
+    "applicationId": "APP-2024-00017",
+    "sessionId": "SES-2024-D02-AM",
+    "program": "MBA",
+    "attempt": 2,
+    "rawScore": 59,
+    "sectionScores": [
+      {
+        "section": "Verbal Ability",
+        "score": 23,
+        "max": 40
+      },
+      {
+        "section": "General Awareness",
+        "score": 36,
+        "max": 40
+      }
+    ],
+    "totalScore": 59,
+    "exportedToCRM": false
+  },
+  {
+    "applicationId": "APP-2024-00018",
+    "sessionId": "SES-2024-D09-PM",
+    "program": "MFA",
+    "attempt": 2,
+    "rawScore": 44,
+    "sectionScores": [
+      {
+        "section": "Quantitative Aptitude",
+        "score": 22,
+        "max": 35
+      },
+      {
+        "section": "Verbal Ability",
+        "score": 22,
+        "max": 40
+      }
+    ],
+    "totalScore": 44,
+    "exportedToCRM": false
+  },
+  {
+    "applicationId": "APP-2024-00019",
+    "sessionId": "SES-2024-D09-PM",
+    "program": "BBA",
+    "attempt": 2,
+    "rawScore": 43,
+    "sectionScores": [
+      {
+        "section": "General Awareness",
+        "score": 17,
+        "max": 30
+      },
+      {
+        "section": "Verbal Ability",
+        "score": 26,
+        "max": 40
+      }
+    ],
+    "totalScore": 43,
+    "exportedToCRM": false
+  },
+  {
+    "applicationId": "APP-2024-00020",
+    "sessionId": "SES-2024-D07-AM",
+    "program": "BBA",
+    "attempt": 2,
+    "rawScore": 43,
+    "sectionScores": [
+      {
+        "section": "Logical Reasoning",
+        "score": 15,
+        "max": 35
+      },
+      {
+        "section": "Quantitative Aptitude",
+        "score": 28,
+        "max": 40
+      }
+    ],
+    "totalScore": 43,
+    "exportedToCRM": false
+  },
+  {
+    "applicationId": "APP-2024-00021",
+    "sessionId": "SES-2024-D05-AM",
+    "program": "MFA",
+    "attempt": 2,
+    "rawScore": 58,
+    "sectionScores": [
+      {
+        "section": "Logical Reasoning",
+        "score": 26,
+        "max": 40
+      },
+      {
+        "section": "General Awareness",
+        "score": 32,
+        "max": 35
+      }
+    ],
+    "totalScore": 58,
+    "exportedToCRM": true
+  },
+  {
+    "applicationId": "APP-2024-00022",
+    "sessionId": "SES-2024-D11-AM",
+    "program": "MBA",
+    "attempt": 1,
+    "rawScore": 34,
+    "sectionScores": [
+      {
+        "section": "Quantitative Aptitude",
+        "score": 17,
+        "max": 40
+      },
+      {
+        "section": "Logical Reasoning",
+        "score": 17,
+        "max": 35
+      }
+    ],
+    "totalScore": 34,
+    "exportedToCRM": true
+  },
+  {
+    "applicationId": "APP-2024-00023",
+    "sessionId": "SES-2024-D05-PM",
+    "program": "MTech",
+    "attempt": 1,
+    "rawScore": 34,
+    "sectionScores": [
+      {
+        "section": "General Awareness",
+        "score": 19,
+        "max": 40
+      },
+      {
+        "section": "Logical Reasoning",
+        "score": 15,
+        "max": 30
+      }
+    ],
+    "totalScore": 34,
+    "exportedToCRM": false
+  },
+  {
+    "applicationId": "APP-2024-00024",
+    "sessionId": "SES-2024-D04-PM",
+    "program": "MFA",
+    "attempt": 1,
+    "rawScore": 43,
+    "sectionScores": [
+      {
+        "section": "General Awareness",
+        "score": 31,
+        "max": 40
+      },
+      {
+        "section": "Verbal Ability",
+        "score": 12,
+        "max": 30
+      }
+    ],
+    "totalScore": 43,
+    "exportedToCRM": false
+  },
+  {
+    "applicationId": "APP-2024-00025",
+    "sessionId": "SES-2024-D08-AM",
+    "program": "BBA",
+    "attempt": 1,
+    "rawScore": 60,
+    "sectionScores": [
+      {
+        "section": "Quantitative Aptitude",
+        "score": 30,
+        "max": 35
+      },
+      {
+        "section": "General Awareness",
+        "score": 30,
+        "max": 35
+      }
+    ],
+    "totalScore": 60,
+    "exportedToCRM": false
+  },
+  {
+    "applicationId": "APP-2024-00026",
+    "sessionId": "SES-2024-D10-AM",
+    "program": "BBA",
+    "attempt": 1,
+    "rawScore": 39,
+    "sectionScores": [
+      {
+        "section": "Verbal Ability",
+        "score": 19,
+        "max": 35
+      },
+      {
+        "section": "Logical Reasoning",
+        "score": 20,
+        "max": 40
+      }
+    ],
+    "totalScore": 39,
+    "exportedToCRM": true
+  },
+  {
+    "applicationId": "APP-2024-00027",
+    "sessionId": "SES-2024-D05-PM",
+    "program": "MBA",
+    "attempt": 1,
+    "rawScore": 41,
+    "sectionScores": [
+      {
+        "section": "Quantitative Aptitude",
+        "score": 25,
+        "max": 35
+      },
+      {
+        "section": "Verbal Ability",
+        "score": 16,
+        "max": 30
+      }
+    ],
+    "totalScore": 41,
+    "exportedToCRM": false
+  },
+  {
+    "applicationId": "APP-2024-00028",
+    "sessionId": "SES-2024-D08-PM",
+    "program": "MTech",
+    "attempt": 1,
+    "rawScore": 47,
+    "sectionScores": [
+      {
+        "section": "Quantitative Aptitude",
+        "score": 22,
+        "max": 30
+      },
+      {
+        "section": "General Awareness",
+        "score": 25,
+        "max": 40
+      }
+    ],
+    "totalScore": 47,
+    "exportedToCRM": false
+  },
+  {
+    "applicationId": "APP-2024-00029",
+    "sessionId": "SES-2024-D06-PM",
+    "program": "MBA",
+    "attempt": 2,
+    "rawScore": 52,
+    "sectionScores": [
+      {
+        "section": "Quantitative Aptitude",
+        "score": 25,
+        "max": 30
+      },
+      {
+        "section": "Logical Reasoning",
+        "score": 27,
+        "max": 30
+      }
+    ],
+    "totalScore": 52,
+    "exportedToCRM": false
+  },
+  {
+    "applicationId": "APP-2024-00030",
+    "sessionId": "SES-2024-D12-AM",
+    "program": "MBA",
+    "attempt": 2,
+    "rawScore": 32,
+    "sectionScores": [
+      {
+        "section": "Quantitative Aptitude",
+        "score": 15,
+        "max": 35
+      },
+      {
+        "section": "Verbal Ability",
+        "score": 17,
+        "max": 30
+      }
+    ],
+    "totalScore": 32,
+    "exportedToCRM": true
+  }
+]

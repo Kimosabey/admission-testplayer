@@ -1,0 +1,36 @@
+:where(h1, h2, .font-display) {
+  font-family: "Cormorant Garamond", Georgia, serif;
+}
+
+:where(body, p, label, button, input, select, td, th, .font-body) {
+  font-family: "DM Sans", system-ui, sans-serif;
+}
+
+:where(code, .font-mono, .app-id, .hash, .score-value) {
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
+}
+
+h1 {
+  font-size: 2.5rem;
+  font-weight: 400;
+  line-height: 1.15;
+}
+
+h2 {
+  font-size: 1.75rem;
+  font-weight: 400;
+  line-height: 1.25;
+}
+
+h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.4;
+}

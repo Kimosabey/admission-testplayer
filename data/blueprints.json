@@ -1,0 +1,628 @@
+[
+  {
+    "id": "BP-001",
+    "name": "MTech Blueprint 01",
+    "programs": [
+      "MTech"
+    ],
+    "sections": [
+      {
+        "name": "Verbal Ability",
+        "itemCount": 30,
+        "timeMinutes": 40,
+        "difficultyDistribution": {
+          "easy": 10,
+          "medium": 13,
+          "hard": 7
+        }
+      },
+      {
+        "name": "General Awareness",
+        "itemCount": 30,
+        "timeMinutes": 35,
+        "difficultyDistribution": {
+          "easy": 10,
+          "medium": 13,
+          "hard": 7
+        }
+      }
+    ],
+    "navigationRules": "section",
+    "calculatorAllowed": false
+  },
+  {
+    "id": "BP-002",
+    "name": "MFA Blueprint 02",
+    "programs": [
+      "MFA"
+    ],
+    "sections": [
+      {
+        "name": "General Awareness",
+        "itemCount": 20,
+        "timeMinutes": 40,
+        "difficultyDistribution": {
+          "easy": 7,
+          "medium": 9,
+          "hard": 4
+        }
+      },
+      {
+        "name": "Logical Reasoning",
+        "itemCount": 20,
+        "timeMinutes": 35,
+        "difficultyDistribution": {
+          "easy": 7,
+          "medium": 9,
+          "hard": 4
+        }
+      }
+    ],
+    "navigationRules": "section",
+    "calculatorAllowed": false
+  },
+  {
+    "id": "BP-003",
+    "name": "MTech Blueprint 03",
+    "programs": [
+      "MTech"
+    ],
+    "sections": [
+      {
+        "name": "Verbal Ability",
+        "itemCount": 20,
+        "timeMinutes": 30,
+        "difficultyDistribution": {
+          "easy": 7,
+          "medium": 9,
+          "hard": 4
+        }
+      },
+      {
+        "name": "Quantitative Aptitude",
+        "itemCount": 20,
+        "timeMinutes": 30,
+        "difficultyDistribution": {
+          "easy": 7,
+          "medium": 9,
+          "hard": 4
+        }
+      }
+    ],
+    "navigationRules": "section",
+    "calculatorAllowed": true
+  },
+  {
+    "id": "BP-004",
+    "name": "BBA Blueprint 04",
+    "programs": [
+      "BBA"
+    ],
+    "sections": [
+      {
+        "name": "General Awareness",
+        "itemCount": 30,
+        "timeMinutes": 30,
+        "difficultyDistribution": {
+          "easy": 10,
+          "medium": 13,
+          "hard": 7
+        }
+      },
+      {
+        "name": "Logical Reasoning",
+        "itemCount": 30,
+        "timeMinutes": 40,
+        "difficultyDistribution": {
+          "easy": 10,
+          "medium": 13,
+          "hard": 7
+        }
+      }
+    ],
+    "navigationRules": "section",
+    "calculatorAllowed": false
+  },
+  {
+    "id": "BP-005",
+    "name": "MFA Blueprint 05",
+    "programs": [
+      "MFA"
+    ],
+    "sections": [
+      {
+        "name": "Verbal Ability",
+        "itemCount": 30,
+        "timeMinutes": 30,
+        "difficultyDistribution": {
+          "easy": 10,
+          "medium": 13,
+          "hard": 7
+        }
+      },
+      {
+        "name": "Logical Reasoning",
+        "itemCount": 20,
+        "timeMinutes": 35,
+        "difficultyDistribution": {
+          "easy": 7,
+          "medium": 9,
+          "hard": 4
+        }
+      }
+    ],
+    "navigationRules": "linear",
+    "calculatorAllowed": false
+  },
+  {
+    "id": "BP-006",
+    "name": "BBA Blueprint 06",
+    "programs": [
+      "BBA",
+      "MBA"
+    ],
+    "sections": [
+      {
+        "name": "Verbal Ability",
+        "itemCount": 25,
+        "timeMinutes": 30,
+        "difficultyDistribution": {
+          "easy": 8,
+          "medium": 11,
+          "hard": 6
+        }
+      },
+      {
+        "name": "Quantitative Aptitude",
+        "itemCount": 25,
+        "timeMinutes": 40,
+        "difficultyDistribution": {
+          "easy": 8,
+          "medium": 11,
+          "hard": 6
+        }
+      }
+    ],
+    "navigationRules": "section",
+    "calculatorAllowed": false
+  },
+  {
+    "id": "BP-007",
+    "name": "BBA Blueprint 07",
+    "programs": [
+      "BBA",
+      "MTech"
+    ],
+    "sections": [
+      {
+        "name": "General Awareness",
+        "itemCount": 30,
+        "timeMinutes": 35,
+        "difficultyDistribution": {
+          "easy": 10,
+          "medium": 13,
+          "hard": 7
+        }
+      },
+      {
+        "name": "Quantitative Aptitude",
+        "itemCount": 25,
+        "timeMinutes": 35,
+        "difficultyDistribution": {
+          "easy": 8,
+          "medium": 11,
+          "hard": 6
+        }
+      }
+    ],
+    "navigationRules": "linear",
+    "calculatorAllowed": true
+  },
+  {
+    "id": "BP-008",
+    "name": "BBA Blueprint 08",
+    "programs": [
+      "BBA"
+    ],
+    "sections": [
+      {
+        "name": "Verbal Ability",
+        "itemCount": 25,
+        "timeMinutes": 30,
+        "difficultyDistribution": {
+          "easy": 8,
+          "medium": 11,
+          "hard": 6
+        }
+      },
+      {
+        "name": "General Awareness",
+        "itemCount": 30,
+        "timeMinutes": 35,
+        "difficultyDistribution": {
+          "easy": 10,
+          "medium": 13,
+          "hard": 7
+        }
+      }
+    ],
+    "navigationRules": "linear",
+    "calculatorAllowed": false
+  },
+  {
+    "id": "BP-009",
+    "name": "MTech Blueprint 09",
+    "programs": [
+      "MTech"
+    ],
+    "sections": [
+      {
+        "name": "Quantitative Aptitude",
+        "itemCount": 20,
+        "timeMinutes": 30,
+        "difficultyDistribution": {
+          "easy": 7,
+          "medium": 9,
+          "hard": 4
+        }
+      },
+      {
+        "name": "General Awareness",
+        "itemCount": 25,
+        "timeMinutes": 40,
+        "difficultyDistribution": {
+          "easy": 8,
+          "medium": 11,
+          "hard": 6
+        }
+      }
+    ],
+    "navigationRules": "linear",
+    "calculatorAllowed": true
+  },
+  {
+    "id": "BP-010",
+    "name": "MBA Blueprint 10",
+    "programs": [
+      "MBA"
+    ],
+    "sections": [
+      {
+        "name": "General Awareness",
+        "itemCount": 25,
+        "timeMinutes": 40,
+        "difficultyDistribution": {
+          "easy": 8,
+          "medium": 11,
+          "hard": 6
+        }
+      },
+      {
+        "name": "Verbal Ability",
+        "itemCount": 25,
+        "timeMinutes": 35,
+        "difficultyDistribution": {
+          "easy": 8,
+          "medium": 11,
+          "hard": 6
+        }
+      }
+    ],
+    "navigationRules": "linear",
+    "calculatorAllowed": false
+  },
+  {
+    "id": "BP-011",
+    "name": "BBA Blueprint 11",
+    "programs": [
+      "BBA"
+    ],
+    "sections": [
+      {
+        "name": "Quantitative Aptitude",
+        "itemCount": 25,
+        "timeMinutes": 35,
+        "difficultyDistribution": {
+          "easy": 8,
+          "medium": 11,
+          "hard": 6
+        }
+      },
+      {
+        "name": "Logical Reasoning",
+        "itemCount": 20,
+        "timeMinutes": 35,
+        "difficultyDistribution": {
+          "easy": 7,
+          "medium": 9,
+          "hard": 4
+        }
+      }
+    ],
+    "navigationRules": "section",
+    "calculatorAllowed": false
+  },
+  {
+    "id": "BP-012",
+    "name": "MFA Blueprint 12",
+    "programs": [
+      "MFA"
+    ],
+    "sections": [
+      {
+        "name": "General Awareness",
+        "itemCount": 25,
+        "timeMinutes": 35,
+        "difficultyDistribution": {
+          "easy": 8,
+          "medium": 11,
+          "hard": 6
+        }
+      },
+      {
+        "name": "Quantitative Aptitude",
+        "itemCount": 25,
+        "timeMinutes": 30,
+        "difficultyDistribution": {
+          "easy": 8,
+          "medium": 11,
+          "hard": 6
+        }
+      }
+    ],
+    "navigationRules": "section",
+    "calculatorAllowed": false
+  },
+  {
+    "id": "BP-013",
+    "name": "BBA Blueprint 13",
+    "programs": [
+      "BBA",
+      "MTech"
+    ],
+    "sections": [
+      {
+        "name": "Verbal Ability",
+        "itemCount": 20,
+        "timeMinutes": 40,
+        "difficultyDistribution": {
+          "easy": 7,
+          "medium": 9,
+          "hard": 4
+        }
+      },
+      {
+        "name": "General Awareness",
+        "itemCount": 30,
+        "timeMinutes": 30,
+        "difficultyDistribution": {
+          "easy": 10,
+          "medium": 13,
+          "hard": 7
+        }
+      }
+    ],
+    "navigationRules": "section",
+    "calculatorAllowed": true
+  },
+  {
+    "id": "BP-014",
+    "name": "MBA Blueprint 14",
+    "programs": [
+      "MBA",
+      "BBA"
+    ],
+    "sections": [
+      {
+        "name": "General Awareness",
+        "itemCount": 25,
+        "timeMinutes": 30,
+        "difficultyDistribution": {
+          "easy": 8,
+          "medium": 11,
+          "hard": 6
+        }
+      },
+      {
+        "name": "Quantitative Aptitude",
+        "itemCount": 20,
+        "timeMinutes": 35,
+        "difficultyDistribution": {
+          "easy": 7,
+          "medium": 9,
+          "hard": 4
+        }
+      }
+    ],
+    "navigationRules": "section",
+    "calculatorAllowed": false
+  },
+  {
+    "id": "BP-015",
+    "name": "BBA Blueprint 15",
+    "programs": [
+      "BBA"
+    ],
+    "sections": [
+      {
+        "name": "Logical Reasoning",
+        "itemCount": 25,
+        "timeMinutes": 35,
+        "difficultyDistribution": {
+          "easy": 8,
+          "medium": 11,
+          "hard": 6
+        }
+      },
+      {
+        "name": "Verbal Ability",
+        "itemCount": 25,
+        "timeMinutes": 35,
+        "difficultyDistribution": {
+          "easy": 8,
+          "medium": 11,
+          "hard": 6
+        }
+      }
+    ],
+    "navigationRules": "linear",
+    "calculatorAllowed": false
+  },
+  {
+    "id": "BP-016",
+    "name": "MBA Blueprint 16",
+    "programs": [
+      "MBA"
+    ],
+    "sections": [
+      {
+        "name": "Logical Reasoning",
+        "itemCount": 30,
+        "timeMinutes": 30,
+        "difficultyDistribution": {
+          "easy": 10,
+          "medium": 13,
+          "hard": 7
+        }
+      },
+      {
+        "name": "Quantitative Aptitude",
+        "itemCount": 30,
+        "timeMinutes": 30,
+        "difficultyDistribution": {
+          "easy": 10,
+          "medium": 13,
+          "hard": 7
+        }
+      }
+    ],
+    "navigationRules": "linear",
+    "calculatorAllowed": false
+  },
+  {
+    "id": "BP-017",
+    "name": "MBA Blueprint 17",
+    "programs": [
+      "MBA"
+    ],
+    "sections": [
+      {
+        "name": "Verbal Ability",
+        "itemCount": 20,
+        "timeMinutes": 35,
+        "difficultyDistribution": {
+          "easy": 7,
+          "medium": 9,
+          "hard": 4
+        }
+      },
+      {
+        "name": "Quantitative Aptitude",
+        "itemCount": 30,
+        "timeMinutes": 30,
+        "difficultyDistribution": {
+          "easy": 10,
+          "medium": 13,
+          "hard": 7
+        }
+      }
+    ],
+    "navigationRules": "linear",
+    "calculatorAllowed": false
+  },
+  {
+    "id": "BP-018",
+    "name": "MTech Blueprint 18",
+    "programs": [
+      "MTech",
+      "MFA"
+    ],
+    "sections": [
+      {
+        "name": "Verbal Ability",
+        "itemCount": 30,
+        "timeMinutes": 40,
+        "difficultyDistribution": {
+          "easy": 10,
+          "medium": 13,
+          "hard": 7
+        }
+      },
+      {
+        "name": "Logical Reasoning",
+        "itemCount": 30,
+        "timeMinutes": 30,
+        "difficultyDistribution": {
+          "easy": 10,
+          "medium": 13,
+          "hard": 7
+        }
+      }
+    ],
+    "navigationRules": "linear",
+    "calculatorAllowed": false
+  },
+  {
+    "id": "BP-019",
+    "name": "MBA Blueprint 19",
+    "programs": [
+      "MBA"
+    ],
+    "sections": [
+      {
+        "name": "Logical Reasoning",
+        "itemCount": 30,
+        "timeMinutes": 35,
+        "difficultyDistribution": {
+          "easy": 10,
+          "medium": 13,
+          "hard": 7
+        }
+      },
+      {
+        "name": "General Awareness",
+        "itemCount": 25,
+        "timeMinutes": 40,
+        "difficultyDistribution": {
+          "easy": 8,
+          "medium": 11,
+          "hard": 6
+        }
+      }
+    ],
+    "navigationRules": "linear",
+    "calculatorAllowed": false
+  },
+  {
+    "id": "BP-020",
+    "name": "MFA Blueprint 20",
+    "programs": [
+      "MFA",
+      "MBA"
+    ],
+    "sections": [
+      {
+        "name": "Logical Reasoning",
+        "itemCount": 30,
+        "timeMinutes": 30,
+        "difficultyDistribution": {
+          "easy": 10,
+          "medium": 13,
+          "hard": 7
+        }
+      },
+      {
+        "name": "General Awareness",
+        "itemCount": 30,
+        "timeMinutes": 30,
+        "difficultyDistribution": {
+          "easy": 10,
+          "medium": 13,
+          "hard": 7
+        }
+      }
+    ],
+    "navigationRules": "section",
+    "calculatorAllowed": true
+  }
+]
