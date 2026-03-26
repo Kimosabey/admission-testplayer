@@ -1,4 +1,5 @@
 import { store } from "/js/store.js";
+import { PERSONA_ROUTES } from "/js/router.js";
 
 const PERSONAS = [
   { key: "candidate", label: "Candidate" },
@@ -38,8 +39,17 @@ export function mountPersonaSwitcher(mountEl, { compact = false } = {}) {
   sync();
 
   select.addEventListener("change", () => {
-    store.setState({ persona: select.value });
-    location.hash = "#/";
+    const nextPersona = select.value;
+    const before = location.hash;
+
+    store.setState({ persona: nextPersona });
+
+    const target = PERSONA_ROUTES?.[nextPersona]?.[0]?.path || "/";
+    location.hash = `#${target}`;
+
+    if (before === location.hash) {
+      window.dispatchEvent(new Event("hashchange"));
+    }
   });
 
   const unsub = store.subscribe(sync);
