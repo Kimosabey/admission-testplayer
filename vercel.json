@@ -1,0 +1,44 @@
+{
+    "version": 2,
+    "public": true,
+    "buildCommand": "",
+    "outputDirectory": ".",
+    "routes": [
+      {
+        "src": "/styles/.*",
+        "dest": "/styles/$1",
+        "methods": ["GET"]
+      },
+      {
+        "src": "/data/.*",
+        "dest": "/data/$1",
+        "methods": ["GET"]
+      },
+      {
+        "src": "/js/.*",
+        "dest": "/js/$1",
+        "methods": ["GET"]
+      },
+      {
+        "src": "/components/.*",
+        "dest": "/components/$1",
+        "methods": ["GET"]
+      },
+      {
+        "src": "/pages/.*",
+        "dest": "/pages/$1",
+        "methods": ["GET"]
+      },
+      {
+        "src": "/public/.*",
+        "dest": "/public/$1",
+        "methods": ["GET"]
+      },
+      {
+        "src": "/(.*)",
+        "dest": "/index.html",
+        "methods": ["GET"]
+      }
+    ]
+  }
+  
