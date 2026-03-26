@@ -41,7 +41,7 @@ function applyTimerStyle(el, sec) {
 }
 
 function paletteClass({ active, marked, answered }) {
-  const base = "h-9 rounded-lg border text-sm font-mono transition-colors";
+  const base = "relative h-9 rounded-lg border text-sm font-mono transition-colors flex items-center justify-center";
   if (active) return `${base} border-accent bg-accent-muted text-warning`;
   if (marked) return `${base} border-accent bg-accent-muted text-warning hover:bg-accent-muted`;
   if (answered) return `${base} border-primary bg-primary-muted text-primary hover:bg-primary-muted`;
@@ -83,6 +83,7 @@ export async function mountTestPlayer() {
   const els = {
     session: root.querySelector("#tp-session"),
     save: root.querySelector("#tp-save"),
+    fullscreen: root.querySelector("#tp-fullscreen"),
     timer: root.querySelector("#tp-timer"),
     answered: root.querySelector("#tp-answered"),
     marked: root.querySelector("#tp-marked"),
@@ -107,6 +108,45 @@ export async function mountTestPlayer() {
   const sessionId = window.__route?.params?.sessionId || store.getState().activeSessionId || "SES-DEMO";
   store.setState({ activeSessionId: sessionId });
   els.session.textContent = sessionId;
+
+  function isFullscreen() {
+    return Boolean(document.fullscreenElement);
+  }
+
+  function syncFullscreenBtn() {
+    if (!els.fullscreen) return;
+    const on = isFullscreen();
+    els.fullscreen.textContent = on ? "Exit full screen" : "Full screen";
+    els.fullscreen.setAttribute("aria-pressed", on ? "true" : "false");
+  }
+
+  async function toggleFullscreen() {
+    try {
+      if (isFullscreen()) await document.exitFullscreen();
+      else if (document.documentElement.requestFullscreen) await document.documentElement.requestFullscreen();
+      else if (root.requestFullscreen) await root.requestFullscreen();
+    } catch {
+      // Browser may block without a user gesture.
+    }
+
+    syncFullscreenBtn();
+  }
+
+  els.fullscreen?.addEventListener("click", toggleFullscreen);
+  document.addEventListener("fullscreenchange", syncFullscreenBtn);
+  window.addEventListener("hashchange", () => document.removeEventListener("fullscreenchange", syncFullscreenBtn), {
+    once: true,
+  });
+
+  syncFullscreenBtn();
+
+  // Best-effort: request full screen on entry (may be blocked).
+  setTimeout(() => {
+    if (!isFullscreen() && document.documentElement.requestFullscreen) {
+      document.documentElement.requestFullscreen().catch(() => {});
+    }
+  }, 0);
+
 
   const attemptKey = `atp_test_state_${sessionId}`;
   const questions = (await fetchData("questions")).slice(0, 25);
@@ -137,8 +177,34 @@ export async function mountTestPlayer() {
     els.save.textContent = d <= 1 ? "Saved just now" : `Saved ${d}s ago`;
   }
 
+  function qType(q) {
+    return String(q?.type || "MCQ").toUpperCase();
+  }
+
+  function isAnsweredValue(q, v) {
+    if (v === null || v === undefined) return false;
+
+    const t = qType(q);
+    if (t === "MCQ") return typeof v === "number";
+    if (t === "MSQ") return Array.isArray(v) && v.length > 0;
+
+    // NUM / SA / any free-response: treat empty-string as unanswered.
+    return String(v).trim().length > 0;
+  }
+
+  function answeredForIndex(i) {
+    const q = questions[i];
+    const id = qid(i);
+    const v = attempt.answers?.[id];
+    return isAnsweredValue(q, v);
+  }
+
   function answeredCount() {
-    return Object.values(attempt.answers || {}).filter((v) => v !== null && v !== undefined).length;
+    let n = 0;
+    for (let i = 0; i < questions.length; i += 1) {
+      if (answeredForIndex(i)) n += 1;
+    }
+    return n;
   }
 
   function markedSet() {
@@ -186,11 +252,14 @@ export async function mountTestPlayer() {
         const id = qid(i);
         const active = i === attempt.idx;
         const marked = ms.has(id);
-        const answered = attempt.answers?.[id] !== null && attempt.answers?.[id] !== undefined;
+        const answered = answeredForIndex(i);
 
         return `<button type="button" data-jump="${i}" class="${paletteClass({ active, marked, answered })}" ${
           attempt.submitted ? "disabled" : ""
-        }>${i + 1}</button>`;
+        }>
+          ${i + 1}
+          ${marked ? '<span class="absolute -top-1 -right-1 text-xs leading-none">⚑</span>' : ""}
+        </button>`;
       })
       .join("");
 
@@ -249,13 +318,105 @@ export async function mountTestPlayer() {
     const id = qid(attempt.idx);
     const ms = markedSet();
     const selected = attempt.answers?.[id];
+    const type = qType(q);
     const opts = Array.isArray(q.options) ? q.options : [];
+
+    function setAnswer(val, { rerender = true } = {}) {
+      attempt.answers = { ...attempt.answers, [id]: val };
+      writeAttempt(attemptKey, attempt);
+
+      if (rerender) render();
+      else {
+        syncCounts();
+        renderPalette();
+        saveText();
+      }
+    }
+
+    let answerBlock = "";
+    let footerNote = "";
+
+    if ((type === "MCQ" || type === "MSQ") && opts.length) {
+      const selectedArr = Array.isArray(selected) ? selected : [];
+
+      answerBlock = opts
+        .map((t, i) => {
+          const sel = type === "MCQ" ? selected === i : selectedArr.includes(i);
+          const letter = String.fromCharCode(65 + i);
+
+          const indicator =
+            type === "MCQ"
+              ? `<span class="mt-1.5 h-4 w-4 rounded-full border border-border flex items-center justify-center">
+                   <span class="h-2 w-2 rounded-full ${sel ? "bg-primary" : "bg-transparent"}"></span>
+                 </span>`
+              : `<span class="mt-1.5 h-4 w-4 rounded border border-border flex items-center justify-center">
+                   <span class="h-2 w-2 rounded-sm ${sel ? "bg-primary" : "bg-transparent"}"></span>
+                 </span>`;
+
+          return `
+            <button type="button" data-opt="${i}" class="${optionClass(sel)}" aria-pressed="${sel}" ${
+              attempt.submitted ? "disabled" : ""
+            }>
+              ${indicator}
+              <span class="text-sm text-ink-2">
+                <span class="font-mono text-xs text-ink-3">${letter}.</span> ${t}
+              </span>
+            </button>
+          `;
+        })
+        .join("");
+
+      footerNote = type === "MCQ" ? "Options are deselectable: click a selected option again." : "Select all that apply.";
+    } else if (type === "NUM") {
+      answerBlock = `
+        <div class="rounded-2xl border border-border bg-surface-sunken px-5 py-5">
+          <label class="block">
+            <span class="font-mono text-xs uppercase track-md text-ink-3">Numeric response</span>
+            <input
+              id="tp-free"
+              type="number"
+              inputmode="decimal"
+              class="mt-2 w-full h-11 rounded-xl border border-border bg-surface px-3 text-sm text-ink-2"
+              placeholder="Enter a number"
+              ${attempt.submitted ? "disabled" : ""}
+            />
+          </label>
+          <p class="mt-3 text-xs text-ink-3 font-mono">Answer is auto-saved as you type.</p>
+        </div>
+      `;
+
+      footerNote = "Numeric response.";
+    } else {
+      answerBlock = `
+        <div class="rounded-2xl border border-border bg-surface-sunken px-5 py-5">
+          <label class="block">
+            <span class="font-mono text-xs uppercase track-md text-ink-3">Response</span>
+            <textarea
+              id="tp-free"
+              rows="4"
+              class="mt-2 w-full rounded-xl border border-border bg-surface px-3 py-3 text-sm text-ink-2"
+              placeholder="Type your answer"
+              ${attempt.submitted ? "disabled" : ""}
+            ></textarea>
+          </label>
+          <p class="mt-3 text-xs text-ink-3 font-mono">Answer is auto-saved as you type.</p>
+        </div>
+      `;
+
+      footerNote = "Free response.";
+    }
 
     els.q.innerHTML = `
       <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <p class="font-mono text-xs text-ink-3">Q${attempt.idx + 1} · ${id}</p>
-          <h2 class="mt-2 font-display text-3xl text-primary">${q.domain || "Question"}</h2>
+
+          <div class="mt-2 flex flex-wrap items-center gap-2">
+            <span class="inline-flex items-center rounded-full border border-border bg-surface-sunken px-2.5 py-1 text-xs font-mono text-ink-3">${type}</span>
+            ${q.difficulty ? '<span class="text-xs text-ink-3">' + q.difficulty + "</span>" : ""}
+          </div>
+
+          <h2 class="mt-3 font-display text-3xl text-primary">${q.domain || "Question"}</h2>
           <p class="mt-2 text-sm text-ink-2">${q.body || ""}</p>
         </div>
 
@@ -280,29 +441,8 @@ export async function mountTestPlayer() {
         </div>
       </div>
 
-      <div class="mt-6 grid gap-3" aria-label="Answer options">
-        ${
-          opts.length
-            ? opts
-                .map((t, i) => {
-                  const sel = selected === i;
-                  const letter = String.fromCharCode(65 + i);
-                  return `
-                    <button type="button" data-opt="${i}" class="${optionClass(sel)}" aria-pressed="${sel}" ${
-                      attempt.submitted ? "disabled" : ""
-                    }>
-                      <span class="mt-1.5 h-4 w-4 rounded-full border border-border flex items-center justify-center">
-                        <span class="h-2 w-2 rounded-full ${sel ? "bg-primary" : "bg-transparent"}"></span>
-                      </span>
-                      <span class="text-sm text-ink-2">
-                        <span class="font-mono text-xs text-ink-3">${letter}.</span> ${t}
-                      </span>
-                    </button>
-                  `;
-                })
-                .join("")
-            : `<div class="rounded-2xl border border-border bg-surface-sunken px-5 py-5"><p class="text-sm text-ink-2">No options in demo dataset.</p></div>`
-        }
+      <div class="mt-6 grid gap-3" aria-label="Answer area">
+        ${answerBlock || `<div class="rounded-2xl border border-border bg-surface-sunken px-5 py-5"><p class="text-sm text-ink-2">No response UI available.</p></div>`}
       </div>
 
       <div class="mt-8 flex items-center justify-between gap-3">
@@ -325,7 +465,7 @@ export async function mountTestPlayer() {
         </button>
       </div>
 
-      <p class="mt-6 text-xs text-ink-3 font-mono">Options are deselectable: click a selected option again.</p>
+      <p class="mt-6 text-xs text-ink-3 font-mono">${footerNote}</p>
     `;
 
     els.q.querySelector("#tp-mark")?.addEventListener("click", () => {
@@ -340,21 +480,52 @@ export async function mountTestPlayer() {
 
     els.q.querySelector("#tp-clear")?.addEventListener("click", () => {
       if (attempt.submitted) return;
-      attempt.answers = { ...attempt.answers, [id]: null };
-      writeAttempt(attemptKey, attempt);
-      render();
+      setAnswer(null);
     });
 
-    els.q.querySelectorAll("[data-opt]").forEach((b) => {
-      b.addEventListener("click", () => {
-        if (attempt.submitted) return;
-        const i = Number(b.getAttribute("data-opt"));
-        const next = selected === i ? null : i;
-        attempt.answers = { ...attempt.answers, [id]: next };
-        writeAttempt(attemptKey, attempt);
-        render();
+    if (type === "MCQ") {
+      els.q.querySelectorAll("[data-opt]").forEach((b) => {
+        b.addEventListener("click", () => {
+          if (attempt.submitted) return;
+          const i = Number(b.getAttribute("data-opt"));
+          const next = selected === i ? null : i;
+          setAnswer(next);
+        });
       });
-    });
+    }
+
+    if (type === "MSQ") {
+      const selectedArr = Array.isArray(selected) ? selected : [];
+      els.q.querySelectorAll("[data-opt]").forEach((b) => {
+        b.addEventListener("click", () => {
+          if (attempt.submitted) return;
+          const i = Number(b.getAttribute("data-opt"));
+          const next = new Set(selectedArr);
+          if (next.has(i)) next.delete(i);
+          else next.add(i);
+
+          const val = next.size ? Array.from(next).sort((a, b) => a - b) : null;
+          setAnswer(val);
+        });
+      });
+    }
+
+    if (!(type === "MCQ" || type === "MSQ")) {
+      const input = els.q.querySelector("#tp-free");
+      if (input) {
+        const current = selected === null || selected === undefined ? "" : String(selected);
+        input.value = current;
+
+        input.addEventListener("input", () => {
+          if (attempt.submitted) return;
+          window.clearTimeout(input.__t);
+          input.__t = window.setTimeout(() => {
+            const v = String(input.value || "").trim();
+            setAnswer(v ? v : null, { rerender: false });
+          }, 120);
+        });
+      }
+    }
 
     els.q.querySelector("#tp-prev")?.addEventListener("click", () => {
       if (attempt.submitted || attempt.idx === 0) return;

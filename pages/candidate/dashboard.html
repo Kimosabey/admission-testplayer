@@ -107,6 +107,7 @@
         </a>
 
         <a
+          id="enter-secure-test"
           href="#/session/${session?.sessionId || sessionId}"
           class="inline-flex items-center gap-2 h-10 px-4 rounded-xl border border-border bg-warning-muted hover:bg-accent-muted hover:text-warning transition-colors"
           aria-label="Enter secure test player"
@@ -116,6 +117,14 @@
         </a>
       </div>
     `;
+
+
+    // Attempt to enter full screen during navigation to secure test player.
+    // Full screen APIs require a user gesture, so we hook the CTA click.
+    upcomingEl.querySelector("#enter-secure-test")?.addEventListener("click", () => {
+      if (document.fullscreenElement) return;
+      document.documentElement.requestFullscreen?.().catch(() => {});
+    });
 
     const ordered = ["booked", "checked-in", "in-progress", "completed", "no-show"];
     const currentIdx = Math.max(0, ordered.indexOf(candidate.status));
