@@ -25,6 +25,9 @@ const ROUTES = {
   "/results": "/pages/scoring/results.html",
   "/export": "/pages/scoring/export.html",
 
+  "/report": "/pages/candidate/report.html",
+  "/report/:sessionId": "/pages/candidate/report.html",
+
   "/session/:sessionId": "/pages/test-player/session.html",
 };
 
@@ -33,6 +36,7 @@ export const PERSONA_ROUTES = {
     { path: "/dashboard", label: "My Dashboard", icon: "◈" },
     { path: "/booking", label: "Book a Slot", icon: "◉" },
     { path: "/hall-ticket", label: "Hall Ticket", icon: "◧" },
+    { path: "/report", label: "Report", icon: "◪" },
   ],
   callCenter: [{ path: "/roster", label: "Candidate Roster", icon: "◫" }],
   bookingAdmin: [

@@ -149,14 +149,55 @@ export async function mountTestPlayer() {
 
 
   const attemptKey = `atp_test_state_${sessionId}`;
-  const questions = (await fetchData("questions")).slice(0, 25);
+
+  function selectQuestions(allQuestions, target = 25) {
+    const desired = [
+      ["MCQ", 10],
+      ["MSQ", 5],
+      ["NUM", 5],
+      ["TF", 3],
+      ["SA", 2],
+    ];
+
+    const picked = [];
+    const seen = new Set();
+
+    const takeByType = (type, n) => {
+      const list = allQuestions.filter((q) => String(q?.type || "").toUpperCase() === type);
+      for (let i = 0; i < list.length && n > 0 && picked.length < target; i += 1) {
+        const q = list[i];
+        if (!q?.id || seen.has(q.id)) continue;
+        picked.push(q);
+        seen.add(q.id);
+        n -= 1;
+      }
+    };
+
+    desired.forEach(([t, n]) => takeByType(t, n));
+
+    for (let i = 0; i < allQuestions.length && picked.length < target; i += 1) {
+      const q = allQuestions[i];
+      if (!q?.id || seen.has(q.id)) continue;
+      picked.push(q);
+      seen.add(q.id);
+    }
+
+    return picked;
+  }
+
+  const allQuestions = await fetchData("questions");
+  const questions = selectQuestions(allQuestions, 25);
 
   const baseAttempt = {
     idx: 0,
     answers: {},
     marked: [],
+    questionIds: questions.map((q) => q.id),
+    startedAt: Date.now(),
     endAt: Date.now() + DURATION_SEC * 1000,
     submitted: false,
+    submittedAt: null,
+    submittedReason: null,
     savedAt: null,
   };
 
@@ -165,8 +206,17 @@ export async function mountTestPlayer() {
   attempt.idx = clamp(Number(attempt.idx) || 0, 0, Math.max(0, questions.length - 1));
   if (!attempt.endAt || attempt.endAt < Date.now()) attempt.endAt = Date.now() + DURATION_SEC * 1000;
 
+
+  if (!attempt.questionIds || !Array.isArray(attempt.questionIds) || !attempt.questionIds.length) {
+    attempt.questionIds = questions.map((q) => q.id);
+  }
+
+  if (!attempt.startedAt) {
+    attempt.startedAt = Date.now();
+  }
+
   const timers = new Set();
-  const qid = (i) => questions[i]?.id || String(i + 1);
+  const qid = (i) => attempt.questionIds?.[i] || questions[i]?.id || String(i + 1);
 
   function saveText() {
     if (!attempt.savedAt) {
@@ -185,7 +235,7 @@ export async function mountTestPlayer() {
     if (v === null || v === undefined) return false;
 
     const t = qType(q);
-    if (t === "MCQ") return typeof v === "number";
+    if (t === "MCQ" || t === "TF") return typeof v === "number";
     if (t === "MSQ") return Array.isArray(v) && v.length > 0;
 
     // NUM / SA / any free-response: treat empty-string as unanswered.
@@ -275,40 +325,12 @@ export async function mountTestPlayer() {
 
   function finishAttempt(reason) {
     attempt.submitted = true;
+    attempt.submittedAt = Date.now();
+    attempt.submittedReason = reason;
     writeAttempt(attemptKey, attempt);
     closeModal();
 
-    renderPalette();
-    syncCounts();
-
-    els.q.innerHTML = `
-      <p class="font-mono text-xs uppercase track-xl text-ink-3">Attempt submitted</p>
-      <h2 class="mt-2 font-display text-4xl text-primary">Submission complete</h2>
-      <p class="mt-3 text-ink-2">${reason}</p>
-
-      <div class="mt-6 grid gap-3 sm:grid-cols-3">
-        <div class="rounded-2xl border border-border bg-surface-sunken px-5 py-4">
-          <p class="font-mono text-xs uppercase track-md text-ink-3">Answered</p>
-          <p class="mt-2 font-mono text-sm text-ink-2">${answeredCount()} / ${questions.length}</p>
-        </div>
-        <div class="rounded-2xl border border-border bg-surface-sunken px-5 py-4">
-          <p class="font-mono text-xs uppercase track-md text-ink-3">Marked</p>
-          <p class="mt-2 font-mono text-sm text-ink-2">${Array.isArray(attempt.marked) ? attempt.marked.length : 0}</p>
-        </div>
-        <div class="rounded-2xl border border-border bg-surface-sunken px-5 py-4">
-          <p class="font-mono text-xs uppercase track-md text-ink-3">Time</p>
-          <p class="mt-2 font-mono text-sm text-ink-2">${els.timer.textContent}</p>
-        </div>
-      </div>
-
-      <a
-        href="#/dashboard"
-        class="mt-6 inline-flex items-center gap-2 h-10 px-4 rounded-xl border border-border bg-primary hover:bg-primary-light transition-colors"
-        style="color: var(--color-text-inverse);"
-      >
-        Exit
-      </a>
-    `;
+    location.hash = `#/report/${encodeURIComponent(sessionId)}`;
   }
 
   function renderQuestion() {
@@ -319,8 +341,8 @@ export async function mountTestPlayer() {
     const ms = markedSet();
     const selected = attempt.answers?.[id];
     const type = qType(q);
-    const opts = Array.isArray(q.options) ? q.options : [];
-
+    let opts = Array.isArray(q.options) ? q.options : [];
+    if (type === "TF" && !opts.length) opts = ["True", "False"];
     function setAnswer(val, { rerender = true } = {}) {
       attempt.answers = { ...attempt.answers, [id]: val };
       writeAttempt(attemptKey, attempt);
@@ -336,16 +358,16 @@ export async function mountTestPlayer() {
     let answerBlock = "";
     let footerNote = "";
 
-    if ((type === "MCQ" || type === "MSQ") && opts.length) {
+    if ((type === "MCQ" || type === "MSQ" || type === "TF") && opts.length) {
       const selectedArr = Array.isArray(selected) ? selected : [];
 
       answerBlock = opts
         .map((t, i) => {
-          const sel = type === "MCQ" ? selected === i : selectedArr.includes(i);
+          const sel = type === "MCQ" || type === "TF" ? selected === i : selectedArr.includes(i);
           const letter = String.fromCharCode(65 + i);
 
           const indicator =
-            type === "MCQ"
+            type === "MCQ" || type === "TF"
               ? `<span class="mt-1.5 h-4 w-4 rounded-full border border-border flex items-center justify-center">
                    <span class="h-2 w-2 rounded-full ${sel ? "bg-primary" : "bg-transparent"}"></span>
                  </span>`
@@ -366,7 +388,7 @@ export async function mountTestPlayer() {
         })
         .join("");
 
-      footerNote = type === "MCQ" ? "Options are deselectable: click a selected option again." : "Select all that apply.";
+      footerNote = type === "MSQ" ? "Select all that apply." : "Options are deselectable: click a selected option again.";
     } else if (type === "NUM") {
       answerBlock = `
         <div class="rounded-2xl border border-border bg-surface-sunken px-5 py-5">
@@ -483,7 +505,7 @@ export async function mountTestPlayer() {
       setAnswer(null);
     });
 
-    if (type === "MCQ") {
+    if (type === "MCQ" || type === "TF") {
       els.q.querySelectorAll("[data-opt]").forEach((b) => {
         b.addEventListener("click", () => {
           if (attempt.submitted) return;
