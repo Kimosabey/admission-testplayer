@@ -1270,16 +1270,16 @@ export const store = {
 
 **Goal:** Full-screen exam interface. No scroll. No sidebar.
 
-- [ ] `pages/test-player/session.html` — standalone full-viewport layout (no sidebar/navbar wrapper classes)
-- [ ] On init: `window.__lenis?.stop()`; on `hashchange` away: `window.__lenis?.start()`
-- [ ] Layout: left palette sidebar + main question area + top bar
-- [ ] Question palette: numbered CSS grid, color-coded (unanswered/answered/marked)
-- [ ] Answer options: custom CSS radio, deselectable on re-click
-- [ ] Countdown: `setInterval` HH:MM:SS, amber at 10min, red at 5min, auto-submit at 00:00
-- [ ] Auto-save indicator: "Saved just now" → "Saved 5s ago" cycling text
-- [ ] Mark for review toggle: updates palette color
-- [ ] Submit modal: CSS `opacity`/`transform` transition, answered/unanswered/marked count summary
-- [ ] Lockdown bar: non-dismissable amber strip "🔒 Secure Mode Active"
+- [x] `pages/test-player/session.html` — standalone full-viewport layout (no sidebar/navbar wrapper classes)
+- [x] On init: `window.__lenis?.stop()`; on `hashchange` away: `window.__lenis?.start()`
+- [x] Layout: left palette sidebar + main question area + top bar
+- [x] Question palette: numbered CSS grid, color-coded (unanswered/answered/marked)
+- [x] Answer options: custom CSS radio, deselectable on re-click
+- [x] Countdown: `setInterval` HH:MM:SS, amber at 10min, red at 5min, auto-submit at 00:00
+- [x] Auto-save indicator: "Saved just now" → "Saved 5s ago" cycling text
+- [x] Mark for review toggle: updates palette color
+- [x] Submit modal: CSS `opacity`/`transform` transition, answered/unanswered/marked count summary
+- [x] Lockdown bar: non-dismissable amber strip "🔒 Secure Mode Active"
 
 **Deliverable:** Exam player navigable. Timer counts. Palette updates. Submit modal reachable.
 
