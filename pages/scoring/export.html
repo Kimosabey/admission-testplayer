@@ -1,9 +1,405 @@
-<div class="p-8 max-w-6xl mx-auto" data-page="export">
-  <h1 class="font-display text-4xl text-primary mb-2">CRM Export</h1>
-  <p class="text-ink-2 mb-8">Week 10 deliverable. Placeholder for animated 4-step export flow.</p>
+<div class="p-8 max-w-screen-2xl mx-auto" data-page="export">
+  <header class="mb-8">
+    <p class="font-mono text-xs uppercase track-xxl text-ink-3">SCORING</p>
+    <div class="mt-2 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+      <div>
+        <h1 class="font-display text-4xl text-primary">CRM Export</h1>
+        <p class="mt-2 max-w-2xl text-ink-2">Mock export pipeline: validating → signing → uploading → complete.</p>
+      </div>
+      <a
+        href="#/results"
+        class="inline-flex items-center gap-2 h-10 px-4 rounded-xl border border-border bg-surface hover:bg-primary-muted hover:text-primary transition-colors"
+      >
+        <span class="opacity-70">◫</span>
+        Results
+      </a>
+    </div>
+  </header>
 
-  <div class="card">
-    <h2 class="card-title">Coming soon</h2>
-    <p class="card-subtitle">Validating → signing → uploading → complete. Reconciliation log with hashes.</p>
-  </div>
+  <section class="flex flex-col gap-6 xl:flex-row" aria-label="Export console">
+    <article class="card xl:flex-1" aria-label="Export target">
+      <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <p class="font-mono text-xs uppercase track-xl text-ink-3">Target</p>
+          <h2 class="mt-2 font-display text-3xl text-primary">Export selection</h2>
+          <p class="mt-2 text-sm text-ink-2">Filters apply to the preview and record count.</p>
+        </div>
+
+        <button
+          id="ex-run"
+          type="button"
+          class="h-10 px-4 rounded-xl border border-border bg-primary hover:bg-primary-light transition-colors"
+          style="color: var(--color-text-inverse);"
+        >
+          Run export
+        </button>
+      </div>
+
+      <div class="mt-6 grid gap-4 sm:grid-cols-3">
+        <label class="block">
+          <span class="font-mono text-xs uppercase track-md text-ink-3">Program</span>
+          <select id="ex-program" class="mt-2 w-full h-10 rounded-xl border border-border bg-surface px-3 text-sm text-ink-2"></select>
+        </label>
+
+        <label class="block">
+          <span class="font-mono text-xs uppercase track-md text-ink-3">Session</span>
+          <select id="ex-session" class="mt-2 w-full h-10 rounded-xl border border-border bg-surface px-3 text-sm text-ink-2"></select>
+        </label>
+
+        <label class="flex items-center gap-3 rounded-2xl border border-border bg-surface-sunken px-4 py-3">
+          <input id="ex-only-open" type="checkbox" checked style="accent-color: var(--color-primary);" />
+          <span class="text-sm text-ink-2">Only unexported</span>
+        </label>
+      </div>
+
+      <div class="mt-6 flex items-center justify-between gap-4">
+        <p class="font-mono text-xs uppercase track-md text-ink-3">Preview</p>
+        <p class="font-mono text-xs text-ink-3"><span id="ex-count">—</span> records</p>
+      </div>
+
+      <div id="ex-preview" class="mt-4"></div>
+    </article>
+
+    <aside class="grid gap-6 xl:w-96 xl:shrink-0" aria-label="Pipeline">
+      <div class="card">
+        <p class="font-mono text-xs uppercase track-xl text-ink-3">Pipeline</p>
+        <h3 class="mt-2 font-display text-2xl text-primary">Status</h3>
+
+        <div class="mt-5 grid gap-3" id="ex-steps">
+          <div class="rounded-2xl border border-border bg-surface px-5 py-4" data-step="validating">
+            <div class="flex items-center justify-between gap-3">
+              <p class="font-mono text-xs uppercase track-md text-ink-3">1 · validating</p>
+              <span class="font-mono text-xs text-ink-3" data-step-state>idle</span>
+            </div>
+            <p class="mt-2 text-sm text-ink-2">Schema checks, duplicates, and record sanity.</p>
+          </div>
+
+          <div class="rounded-2xl border border-border bg-surface px-5 py-4" data-step="signing">
+            <div class="flex items-center justify-between gap-3">
+              <p class="font-mono text-xs uppercase track-md text-ink-3">2 · signing</p>
+              <span class="font-mono text-xs text-ink-3" data-step-state>idle</span>
+            </div>
+            <p class="mt-2 text-sm text-ink-2">Signing payload with demo key material.</p>
+          </div>
+
+          <div class="rounded-2xl border border-border bg-surface px-5 py-4" data-step="uploading">
+            <div class="flex items-center justify-between gap-3">
+              <p class="font-mono text-xs uppercase track-md text-ink-3">3 · uploading</p>
+              <span class="font-mono text-xs text-ink-3" data-step-state>idle</span>
+            </div>
+
+            <div class="mt-4 rounded-full border border-border bg-surface-sunken overflow-hidden">
+              <div id="ex-progress" class="h-2 bg-primary" style="transform: scaleX(0); transform-origin: left center;"></div>
+            </div>
+          </div>
+
+          <div class="rounded-2xl border border-border bg-surface px-5 py-4" data-step="complete">
+            <div class="flex items-center justify-between gap-3">
+              <p class="font-mono text-xs uppercase track-md text-ink-3">4 · complete</p>
+              <span class="font-mono text-xs text-ink-3" data-step-state>idle</span>
+            </div>
+            <p id="ex-complete" class="mt-2 text-sm text-ink-2">—</p>
+          </div>
+        </div>
+
+        <p id="ex-status" class="mt-5 text-xs text-ink-3 font-mono">Ready.</p>
+      </div>
+    </aside>
+  </section>
+
+  <section class="mt-6" aria-label="Reconciliation log">
+    <div class="flex items-end justify-between gap-4">
+      <div>
+        <p class="font-mono text-xs uppercase track-xl text-ink-3">Audit</p>
+        <h2 class="mt-2 font-display text-3xl text-primary">Reconciliation log</h2>
+      </div>
+      <button
+        id="ex-clear-log"
+        type="button"
+        class="h-9 px-3 rounded-xl border border-border bg-surface hover:bg-primary-muted hover:text-primary transition-colors text-sm"
+      >
+        Clear log
+      </button>
+    </div>
+
+    <div id="ex-log" class="mt-4"></div>
+  </section>
 </div>
+
+<script data-page-init type="text/javascript">
+  (async function () {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const { fetchData, formatDate } = await import('/js/utils.js');
+    const { buildTable } = await import('/components/data-table.js');
+    const { HashDisplay, mountHashCopy } = await import('/components/hash-display.js');
+
+    const root = document.querySelector('[data-page="export"]');
+    if (!root) return;
+
+    const els = {
+      run: root.querySelector('#ex-run'),
+      program: root.querySelector('#ex-program'),
+      session: root.querySelector('#ex-session'),
+      onlyOpen: root.querySelector('#ex-only-open'),
+      count: root.querySelector('#ex-count'),
+      preview: root.querySelector('#ex-preview'),
+
+      progress: root.querySelector('#ex-progress'),
+      status: root.querySelector('#ex-status'),
+      complete: root.querySelector('#ex-complete'),
+      steps: root.querySelectorAll('[data-step]'),
+
+      log: root.querySelector('#ex-log'),
+      clearLog: root.querySelector('#ex-clear-log'),
+    };
+
+    const EXPORT_KEY = 'atp_score_exported';
+    const RUNS_KEY = 'atp_export_runs';
+
+    function readMap(key) {
+      try {
+        const raw = localStorage.getItem(key);
+        const parsed = raw ? JSON.parse(raw) : {};
+        return parsed && typeof parsed === 'object' ? parsed : {};
+      } catch {
+        return {};
+      }
+    }
+
+    function writeMap(key, value) {
+      localStorage.setItem(key, JSON.stringify(value));
+    }
+
+    function readList(key) {
+      try {
+        const raw = localStorage.getItem(key);
+        const parsed = raw ? JSON.parse(raw) : [];
+        return Array.isArray(parsed) ? parsed : [];
+      } catch {
+        return [];
+      }
+    }
+
+    function writeList(key, list) {
+      localStorage.setItem(key, JSON.stringify(list));
+    }
+
+    let exportMap = readMap(EXPORT_KEY);
+
+    function isExported(appId, original) {
+      const v = exportMap[appId];
+      if (typeof v === 'boolean') return v;
+      return Boolean(original);
+    }
+
+    const [scores, candidates, sessions] = await Promise.all([
+      fetchData('scores'),
+      fetchData('candidates'),
+      fetchData('sessions'),
+    ]);
+
+    const candById = new Map(candidates.map((c) => [c.applicationId, c]));
+
+    function optionList(values, labelFn) {
+      return values
+        .map((v) => `<option value="${v}">${labelFn ? labelFn(v) : v}</option>`)
+        .join('');
+    }
+
+    function renderFilters() {
+      const programs = Array.from(
+        new Set(scores.map((s) => s.program).filter(Boolean).concat(candidates.flatMap((c) => c.programs || []))),
+      ).sort();
+
+      els.program.innerHTML = ['<option value="all">All</option>', optionList(programs)].join('');
+
+      const sessionIds = Array.from(new Set(scores.map((s) => s.sessionId).filter(Boolean))).sort();
+      els.session.innerHTML = ['<option value="all">All</option>', optionList(sessionIds)].join('');
+    }
+
+    function filteredRows() {
+      const p = els.program.value || 'all';
+      const sid = els.session.value || 'all';
+      const onlyOpen = els.onlyOpen.checked;
+
+      return scores.filter((s) => {
+        if (p !== 'all' && s.program !== p) return false;
+        if (sid !== 'all' && s.sessionId !== sid) return false;
+        if (onlyOpen && isExported(s.applicationId, s.exportedToCRM)) return false;
+        return true;
+      });
+    }
+
+    function renderPreview() {
+      const list = filteredRows();
+      els.count.textContent = String(list.length);
+
+      const rows = list.map((s) => {
+        const c = candById.get(s.applicationId);
+        return {
+          applicationId: s.applicationId,
+          name: c?.name || '—',
+          program: s.program || '—',
+          sessionId: s.sessionId || '—',
+          total: s.totalScore ?? s.rawScore ?? 0,
+        };
+      });
+
+      if (!rows.length) {
+        els.preview.innerHTML = `<p class="text-sm text-ink-3">No records match filters.</p>`;
+        return;
+      }
+
+      const table = buildTable({
+        columns: [
+          { key: 'applicationId', label: 'App ID', render: (v) => `<span class="font-mono text-xs text-ink-3">${v}</span>` },
+          { key: 'name', label: 'Name' },
+          { key: 'program', label: 'Program' },
+          { key: 'sessionId', label: 'Session' },
+          { key: 'total', label: 'Total', sortFn: (a, b) => a.total - b.total, render: (v) => `<span class="font-mono text-sm text-ink">${Number(v).toFixed(0)}</span>` },
+        ],
+        rows,
+      });
+
+      els.preview.innerHTML = '';
+      els.preview.appendChild(table);
+    }
+
+    function setStep(step, state) {
+      const card = root.querySelector(`[data-step="${step}"]`);
+      const badge = card?.querySelector('[data-step-state]');
+      if (!badge) return;
+      badge.textContent = state;
+    }
+
+    function resetSteps() {
+      ['validating', 'signing', 'uploading', 'complete'].forEach((s) => setStep(s, 'idle'));
+      els.complete.textContent = '—';
+      els.progress.style.transform = 'scaleX(0)';
+      els.status.textContent = 'Ready.';
+    }
+
+    function delay(ms) {
+      return new Promise((r) => setTimeout(r, ms));
+    }
+
+    async function runExport() {
+      const payload = filteredRows();
+      if (!payload.length) return;
+
+      els.run.disabled = true;
+      els.run.classList.add('opacity-50', 'cursor-not-allowed');
+
+      resetSteps();
+
+      setStep('validating', 'running');
+      els.status.textContent = 'Validating…';
+      await delay(prefersReducedMotion ? 0 : 700);
+      setStep('validating', 'ok');
+
+      setStep('signing', 'running');
+      els.status.textContent = 'Signing…';
+      await delay(prefersReducedMotion ? 0 : 700);
+      setStep('signing', 'ok');
+
+      setStep('uploading', 'running');
+      els.status.textContent = 'Uploading…';
+
+      if (!prefersReducedMotion && window.gsap) {
+        window.gsap.set(els.progress, { scaleX: 0, transformOrigin: 'left center' });
+        await new Promise((resolve) => {
+          window.gsap.to(els.progress, { scaleX: 1, duration: 2.1, ease: 'power2.out', onComplete: resolve });
+        });
+      } else {
+        els.progress.style.transform = 'scaleX(1)';
+      }
+
+      setStep('uploading', 'ok');
+
+      const hash = `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 10)}`.slice(0, 24);
+      const ts = new Date();
+
+      exportMap = { ...exportMap };
+      payload.forEach((s) => {
+        exportMap[s.applicationId] = true;
+      });
+      writeMap(EXPORT_KEY, exportMap);
+
+      const runs = readList(RUNS_KEY);
+      runs.unshift({
+        id: `RUN-${Date.now().toString(36).toUpperCase()}`,
+        hash,
+        timestamp: ts.toISOString(),
+        count: payload.length,
+        filters: {
+          program: els.program.value,
+          sessionId: els.session.value,
+          onlyUnexported: els.onlyOpen.checked,
+        },
+      });
+      writeList(RUNS_KEY, runs.slice(0, 25));
+
+      setStep('complete', 'ok');
+      els.status.textContent = 'Complete.';
+      els.complete.textContent = `${payload.length} records · ${formatDate(ts, { time: true })}`;
+
+      renderPreview();
+      renderLog();
+
+      els.run.disabled = false;
+      els.run.classList.remove('opacity-50', 'cursor-not-allowed');
+    }
+
+    function renderLog() {
+      const runs = readList(RUNS_KEY);
+
+      if (!runs.length) {
+        els.log.innerHTML = `<p class="text-sm text-ink-3">No exports yet.</p>`;
+        return;
+      }
+
+      const tableRows = runs.map((r) => ({
+        timestamp: r.timestamp,
+        count: r.count,
+        hash: r.hash,
+        id: r.id,
+      }));
+
+      const table = buildTable({
+        columns: [
+          {
+            key: 'timestamp',
+            label: 'Timestamp',
+            render: (v) => `<span class="font-mono text-xs text-ink-3">${formatDate(v, { time: true })}</span>`,
+          },
+          { key: 'id', label: 'Run ID', render: (v) => `<span class="font-mono text-xs text-ink-3">${v}</span>` },
+          { key: 'count', label: 'Count', render: (v) => `<span class="font-mono text-sm text-ink">${v}</span>` },
+          {
+            key: 'hash',
+            label: 'Hash',
+            render: (v) => HashDisplay(v, { label: 'hash' }),
+          },
+        ],
+        rows: tableRows,
+      });
+
+      els.log.innerHTML = '';
+      els.log.appendChild(table);
+      mountHashCopy(els.log);
+    }
+
+    renderFilters();
+    renderPreview();
+    renderLog();
+
+    ;[els.program, els.session, els.onlyOpen].forEach((x) => x.addEventListener('change', renderPreview));
+
+    els.run.addEventListener('click', runExport);
+
+    els.clearLog.addEventListener('click', () => {
+      localStorage.removeItem(RUNS_KEY);
+      renderLog();
+    });
+  })();
+</script>

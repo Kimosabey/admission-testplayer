@@ -1,9 +1,426 @@
-<div class="p-8 max-w-6xl mx-auto" data-page="results">
-  <h1 class="font-display text-4xl text-primary mb-2">Results</h1>
-  <p class="text-ink-2 mb-8">Week 10 deliverable. Placeholder for results table + histogram.</p>
+<div class="p-8 max-w-screen-2xl mx-auto" data-page="results">
+  <header class="mb-8">
+    <p class="font-mono text-xs uppercase track-xxl text-ink-3">SCORING</p>
+    <div class="mt-2 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+      <div>
+        <h1 class="font-display text-4xl text-primary">Results</h1>
+        <p class="mt-2 max-w-2xl text-ink-2">Sortable results table with score distribution and a slide-out detail panel.</p>
+      </div>
+      <a
+        href="#/export"
+        class="inline-flex items-center gap-2 h-10 px-4 rounded-xl border border-border bg-surface hover:bg-primary-muted hover:text-primary transition-colors"
+      >
+        <span class="opacity-70">◎</span>
+        CRM Export
+      </a>
+    </div>
+  </header>
 
-  <div class="card">
-    <h2 class="card-title">Coming soon</h2>
-    <p class="card-subtitle">Sortable data-table, click row for slide-out detail panel, Chart.js distribution.</p>
+  <section class="grid gap-6 xl:grid-cols-2" aria-label="Score distribution">
+    <article class="card" id="results-hist-card">
+      <div class="flex items-start justify-between gap-4">
+        <div>
+          <p class="font-mono text-xs uppercase track-xl text-ink-3">Distribution</p>
+          <h2 class="mt-2 font-display text-3xl text-primary">Score histogram</h2>
+          <p class="mt-2 text-sm text-ink-2">Total score buckets across all attempts.</p>
+        </div>
+        <p id="results-summary" class="text-xs text-ink-3 font-mono">—</p>
+      </div>
+
+      <div class="mt-6 rounded-2xl border border-border bg-surface px-4 py-4" style="height: 300px;">
+        <canvas id="results-hist"></canvas>
+      </div>
+    </article>
+
+    <article class="card" id="results-metrics">
+      <p class="font-mono text-xs uppercase track-xl text-ink-3">Quick stats</p>
+      <div class="mt-4 grid gap-4 sm:grid-cols-3">
+        <div class="stat">
+          <p class="stat-k">Attempts</p>
+          <p id="m-attempts" class="stat-v font-mono text-2xl text-ink">—</p>
+        </div>
+        <div class="stat">
+          <p class="stat-k">Avg score</p>
+          <p id="m-avg" class="stat-v font-mono text-2xl text-ink">—</p>
+        </div>
+        <div class="stat">
+          <p class="stat-k">Exported</p>
+          <p id="m-exported" class="stat-v font-mono text-2xl text-ink">—</p>
+        </div>
+      </div>
+
+      <div class="mt-6 rounded-2xl border border-border bg-surface-sunken px-5 py-5">
+        <p class="font-mono text-xs uppercase track-md text-ink-3">Interaction</p>
+        <p class="mt-2 text-sm text-ink-2">Click any row to open the detail panel (section bars + percentile mock).</p>
+      </div>
+    </article>
+  </section>
+
+  <section class="mt-6" aria-label="Results table">
+    <div class="flex items-end justify-between gap-4">
+      <div>
+        <p class="font-mono text-xs uppercase track-xl text-ink-3">Table</p>
+        <h2 class="mt-2 font-display text-3xl text-primary">Attempts</h2>
+      </div>
+      <p class="text-xs text-ink-3 font-mono">Tip: click headers to sort</p>
+    </div>
+
+    <div id="results-table" class="mt-4"></div>
+  </section>
+
+  <div>
+    <div id="res-overlay" class="fixed inset-0 z-40 bg-ink/40 opacity-0 pointer-events-none transition-opacity"></div>
+
+    <aside
+      id="res-drawer"
+      class="fixed right-0 top-0 z-50 h-screen w-96 bg-surface border-l border-border shadow-sm
+             translate-x-full transition-transform duration-300"
+      aria-label="Result detail drawer"
+    >
+      <div class="h-full flex flex-col">
+        <div class="p-6 border-b border-border flex items-start justify-between gap-4">
+          <div>
+            <p class="font-mono text-xs uppercase track-xl text-ink-3">ATTEMPT</p>
+            <h2 class="mt-2 font-display text-3xl text-primary">Detail</h2>
+          </div>
+
+          <button
+            id="res-close"
+            type="button"
+            class="h-10 w-10 rounded-xl border border-border bg-surface hover:bg-primary-muted hover:text-primary transition-colors"
+            aria-label="Close"
+          >
+            ×
+          </button>
+        </div>
+
+        <div id="res-detail" class="flex-1 overflow-auto p-6"></div>
+
+        <div class="p-6 border-t border-border flex items-center justify-between gap-3">
+          <a
+            href="#/export"
+            class="inline-flex items-center gap-2 h-10 px-4 rounded-xl border border-border bg-surface hover:bg-primary-muted hover:text-primary transition-colors"
+          >
+            <span class="opacity-70">◎</span>
+            Export
+          </a>
+
+          <button
+            id="res-drawer-close"
+            type="button"
+            class="h-10 px-4 rounded-xl border border-border bg-primary hover:bg-primary-light transition-colors"
+            style="color: var(--color-text-inverse);"
+          >
+            Done
+          </button>
+        </div>
+      </div>
+    </aside>
   </div>
 </div>
+
+<script data-page-init type="text/javascript">
+  (async function () {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const { fetchData } = await import('/js/utils.js');
+    const { StatusPill } = await import('/components/status-pill.js');
+    const { buildTable } = await import('/components/data-table.js');
+
+    const root = document.querySelector('[data-page="results"]');
+    if (!root) return;
+
+    const els = {
+      table: root.querySelector('#results-table'),
+      hist: root.querySelector('#results-hist'),
+      summary: root.querySelector('#results-summary'),
+      attempts: root.querySelector('#m-attempts'),
+      avg: root.querySelector('#m-avg'),
+      exported: root.querySelector('#m-exported'),
+
+      overlay: root.querySelector('#res-overlay'),
+      drawer: root.querySelector('#res-drawer'),
+      detail: root.querySelector('#res-detail'),
+      closeBtn: root.querySelector('#res-close'),
+      closeBtn2: root.querySelector('#res-drawer-close'),
+    };
+
+    const [scores, candidates] = await Promise.all([fetchData('scores'), fetchData('candidates')]);
+    const candById = new Map(candidates.map((c) => [c.applicationId, c]));
+
+    const EXPORT_KEY = 'atp_score_exported';
+
+    function readExportMap() {
+      try {
+        const raw = localStorage.getItem(EXPORT_KEY);
+        const parsed = raw ? JSON.parse(raw) : {};
+        return parsed && typeof parsed === 'object' ? parsed : {};
+      } catch {
+        return {};
+      }
+    }
+
+    const exportMap = readExportMap();
+
+    function isExported(appId, original) {
+      const v = exportMap[appId];
+      if (typeof v === 'boolean') return v;
+      return Boolean(original);
+    }
+
+    const rows = scores.map((s) => {
+      const c = candById.get(s.applicationId);
+      const sectionText = (s.sectionScores || [])
+        .map((x) => `${(x.section || '').split(' ')[0]} ${x.score}/${x.max}`)
+        .join(' · ');
+
+      return {
+        applicationId: s.applicationId,
+        name: c?.name || '—',
+        program: s.program || (c?.programs?.[0] ?? '—'),
+        attempt: s.attempt ?? 1,
+        totalScore: s.totalScore ?? s.rawScore ?? 0,
+        sectionScores: sectionText,
+        exported: isExported(s.applicationId, s.exportedToCRM),
+        _raw: s,
+      };
+    });
+
+    const totals = rows.map((r) => r.totalScore);
+    const avg = totals.length ? totals.reduce((a, b) => a + b, 0) / totals.length : 0;
+    const exportedCount = rows.filter((r) => r.exported).length;
+
+    els.attempts.textContent = String(rows.length);
+    els.avg.textContent = avg ? avg.toFixed(1) : '—';
+    els.exported.textContent = `${exportedCount}/${rows.length}`;
+
+    function percentile(score) {
+      const sorted = totals.slice().sort((a, b) => a - b);
+      const below = sorted.filter((x) => x <= score).length;
+      return sorted.length ? Math.round((below / sorted.length) * 100) : 0;
+    }
+
+    function renderHistogram() {
+      if (!window.Chart) return;
+
+      const min = 0;
+      const max = Math.max(100, ...totals);
+      const bins = 10;
+      const step = Math.ceil((max - min + 1) / bins);
+
+      const labels = Array.from({ length: bins }, (_, i) => {
+        const a = min + i * step;
+        const b = a + step - 1;
+        return `${a}-${b}`;
+      });
+
+      const counts = Array.from({ length: bins }, () => 0);
+      totals.forEach((v) => {
+        const i = Math.min(bins - 1, Math.floor((v - min) / step));
+        counts[i] += 1;
+      });
+
+      els.summary.textContent = `min ${Math.min(...totals)} · max ${Math.max(...totals)} · bins ${bins}`;
+
+      const css = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+      const primary = css('--color-primary');
+      const border = css('--color-border');
+      const text = css('--color-text-muted');
+
+      // eslint-disable-next-line no-undef
+      new Chart(els.hist.getContext('2d'), {
+        type: 'bar',
+        data: {
+          labels,
+          datasets: [
+            {
+              label: 'Attempts',
+              data: counts,
+              backgroundColor: primary,
+              borderColor: primary,
+              borderWidth: 1,
+              borderRadius: 8,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { ticks: { color: text }, grid: { color: border } },
+            y: { ticks: { color: text }, grid: { color: border }, beginAtZero: true },
+          },
+        },
+      });
+
+      if (!prefersReducedMotion && window.gsap && window.ScrollTrigger) {
+        window.gsap.fromTo(
+          '#results-hist-card',
+          { opacity: 0, y: 24 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.7,
+            ease: 'power2.out',
+            scrollTrigger: { trigger: '#results-hist-card', start: 'top 85%' },
+          },
+        );
+      }
+    }
+
+    function renderTable() {
+      els.table.innerHTML = '';
+
+      const columns = [
+        {
+          key: 'applicationId',
+          label: 'App ID',
+          render: (v, row) => `
+            <div class="font-mono text-xs text-ink-3">
+              <span data-appid="${row.applicationId}" class="hidden"></span>
+              ${row.applicationId}
+            </div>
+          `,
+        },
+        { key: 'name', label: 'Name' },
+        { key: 'program', label: 'Program' },
+        { key: 'attempt', label: 'Attempt' },
+        {
+          key: 'sectionScores',
+          label: 'Section Scores',
+          render: (v) => `<span class="font-mono text-xs text-ink-3">${v || '—'}</span>`,
+        },
+        {
+          key: 'totalScore',
+          label: 'Total',
+          sortFn: (a, b) => a.totalScore - b.totalScore,
+          render: (v) => `<span class="font-mono text-sm text-ink">${Number(v).toFixed(0)}</span>`,
+        },
+        {
+          key: 'exported',
+          label: 'CRM',
+          sortFn: (a, b) => Number(a.exported) - Number(b.exported),
+          render: (v) => (v ? StatusPill('completed', 'sm') : StatusPill('draft', 'sm')),
+        },
+      ];
+
+      const table = buildTable({ columns, rows });
+      table.classList.add('cursor-pointer');
+      els.table.appendChild(table);
+
+      const tbody = table.querySelector('tbody');
+      tbody?.querySelectorAll('tr').forEach((tr) => {
+        tr.classList.add('hover:bg-primary-muted', 'transition-colors');
+      });
+
+      tbody?.addEventListener('click', (e) => {
+        const tr = e.target.closest('tr');
+        if (!tr) return;
+        const appId = tr.querySelector('[data-appid]')?.getAttribute('data-appid');
+        if (!appId) return;
+        openDrawer(appId);
+      });
+
+      if (!prefersReducedMotion && window.gsap && window.ScrollTrigger) {
+        window.gsap.fromTo(
+          tbody?.querySelectorAll('tr') || [],
+          { opacity: 0, y: 14 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.6,
+            ease: 'power2.out',
+            stagger: 0.03,
+            scrollTrigger: { trigger: table, start: 'top 85%' },
+          },
+        );
+      }
+    }
+
+    function drawerHtml(row) {
+      const s = row._raw;
+      const c = candById.get(row.applicationId);
+      const p = percentile(row.totalScore);
+
+      const sections = (s.sectionScores || []).map((x) => {
+        const pct = x.max ? Math.round((x.score / x.max) * 100) : 0;
+        return `
+          <div class="rounded-2xl border border-border bg-surface px-5 py-4">
+            <div class="flex items-start justify-between gap-4">
+              <div>
+                <p class="font-mono text-xs uppercase track-md text-ink-3">${x.section}</p>
+                <p class="mt-2 font-mono text-sm text-ink-2">${x.score} / ${x.max}</p>
+              </div>
+              <p class="font-mono text-xs text-ink-3">${pct}%</p>
+            </div>
+            <div class="mt-3 h-2 rounded-full bg-surface-sunken overflow-hidden">
+              <div class="h-full bg-primary" style="width:${pct}%;"></div>
+            </div>
+          </div>
+        `;
+      });
+
+      return `
+        <div class="space-y-5">
+          <div class="rounded-2xl border border-border bg-surface-sunken px-5 py-5">
+            <p class="font-mono text-xs text-ink-3">${row.applicationId}</p>
+            <h3 class="mt-2 font-display text-3xl text-primary">${c?.name || row.name}</h3>
+            <p class="mt-2 text-sm text-ink-2">Program: <span class="font-mono text-xs">${row.program}</span> · Attempt <span class="font-mono text-xs">${row.attempt}</span></p>
+          </div>
+
+          <div class="grid gap-3 sm:grid-cols-2">
+            <div class="rounded-2xl border border-border bg-surface px-5 py-4">
+              <p class="font-mono text-xs uppercase track-md text-ink-3">Total score</p>
+              <p class="mt-2 font-mono text-2xl text-ink">${row.totalScore}</p>
+            </div>
+            <div class="rounded-2xl border border-border bg-surface px-5 py-4">
+              <p class="font-mono text-xs uppercase track-md text-ink-3">Percentile (mock)</p>
+              <p class="mt-2 font-mono text-2xl text-ink">${p}th</p>
+            </div>
+          </div>
+
+          <div>
+            <p class="font-mono text-xs uppercase track-xl text-ink-3">Section scores</p>
+            <div class="mt-3 grid gap-3">
+              ${sections.join('') || `<p class="text-sm text-ink-3">No section breakdown available.</p>`}
+            </div>
+          </div>
+
+          <div class="rounded-2xl border border-border bg-surface px-5 py-4">
+            <p class="font-mono text-xs uppercase track-md text-ink-3">CRM export</p>
+            <div class="mt-2">${row.exported ? StatusPill('completed', 'sm') : StatusPill('draft', 'sm')}</div>
+            <p class="mt-3 text-xs text-ink-3 font-mono">Export status is demo state (localStorage override).</p>
+          </div>
+        </div>
+      `;
+    }
+
+    function openDrawer(appId) {
+      const row = rows.find((r) => r.applicationId === appId);
+      if (!row) return;
+
+      els.detail.innerHTML = drawerHtml(row);
+
+      els.overlay.classList.remove('pointer-events-none');
+      els.overlay.classList.add('opacity-100');
+      els.drawer.classList.remove('translate-x-full');
+    }
+
+    function closeDrawer() {
+      els.overlay.classList.add('pointer-events-none');
+      els.overlay.classList.remove('opacity-100');
+      els.drawer.classList.add('translate-x-full');
+    }
+
+    els.closeBtn.addEventListener('click', closeDrawer);
+    els.closeBtn2.addEventListener('click', closeDrawer);
+    els.overlay.addEventListener('click', closeDrawer);
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeDrawer();
+    });
+
+    renderHistogram();
+    renderTable();
+  })();
+</script>

@@ -1289,17 +1289,17 @@ export const store = {
 
 **Goal:** Score analyst results table and animated export flow.
 
-- [ ] `pages/scoring/results.html` — loads `scores.json` + `candidates.json`
-- [ ] Results table (`data-table.js`): App ID, Name, Program, Attempt, Section Scores, Total, CRM Status. Sortable.
-- [ ] Row click: slide-out panel with section score progress bars, percentile mock
-- [ ] Chart.js bar histogram: score distribution
-- [ ] GSAP ScrollTrigger: chart reveal, staggered row entrance
-- [ ] `pages/scoring/export.html` — filter controls, preview table, 4-step export animation:
+- [x] `pages/scoring/results.html` — loads `scores.json` + `candidates.json`
+- [x] Results table (`data-table.js`): App ID, Name, Program, Attempt, Section Scores, Total, CRM Status. Sortable.
+- [x] Row click: slide-out panel with section score progress bars, percentile mock
+- [x] Chart.js bar histogram: score distribution
+- [x] GSAP ScrollTrigger: chart reveal, staggered row entrance
+- [x] `pages/scoring/export.html` — filter controls, preview table, 4-step export animation:
   1. Validating (spinner)
   2. Signing (lock icon)
   3. Uploading (GSAP `scaleX` progress bar)
   4. Complete (checkmark, timestamp, record count)
-- [ ] Reconciliation log: table of past exports with hash (mono), timestamp, count, download icon
+- [x] Reconciliation log: table of past exports with hash (mono), timestamp, count, download icon
 
 **Deliverable:** Results table loads. Histogram renders. Export flow completes to confirmation.
 
