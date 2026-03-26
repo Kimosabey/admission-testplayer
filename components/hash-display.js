@@ -8,7 +8,7 @@ export function HashDisplay(hash, { label = "Hash" } = {}) {
 
   return `
     <div class="inline-flex items-center gap-2 rounded-xl border border-border bg-surface px-3 py-2" data-hash-display>
-      <span class="text-xs font-mono tracking-[0.18em] text-ink-3">${label.toUpperCase()}</span>
+      <span class="text-xs font-mono track-md text-ink-3">${label.toUpperCase()}</span>
       <code id="${id}" class="text-sm font-mono text-ink-2">${value}</code>
       <button
         type="button"

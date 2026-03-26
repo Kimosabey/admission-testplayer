@@ -24,9 +24,9 @@ function render() {
       <div class="p-6 border-b border-border">
         <div class="flex items-baseline gap-2">
           <span class="font-display text-2xl text-primary">ATP</span>
-          <span class="text-xs text-ink-3 font-mono tracking-[0.28em]">NAV</span>
+          <span class="text-xs text-ink-3 font-mono track-xl">NAV</span>
         </div>
-        <p class="mt-2 text-sm text-ink-2">Persona: <span class="font-mono text-xs tracking-[0.14em]">${persona}</span></p>
+        <p class="mt-2 text-sm text-ink-2">Persona: <span class="font-mono text-xs track-sm">${persona}</span></p>
       </div>
 
       <nav class="flex-1 py-4">
@@ -53,7 +53,7 @@ function render() {
       </nav>
 
       <div class="p-6 border-t border-border">
-        <p class="text-xs text-ink-3 font-mono tracking-[0.18em]">STATIC DEMO · CDN ONLY</p>
+        <p class="text-xs text-ink-3 font-mono track-md">STATIC DEMO · CDN ONLY</p>
       </div>
     </aside>
   `;

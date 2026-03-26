@@ -22,7 +22,7 @@ function render() {
 
             <a href="#/" class="flex items-baseline gap-2 group">
               <span class="font-display text-2xl text-primary tracking-tight">ATP</span>
-              <span class="hidden sm:inline font-mono text-[11px] tracking-[0.28em] text-ink-3 group-hover:text-primary transition-colors">
+              <span class="hidden sm:inline font-mono text-xs track-xl text-ink-3 group-hover:text-primary transition-colors">
                 ADMISSION TEST
               </span>
             </a>
@@ -40,7 +40,7 @@ function render() {
               aria-pressed="${darkMode ? "true" : "false"}"
               title="Toggle theme"
             >
-              <span class="font-mono text-xs tracking-[0.18em] text-ink-3">THEME</span>
+              <span class="font-mono text-xs track-md text-ink-3">THEME</span>
               <span class="font-mono text-xs text-ink-2">${darkMode ? "DARK" : "LIGHT"}</span>
             </button>
 
@@ -56,7 +56,7 @@ function render() {
                 <span class="hidden sm:inline text-sm">Alerts</span>
               </button>
               <span
-                class="absolute -top-1.5 -right-1.5 min-w-5 h-5 px-1 rounded-full text-[11px] font-mono
+                class="absolute -top-1.5 -right-1.5 min-w-5 h-5 px-1 rounded-full text-xs font-mono
                        bg-danger text-[var(--color-text-inverse)] flex items-center justify-center"
                 aria-label="Alert count"
               >

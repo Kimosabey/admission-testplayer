@@ -1,9 +1,377 @@
-<div class="p-8 max-w-4xl mx-auto" data-page="booking">
-  <h1 class="font-display text-4xl text-primary mb-2">Book Your Slot</h1>
-  <p class="text-ink-2 mb-8">Week 3 deliverable. Placeholder for the 3-step booking wizard.</p>
+<div class="p-8 max-w-5xl mx-auto" data-page="booking">
+  <header class="mb-8">
+    <p class="font-mono text-xs uppercase track-xxl text-ink-3">BOOKING</p>
+    <h1 class="mt-2 font-display text-4xl text-primary">Book Your Slot</h1>
+    <p class="mt-3 max-w-2xl text-ink-2">
+      Select program(s), pick an available session, then confirm. This flow simulates booking without mutating JSON.
+    </p>
+  </header>
 
-  <div class="card">
-    <h2 class="card-title">Coming soon</h2>
-    <p class="card-subtitle">Programs → sessions → confirm. Capacity fill bands and GSAP step transitions.</p>
-  </div>
+  <section class="card" aria-label="Booking wizard">
+    <div id="candidate-summary" class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"></div>
+
+    <div class="mt-8">
+      <div class="flex items-center justify-between gap-4">
+        <p class="text-sm text-ink-2">
+          <span class="font-mono text-xs uppercase track-md text-ink-3">STEP</span>
+          <span id="step-count" class="ml-2 font-mono text-xs text-ink-2"></span>
+        </p>
+        <p id="step-title" class="text-sm text-ink-2"></p>
+      </div>
+
+      <div class="relative mt-4 px-1" aria-hidden="true">
+        <div class="absolute left-2 right-2 top-1/2 -translate-y-1/2 h-px bg-border"></div>
+        <div
+          id="step-line-fill"
+          class="absolute left-2 top-1/2 -translate-y-1/2 h-px bg-primary origin-left scale-x-0"
+          style="width: calc(100% - 1rem);"
+        ></div>
+
+        <div class="relative flex items-center justify-between">
+          <div data-step-dot="1"></div>
+          <div data-step-dot="2"></div>
+          <div data-step-dot="3"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="wizard-panel" class="mt-8"></div>
+
+    <div class="mt-10 flex items-center justify-between gap-3">
+      <button
+        id="wizard-back"
+        type="button"
+        class="h-10 px-4 rounded-xl border border-border bg-surface hover:bg-primary-muted hover:text-primary transition-colors"
+      >
+        Back
+      </button>
+
+      <button
+        id="wizard-next"
+        type="button"
+        class="h-10 px-4 rounded-xl border border-border bg-primary hover:bg-primary-light transition-colors"
+        style="color: var(--color-text-inverse);"
+      >
+        Continue
+      </button>
+    </div>
+  </section>
 </div>
+
+<script data-page-init type="text/javascript">
+  (async function () {
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    const { fetchData, formatDate } = await import("/js/utils.js");
+    const { store } = await import("/js/store.js");
+    const { Badge } = await import("/components/badge.js");
+
+    const root = document.querySelector('[data-page="booking"]');
+    if (!root) return;
+
+    const els = {
+      candidateSummary: root.querySelector("#candidate-summary"),
+      stepCount: root.querySelector("#step-count"),
+      stepTitle: root.querySelector("#step-title"),
+      lineFill: root.querySelector("#step-line-fill"),
+      panel: root.querySelector("#wizard-panel"),
+      back: root.querySelector("#wizard-back"),
+      next: root.querySelector("#wizard-next"),
+      dots: Array.from(root.querySelectorAll("[data-step-dot]")),
+    };
+
+    const [candidates, sessions, centers] = await Promise.all([
+      fetchData("candidates"),
+      fetchData("sessions"),
+      fetchData("centers"),
+    ]);
+
+    const centerById = new Map(centers.map((c) => [c.centerId, c]));
+
+    const state = store.getState();
+    let candidate = candidates.find((c) => c.applicationId === state.candidateId) || candidates[0];
+    if (!candidate) return;
+
+    if (candidate.applicationId !== state.candidateId) {
+      store.setState({ candidateId: candidate.applicationId });
+    }
+
+    const programOptions = Array.from(
+      new Set(
+        candidates
+          .flatMap((c) => c.programs || [])
+          .map((p) => String(p).trim())
+          .filter(Boolean),
+      ),
+    ).sort();
+
+    let step = 1;
+    let selectedPrograms = new Set(candidate.programs?.slice(0, 1) || []);
+    let selectedSessionId = store.getState().activeSessionId;
+
+    function renderCandidateSummary() {
+      els.candidateSummary.innerHTML = `
+        <div class="flex flex-col gap-1">
+          <p class="text-sm text-ink-2">
+            <span class="font-mono text-xs uppercase track-md text-ink-3">Candidate</span>
+            <span class="ml-2 font-medium text-ink">${candidate.name}</span>
+          </p>
+          <p class="text-sm text-ink-2">
+            <span class="font-mono text-xs uppercase track-md text-ink-3">Application</span>
+            <span class="ml-2 font-mono text-xs text-ink-2">${candidate.applicationId}</span>
+          </p>
+        </div>
+
+        <div class="flex items-center flex-wrap gap-2">
+          ${Badge(candidate.cycle, { tone: "accent", mono: true })}
+          ${Badge(`Attempt ${candidate.attemptCount}`, { tone: "neutral", mono: true })}
+        </div>
+      `;
+    }
+
+    function dotClass(state) {
+      const base =
+        "h-10 w-10 rounded-full border flex items-center justify-center font-mono text-sm transition-colors";
+
+      if (state === "complete") {
+        return `${base} bg-primary border-primary text-parchment`;
+      }
+
+      if (state === "active") {
+        return `${base} bg-primary-muted border-primary text-primary`;
+      }
+
+      return `${base} bg-surface border-border text-ink-2`;
+    }
+
+    function renderStepRail() {
+      els.stepCount.textContent = `${step} / 3`;
+
+      const titles = {
+        1: "Programs",
+        2: "Sessions",
+        3: "Confirm",
+      };
+
+      els.stepTitle.textContent = titles[step] || "";
+
+      const progress = (step - 1) / 2;
+      els.lineFill.style.transform = `scaleX(${progress})`;
+
+      els.dots.forEach((d) => {
+        const idx = Number(d.getAttribute("data-step-dot"));
+        const s = idx < step ? "complete" : idx === step ? "active" : "idle";
+        d.className = dotClass(s);
+        d.textContent = idx;
+      });
+    }
+
+    function animatePanelIn(dir) {
+      if (prefersReducedMotion) return;
+      if (!window.gsap) return;
+
+      window.gsap.fromTo(
+        els.panel.querySelector(".wizard-panel"),
+        { opacity: 0, x: dir * 40 },
+        { opacity: 1, x: 0, duration: 0.55, ease: "power2.out" },
+      );
+
+      window.gsap.to(els.lineFill, {
+        scaleX: (step - 1) / 2,
+        duration: 0.5,
+        ease: "power2.out",
+        overwrite: true,
+      });
+    }
+
+    function renderStep1() {
+      const options = programOptions
+        .map((p) => {
+          const checked = selectedPrograms.has(p) ? "checked" : "";
+          return `
+            <label class="flex items-start gap-3 rounded-2xl border border-border bg-surface px-4 py-4 hover:bg-primary-muted transition-colors cursor-pointer">
+              <input type="checkbox" value="${p}" ${checked} class="mt-1" style="accent-color: var(--color-primary);" />
+              <div>
+                <p class="font-medium text-ink">${p}</p>
+                <p class="mt-1 text-sm text-ink-2">Eligible program for this cycle.</p>
+              </div>
+            </label>
+          `;
+        })
+        .join("");
+
+      els.panel.innerHTML = `
+        <div class="wizard-panel" data-step="1">
+          <h2 class="font-display text-3xl text-primary">Select program(s)</h2>
+          <p class="mt-2 text-ink-2">You may select more than one program for the same attempt window.</p>
+
+          <div class="mt-6 grid gap-3 sm:grid-cols-2">${options}</div>
+        </div>
+      `;
+
+      els.panel.querySelectorAll("input[type=checkbox]").forEach((cb) => {
+        cb.addEventListener("change", () => {
+          const v = cb.value;
+          if (cb.checked) selectedPrograms.add(v);
+          else selectedPrograms.delete(v);
+
+          syncControls();
+        });
+      });
+    }
+
+    function capacityTone(ratio) {
+      if (ratio < 0.6) return "bg-success";
+      if (ratio < 0.85) return "bg-warning";
+      return "bg-danger";
+    }
+
+    function renderStep2() {
+      const cards = sessions
+        .slice()
+        .sort((a, b) => (a.date + a.startTime).localeCompare(b.date + b.startTime))
+        .map((s) => {
+          const center = centerById.get(s.centerId);
+          const ratio = Math.min(1, s.enrolled / s.capacity);
+          const full = s.enrolled >= s.capacity;
+          const selected = s.sessionId === selectedSessionId;
+
+          return `
+            <button
+              type="button"
+              data-session-id="${s.sessionId}"
+              ${full ? "disabled" : ""}
+              class="text-left rounded-2xl border border-border bg-surface px-4 py-4 transition-colors
+                     hover:bg-primary-muted hover:text-primary
+                     ${selected ? "ring-2 ring-accent" : ""}
+                     ${full ? "opacity-50 cursor-not-allowed hover:bg-surface hover:text-ink" : ""}"
+            >
+              <div class="flex items-start justify-between gap-3">
+                <div>
+                  <p class="font-medium text-ink">${formatDate(s.date)} · ${s.startTime}–${s.endTime}</p>
+                  <p class="mt-1 text-sm text-ink-2">${center?.name || s.centerId} · ${center?.city || ""}</p>
+                </div>
+                <p class="font-mono text-xs text-ink-3">${full ? "FULL" : s.status.toUpperCase()}</p>
+              </div>
+
+              <div class="mt-4">
+                <div class="flex items-center justify-between text-xs text-ink-3">
+                  <span>${s.enrolled} / ${s.capacity}</span>
+                  <span class="font-mono">${Math.round(ratio * 100)}%</span>
+                </div>
+                <div class="mt-2 h-2 rounded-full bg-surface-sunken overflow-hidden">
+                  <div class="h-full w-full origin-left ${capacityTone(ratio)}" style="transform: scaleX(${ratio});"></div>
+                </div>
+              </div>
+            </button>
+          `;
+        })
+        .join("");
+
+      els.panel.innerHTML = `
+        <div class="wizard-panel" data-step="2">
+          <h2 class="font-display text-3xl text-primary">Pick a session</h2>
+          <p class="mt-2 text-ink-2">Capacity is visualised: green under 60%, amber 60–85%, red above 85%.</p>
+
+          <div class="mt-6 grid gap-3 lg:grid-cols-2">${cards}</div>
+        </div>
+      `;
+
+      els.panel.querySelectorAll("[data-session-id]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          selectedSessionId = btn.getAttribute("data-session-id");
+          renderStep2();
+          syncControls();
+          animatePanelIn(1);
+        });
+      });
+    }
+
+    function renderStep3() {
+      const session = sessions.find((s) => s.sessionId === selectedSessionId);
+      const center = session ? centerById.get(session.centerId) : null;
+
+      els.panel.innerHTML = `
+        <div class="wizard-panel" data-step="3">
+          <h2 class="font-display text-3xl text-primary">Confirm booking</h2>
+          <p class="mt-2 text-ink-2">Review the selections below. Confirmation updates local demo state only.</p>
+
+          <div class="mt-6 grid gap-4 md:grid-cols-2">
+            <div class="rounded-2xl border border-border bg-surface px-5 py-5">
+              <p class="font-mono text-xs uppercase track-md text-ink-3">Programs</p>
+              <div class="mt-3 flex flex-wrap gap-2">
+                ${Array.from(selectedPrograms)
+                  .map((p) => Badge(p, { tone: "primary" }))
+                  .join("")}
+              </div>
+            </div>
+
+            <div class="rounded-2xl border border-border bg-surface px-5 py-5">
+              <p class="font-mono text-xs uppercase track-md text-ink-3">Session</p>
+              <p class="mt-3 font-medium text-ink">${session ? `${formatDate(session.date)} · ${session.startTime}–${session.endTime}` : "—"}</p>
+              <p class="mt-1 text-sm text-ink-2">${center?.name || "—"}</p>
+              <p class="mt-1 text-sm text-ink-2">${center?.address || ""}</p>
+            </div>
+          </div>
+
+          <div class="mt-6 rounded-2xl border border-border bg-surface-sunken px-5 py-5">
+            <p class="font-mono text-xs uppercase track-md text-ink-3">Policy</p>
+            <p class="mt-2 text-sm text-ink-2">
+              Arrive 30 minutes early with a valid photo ID. Late arrivals may be marked no-show at proctor discretion.
+            </p>
+          </div>
+        </div>
+      `;
+    }
+
+    function syncControls() {
+      const canGoBack = step > 1;
+      els.back.disabled = !canGoBack;
+      els.back.classList.toggle("opacity-50", !canGoBack);
+      els.back.classList.toggle("cursor-not-allowed", !canGoBack);
+
+      let canContinue = true;
+      if (step === 1) canContinue = selectedPrograms.size > 0;
+      if (step === 2) canContinue = Boolean(selectedSessionId);
+
+      els.next.disabled = !canContinue;
+      els.next.classList.toggle("opacity-50", !canContinue);
+      els.next.classList.toggle("cursor-not-allowed", !canContinue);
+
+      els.next.textContent = step === 3 ? "Confirm booking" : "Continue";
+    }
+
+    function render(dir = 1) {
+      renderCandidateSummary();
+      renderStepRail();
+
+      if (step === 1) renderStep1();
+      if (step === 2) renderStep2();
+      if (step === 3) renderStep3();
+
+      syncControls();
+      animatePanelIn(dir);
+    }
+
+    els.back.addEventListener("click", () => {
+      if (step <= 1) return;
+      step -= 1;
+      render(-1);
+    });
+
+    els.next.addEventListener("click", () => {
+      if (els.next.disabled) return;
+
+      if (step < 3) {
+        step += 1;
+        render(1);
+        return;
+      }
+
+      store.setState({ activeSessionId: selectedSessionId });
+      location.hash = `#/hall-ticket/${candidate.applicationId}`;
+    });
+
+    render(1);
+  })();
+</script>

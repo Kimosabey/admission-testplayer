@@ -1,9 +1,31 @@
 <div class="p-8 max-w-5xl mx-auto" data-page="hall-ticket">
-  <h1 class="font-display text-4xl text-primary mb-2">Hall Ticket</h1>
-  <p class="text-ink-2 mb-8">Week 4 deliverable. Placeholder for print-quality ticket + QR.</p>
+  <header class="mb-8">
+    <p class="font-mono text-xs uppercase track-xxl text-ink-3">HALL TICKET</p>
+    <h1 class="mt-2 font-display text-4xl text-primary">Hall Ticket</h1>
+    <p class="mt-3 text-ink-2">
+      Week 4 will render the print-quality ticket + QR. For now, this page confirms routing and URL params.
+    </p>
+  </header>
 
   <div class="card">
-    <h2 class="card-title">Coming soon</h2>
-    <p class="card-subtitle">Loads hall-tickets.json by URL param. QRCode.js + print stylesheet.</p>
+    <h2 class="card-title">Placeholder</h2>
+    <p class="card-subtitle">Application ID from route:</p>
+
+    <p class="mt-4 font-mono text-sm text-ink-2">
+      <span class="text-ink-3">APP</span>
+      <span id="ht-appid">—</span>
+    </p>
+
+    <p class="mt-6 text-sm text-ink-2">
+      Next: load <span class="font-mono text-xs">hall-tickets.json</span> and <span class="font-mono text-xs">candidates.json</span> by this param.
+    </p>
   </div>
 </div>
+
+<script data-page-init type="text/javascript">
+  (function () {
+    const el = document.getElementById("ht-appid");
+    if (!el) return;
+    el.textContent = window.__route?.params?.id || "(none)";
+  })();
+</script>

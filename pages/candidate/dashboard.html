@@ -1,120 +1,194 @@
 <div class="p-8 max-w-6xl mx-auto" data-page="dashboard">
   <header class="mb-10">
-    <p class="font-mono text-xs tracking-[0.32em] text-ink-3">ADMISSION TEST PLATFORM</p>
-    <h1 class="mt-2 font-display text-5xl text-primary">Institutional Precision</h1>
+    <p class="font-mono text-xs uppercase track-xxl text-ink-3">CANDIDATE</p>
+    <h1 class="mt-2 font-display text-5xl text-primary">My Dashboard</h1>
     <p class="mt-4 max-w-2xl text-ink-2">
-      Shell + router + persona navigation are live. This dashboard is the week-1 runway migrated into the SPA flow.
+      Upcoming session, attempt history, and status timeline. Use the Booking flow to change the active session.
     </p>
   </header>
 
-  <section class="grid gap-6 md:grid-cols-2">
-    <article class="card">
-      <h2 class="card-title">Navigation shell</h2>
-      <p class="card-subtitle">
-        Persona-aware routes, sticky top bar, and a mobile-collapsible sidebar. All page content is fetched as partial HTML.
-      </p>
-      <div class="mt-6 flex flex-wrap gap-2">
-        <span class="badge">Hash router</span>
-        <span class="badge">Static JSON</span>
-        <span class="badge badge-mono">CDN only</span>
-      </div>
-    </article>
-
-    <article class="card">
-      <h2 class="card-title">Scroll validation</h2>
-      <p class="card-subtitle">
-        Lenis owns scroll. GSAP owns RAF. ScrollTrigger instances are killed on every navigation.
-      </p>
-      <div class="mt-6 grid grid-cols-2 gap-3">
-        <div class="stat">
-          <div class="stat-k">Lerp</div>
-          <div class="stat-v">0.08</div>
-        </div>
-        <div class="stat">
-          <div class="stat-k">autoRaf</div>
-          <div class="stat-v">false</div>
-        </div>
-        <div class="stat">
-          <div class="stat-k">Ticker</div>
-          <div class="stat-v">GSAP</div>
-        </div>
-        <div class="stat">
-          <div class="stat-k">Theme</div>
-          <div class="stat-v">Tokens</div>
-        </div>
-      </div>
-    </article>
+  <section class="grid gap-6 lg:grid-cols-3">
+    <article class="card lg:col-span-2 dash-card" id="upcoming-card"></article>
+    <article class="card dash-card" id="timeline-card"></article>
   </section>
 
-  <section class="mt-12">
-    <div class="flex items-end justify-between gap-4">
-      <h2 class="font-display text-3xl text-primary">System cards</h2>
-      <p class="text-sm text-ink-3">Aesthetic: authoritative, editorial, restrained motion.</p>
-    </div>
-
-    <div class="mt-6 grid gap-4 md:grid-cols-3">
-      <div class="card card-compact">
-        <h3 class="card-title-sm">Booking</h3>
-        <p class="card-body">3-step wizard with capacity cues and a clear policy stance.</p>
-      </div>
-      <div class="card card-compact">
-        <h3 class="card-title-sm">QBMS</h3>
-        <p class="card-body">Lifecycle columns with disciplined status language.</p>
-      </div>
-      <div class="card card-compact">
-        <h3 class="card-title-sm">NOC</h3>
-        <p class="card-body">Pinned stats, live health grid, alert triage.</p>
-      </div>
-    </div>
-  </section>
-
-  <section class="mt-12">
-    <h2 class="font-display text-3xl text-primary">Long form</h2>
-    <p class="mt-3 max-w-3xl text-ink-2">
-      Week 2 focuses on architecture: routing, store, and reusable components. Week 3 begins real candidate flows.
-    </p>
-
-    <div class="mt-8 space-y-4">
-      <div class="prose-block">
-        <h3 class="prose-title">Operational seriousness</h3>
-        <p class="prose-body">
-          Every surface should feel like it belongs in a national exam control room: decisive layout, tight hierarchy,
-          mono for identifiers, and saturation reserved for state.
-        </p>
-      </div>
-      <div class="prose-block">
-        <h3 class="prose-title">Information density</h3>
-        <p class="prose-body">
-          Scan-first design. Borders and spacing do the work. Don’t decorate what you can label.
-        </p>
-      </div>
-      <div class="prose-block">
-        <h3 class="prose-title">Motion restraint</h3>
-        <p class="prose-body">
-          Only transform and opacity. Scroll-linked motion is GSAP + ScrollTrigger; UI state uses lightweight CSS.
-        </p>
-      </div>
-    </div>
-
-    <div class="mt-10 grid gap-3">
-      <div class="divider"></div>
-      <p class="font-mono text-xs text-ink-3">END OF RUNWAY</p>
-      <div class="h-[55vh]"></div>
-    </div>
-  </section>
+  <section class="mt-6 card dash-card" id="attempts-card"></section>
 </div>
 
 <script data-page-init type="text/javascript">
   (async function () {
-    const { fetchData } = await import("/js/utils.js");
-    const { store } = await import("/js/store.js");
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    try {
-      const alerts = await fetchData("alerts");
+    const { fetchData, formatDate } = await import("/js/utils.js");
+    const { store } = await import("/js/store.js");
+    const { StatusPill } = await import("/components/status-pill.js");
+
+    const root = document.querySelector('[data-page="dashboard"]');
+    if (!root) return;
+
+    const upcomingEl = root.querySelector("#upcoming-card");
+    const timelineEl = root.querySelector("#timeline-card");
+    const attemptsEl = root.querySelector("#attempts-card");
+
+    const [candidates, sessions, centers, scores, alerts] = await Promise.all([
+      fetchData("candidates"),
+      fetchData("sessions"),
+      fetchData("centers"),
+      fetchData("scores"),
+      fetchData("alerts").catch(() => []),
+    ]);
+
+    if (alerts?.length) {
       const unresolved = alerts.filter((a) => !a.resolved).length;
       store.setState({ alertCount: unresolved });
-    } catch {
-      // no-op
+    }
+
+    const state = store.getState();
+    let candidate = candidates.find((c) => c.applicationId === state.candidateId) || candidates[0];
+    if (!candidate) return;
+
+    if (candidate.applicationId !== state.candidateId) {
+      store.setState({ candidateId: candidate.applicationId });
+    }
+
+    const sessionId = state.activeSessionId || candidate.sessionId;
+    const session =
+      sessions.find((s) => s.sessionId === sessionId) ||
+      sessions.find((s) => s.sessionId === candidate.sessionId);
+    const center = session ? centers.find((c) => c.centerId === session.centerId) : null;
+
+    upcomingEl.innerHTML = `
+      <div class="flex items-start justify-between gap-4">
+        <div>
+          <p class="font-mono text-xs uppercase track-md text-ink-3">Upcoming session</p>
+          <h2 class="mt-2 font-display text-3xl text-primary">${session ? formatDate(session.date) : "—"}</h2>
+          <p class="mt-2 text-ink-2">${session ? `${session.startTime}–${session.endTime}` : ""}</p>
+          <p class="mt-1 text-ink-2">${center ? `${center.name} · ${center.city}` : ""}</p>
+        </div>
+
+        <div class="flex flex-col items-end gap-2">
+          ${StatusPill(candidate.status)}
+          <p class="font-mono text-xs text-ink-3">${candidate.applicationId}</p>
+        </div>
+      </div>
+
+      <div class="mt-6 grid gap-3 sm:grid-cols-3">
+        <div class="rounded-2xl border border-border bg-surface px-4 py-4">
+          <p class="font-mono text-xs uppercase track-md text-ink-3">Programs</p>
+          <p class="mt-2 text-ink-2">${(candidate.programs || []).join(", ")}</p>
+        </div>
+        <div class="rounded-2xl border border-border bg-surface px-4 py-4">
+          <p class="font-mono text-xs uppercase track-md text-ink-3">Cycle</p>
+          <p class="mt-2 text-ink-2">${candidate.cycle}</p>
+        </div>
+        <div class="rounded-2xl border border-border bg-surface px-4 py-4">
+          <p class="font-mono text-xs uppercase track-md text-ink-3">Attempt</p>
+          <p class="mt-2 text-ink-2">${candidate.attemptCount}</p>
+        </div>
+      </div>
+
+      <div class="mt-6 flex flex-wrap items-center gap-3">
+        <a
+          href="#/booking"
+          class="inline-flex items-center gap-2 h-10 px-4 rounded-xl border border-border bg-surface
+                 hover:bg-primary-muted hover:text-primary transition-colors"
+        >
+          <span class="opacity-70">◉</span>
+          Book / Change session
+        </a>
+        <a
+          href="#/hall-ticket/${candidate.applicationId}"
+          class="inline-flex items-center gap-2 h-10 px-4 rounded-xl border border-border bg-primary hover:bg-primary-light transition-colors"
+          style="color: var(--color-text-inverse);"
+        >
+          <span class="opacity-80">◧</span>
+          View hall ticket
+        </a>
+      </div>
+    `;
+
+    const ordered = ["booked", "checked-in", "in-progress", "completed", "no-show"];
+    const currentIdx = Math.max(0, ordered.indexOf(candidate.status));
+
+    timelineEl.innerHTML = `
+      <p class="font-mono text-xs uppercase track-md text-ink-3">Status timeline</p>
+      <h2 class="mt-2 font-display text-2xl text-primary">${candidate.status.replace(/-/g, " ")}</h2>
+
+      <div class="mt-6 space-y-3">
+        ${ordered
+          .map((s, idx) => {
+            const done = idx < currentIdx && candidate.status !== "no-show";
+            const active = idx === currentIdx;
+            const dot = done ? "bg-primary" : active ? "bg-accent" : "bg-border";
+            const label = done ? "text-ink" : active ? "text-primary" : "text-ink-3";
+            return `
+              <div class="flex items-start gap-3">
+                <span class="mt-1.5 h-2.5 w-2.5 rounded-full ${dot}"></span>
+                <div>
+                  <p class="text-sm font-medium ${label}">${s.replace(/-/g, " ")}</p>
+                  <p class="text-xs text-ink-3 font-mono">${idx === currentIdx ? "current" : done ? "complete" : "pending"}</p>
+                </div>
+              </div>
+            `;
+          })
+          .join("")}
+      </div>
+    `;
+
+    const rows = scores
+      .filter((s) => s.applicationId === candidate.applicationId)
+      .slice()
+      .sort((a, b) => (a.attempt || 0) - (b.attempt || 0));
+
+    attemptsEl.innerHTML = `
+      <div class="flex items-start justify-between gap-4">
+        <div>
+          <p class="font-mono text-xs uppercase track-md text-ink-3">Attempt history</p>
+          <h2 class="mt-2 font-display text-3xl text-primary">Scores</h2>
+        </div>
+        <p class="text-sm text-ink-3">${rows.length} record(s)</p>
+      </div>
+
+      <div class="mt-6 grid gap-3">
+        ${
+          rows.length
+            ? rows
+                .map((r) => {
+                  const sections = (r.sectionScores || [])
+                    .map((x) => `${x.section}: ${x.score}/${x.max}`)
+                    .join(" · ");
+
+                  return `
+                    <div class="rounded-2xl border border-border bg-surface px-5 py-4">
+                      <div class="flex items-start justify-between gap-4">
+                        <div>
+                          <p class="font-medium text-ink">${r.program} · Attempt ${r.attempt}</p>
+                          <p class="mt-1 text-sm text-ink-2">${sections || "—"}</p>
+                        </div>
+                        <div class="text-right">
+                          <p class="font-mono text-lg text-ink">${r.totalScore}</p>
+                          <p class="mt-1 text-xs text-ink-3 font-mono">CRM: ${r.exportedToCRM ? "exported" : "pending"}</p>
+                        </div>
+                      </div>
+                    </div>
+                  `;
+                })
+                .join("")
+            : `
+              <div class="rounded-2xl border border-border bg-surface-sunken px-5 py-5">
+                <p class="text-sm text-ink-2">No score records found for this candidate.</p>
+              </div>
+            `
+        }
+      </div>
+    `;
+
+    if (!prefersReducedMotion && window.gsap) {
+      window.gsap.fromTo(
+        root.querySelectorAll(".dash-card"),
+        { opacity: 0, y: 18 },
+        { opacity: 1, y: 0, duration: 0.6, ease: "power2.out", stagger: 0.08 },
+      );
     }
   })();
 </script>

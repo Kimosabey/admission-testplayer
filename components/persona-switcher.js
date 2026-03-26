@@ -18,7 +18,7 @@ export function mountPersonaSwitcher(mountEl, { compact = false } = {}) {
 
   mountEl.innerHTML = `
     <label class="flex items-center gap-2" aria-label="Persona">
-      <span class="hidden lg:inline text-xs tracking-[0.2em] text-ink-3 font-mono">ROLE</span>
+      <span class="hidden lg:inline text-xs track-lg text-ink-3 font-mono">ROLE</span>
       <select
         class="h-9 rounded-xl border border-border bg-surface px-3 text-sm text-ink-2 shadow-sm
                focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-0"

@@ -49,7 +49,7 @@ export function buildTable({ columns, rows, tableClass = "" }) {
 
   columns.forEach((col) => {
     const th = document.createElement("th");
-    th.className = "px-4 py-3 text-left text-xs font-mono tracking-[0.18em] text-ink-3";
+    th.className = "px-4 py-3 text-left text-xs font-mono track-md text-ink-3";
     th.setAttribute("scope", "col");
     th.setAttribute("data-key", col.key);
     th.setAttribute("aria-sort", "none");

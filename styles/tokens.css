@@ -109,6 +109,15 @@ body {
   border-color: var(--color-border-strong) !important;
 }
 
+.bg-border {
+  background-color: var(--color-border) !important;
+}
+
+.bg-border-strong {
+  background-color: var(--color-border-strong) !important;
+}
+
+
 /* Test player must be chrome-less (sidebar/navbar hidden). */
 [data-chrome="hidden"] #navbar-mount,
 [data-chrome="hidden"] #sidebar-mount {

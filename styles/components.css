@@ -104,3 +104,28 @@
     transparent
   );
 }
+
+.track-xxl {
+  letter-spacing: 0.32em;
+}
+
+.track-xl {
+  letter-spacing: 0.28em;
+}
+
+.track-lg {
+  letter-spacing: 0.2em;
+}
+
+.track-md {
+  letter-spacing: 0.18em;
+}
+
+.track-sm {
+  letter-spacing: 0.14em;
+}
+
+.track-xs {
+  letter-spacing: 0.12em;
+}
+
