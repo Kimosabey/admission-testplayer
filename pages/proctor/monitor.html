@@ -1,9 +1,390 @@
-<div class="p-8 max-w-6xl mx-auto" data-page="monitor">
-  <h1 class="font-display text-4xl text-primary mb-2">Monitor</h1>
-  <p class="text-ink-2 mb-8">Week 7 deliverable. Placeholder for seat grid + incident log.</p>
+<div class="p-8 max-w-screen-2xl mx-auto" data-page="monitor">
+  <header class="mb-8">
+    <p class="font-mono text-xs uppercase track-xxl text-ink-3">PROCTOR</p>
+    <div class="mt-2 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+      <div>
+        <h1 class="font-display text-4xl text-primary">Monitor</h1>
+        <p class="mt-2 max-w-2xl text-ink-2">Seat grid by candidate status, plus incident capture (local demo state).</p>
+      </div>
+      <a
+        href="#/check-in"
+        class="inline-flex items-center gap-2 h-10 px-4 rounded-xl border border-border bg-surface hover:bg-primary-muted hover:text-primary transition-colors"
+      >
+        <span class="opacity-70">◱</span>
+        Check-in
+      </a>
+    </div>
+  </header>
 
-  <div class="card">
-    <h2 class="card-title">Coming soon</h2>
-    <p class="card-subtitle">CSS seat map with status colors, hover tooltips, and incident capture.</p>
-  </div>
+  <section class="flex flex-col gap-6 xl:flex-row">
+    <article class="card xl:flex-1" aria-label="Seat map">
+      <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p class="font-mono text-xs uppercase track-xl text-ink-3">Seat grid</p>
+          <p class="mt-2 text-sm text-ink-2">Hover for details. Click a seat to prefill incident form.</p>
+        </div>
+
+        <div class="grid gap-3 sm:grid-cols-2 sm:items-end">
+          <label class="block">
+            <span class="font-mono text-xs uppercase track-md text-ink-3">Session</span>
+            <select id="mon-session" class="mt-2 w-full h-10 rounded-xl border border-border bg-surface px-3 text-sm text-ink-2"></select>
+          </label>
+
+          <div>
+            <p class="font-mono text-xs uppercase track-md text-ink-3">Legend</p>
+            <div class="mt-2 flex flex-wrap items-center gap-2">
+              <span class="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-3 py-1 text-xs text-ink-2">
+                <span class="h-2.5 w-2.5 rounded-full bg-info"></span>
+                booked
+              </span>
+              <span class="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-3 py-1 text-xs text-ink-2">
+                <span class="h-2.5 w-2.5 rounded-full bg-primary"></span>
+                checked-in
+              </span>
+              <span class="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-3 py-1 text-xs text-ink-2">
+                <span class="h-2.5 w-2.5 rounded-full bg-warning"></span>
+                in-progress
+              </span>
+              <span class="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-3 py-1 text-xs text-ink-2">
+                <span class="h-2.5 w-2.5 rounded-full bg-success"></span>
+                completed
+              </span>
+              <span class="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-3 py-1 text-xs text-ink-2">
+                <span class="h-2.5 w-2.5 rounded-full bg-danger"></span>
+                no-show
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-6 rounded-2xl border border-border bg-surface-sunken overflow-hidden">
+        <div class="px-5 py-4 border-b border-border flex items-center justify-between gap-4">
+          <p class="font-mono text-xs uppercase track-md text-ink-3">Occupancy</p>
+          <p class="text-sm text-ink-2"><span id="mon-count" class="font-mono text-xs">—</span> candidates</p>
+        </div>
+
+        <div class="p-5 overflow-x-auto">
+          <div id="seat-map" class="grid gap-2" aria-label="Seat map"></div>
+        </div>
+      </div>
+    </article>
+
+    <aside class="grid gap-6 xl:w-96 xl:shrink-0">
+      <div class="card" aria-label="Incident log">
+        <div>
+          <p class="font-mono text-xs uppercase track-xl text-ink-3">Incident log</p>
+          <p class="mt-2 text-sm text-ink-2">Local demo incidents (stored in localStorage).</p>
+        </div>
+
+        <form id="inc-form" class="mt-6 grid gap-4">
+          <div class="grid gap-4 sm:grid-cols-2">
+            <label class="block">
+              <span class="font-mono text-xs uppercase track-md text-ink-3">Seat</span>
+              <input id="inc-seat" type="text" placeholder="D-07" class="mt-2 w-full h-10 rounded-xl border border-border bg-surface px-3 text-sm text-ink-2" />
+            </label>
+            <label class="block">
+              <span class="font-mono text-xs uppercase track-md text-ink-3">Candidate</span>
+              <input id="inc-app" type="text" placeholder="APP-2024-00001" class="mt-2 w-full h-10 rounded-xl border border-border bg-surface px-3 text-sm text-ink-2" />
+            </label>
+          </div>
+
+          <div class="grid gap-4 sm:grid-cols-2">
+            <label class="block">
+              <span class="font-mono text-xs uppercase track-md text-ink-3">Type</span>
+              <select id="inc-type" class="mt-2 w-full h-10 rounded-xl border border-border bg-surface px-3 text-sm text-ink-2">
+                <option value="">Select</option>
+                <option value="identity">Identity mismatch</option>
+                <option value="connectivity">Connectivity</option>
+                <option value="noise">Noise / disturbance</option>
+                <option value="device">Prohibited device</option>
+                <option value="other">Other</option>
+              </select>
+            </label>
+
+            <label class="block">
+              <span class="font-mono text-xs uppercase track-md text-ink-3">Severity</span>
+              <select id="inc-sev" class="mt-2 w-full h-10 rounded-xl border border-border bg-surface px-3 text-sm text-ink-2">
+                <option value="info">info</option>
+                <option value="warning">warning</option>
+                <option value="critical">critical</option>
+              </select>
+            </label>
+          </div>
+
+          <label class="block">
+            <span class="font-mono text-xs uppercase track-md text-ink-3">Notes</span>
+            <textarea id="inc-notes" rows="3" class="mt-2 w-full rounded-xl border border-border bg-surface px-3 py-2 text-sm text-ink-2" placeholder="Describe the incident…"></textarea>
+          </label>
+
+          <div class="flex items-center justify-end gap-3">
+            <button
+              id="inc-clear"
+              type="button"
+              class="h-10 px-4 rounded-xl border border-border bg-surface hover:bg-primary-muted hover:text-primary transition-colors"
+            >
+              Clear
+            </button>
+            <button
+              type="submit"
+              class="h-10 px-4 rounded-xl border border-border bg-primary hover:bg-primary-light transition-colors"
+              style="color: var(--color-text-inverse);"
+            >
+              Log incident
+            </button>
+          </div>
+        </form>
+
+        <div class="mt-6 divider"></div>
+
+        <div class="mt-6">
+          <div class="flex items-center justify-between gap-4">
+            <p class="font-mono text-xs uppercase track-md text-ink-3">Recent</p>
+            <p class="font-mono text-xs text-ink-3"><span id="inc-count">—</span> items</p>
+          </div>
+          <div id="inc-list" class="mt-4 grid gap-3"></div>
+        </div>
+      </div>
+    </aside>
+  </section>
 </div>
+
+<script data-page-init type="text/javascript">
+  (async function () {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const { fetchData, formatDate, formatRelativeTime } = await import('/js/utils.js');
+    const { store } = await import('/js/store.js');
+    const { StatusPill } = await import('/components/status-pill.js');
+
+    const root = document.querySelector('[data-page="monitor"]');
+    if (!root) return;
+
+    const els = {
+      session: root.querySelector('#mon-session'),
+      seatMap: root.querySelector('#seat-map'),
+      count: root.querySelector('#mon-count'),
+
+      form: root.querySelector('#inc-form'),
+      seat: root.querySelector('#inc-seat'),
+      app: root.querySelector('#inc-app'),
+      type: root.querySelector('#inc-type'),
+      sev: root.querySelector('#inc-sev'),
+      notes: root.querySelector('#inc-notes'),
+      clear: root.querySelector('#inc-clear'),
+      incCount: root.querySelector('#inc-count'),
+      incList: root.querySelector('#inc-list'),
+    };
+
+    const [candidates, sessions, centers] = await Promise.all([
+      fetchData('candidates'),
+      fetchData('sessions'),
+      fetchData('centers'),
+    ]);
+
+    const centerById = new Map(centers.map((c) => [c.centerId, c]));
+
+    const STATUS_KEY = 'atp_candidate_status';
+    const INCIDENT_KEY = 'atp_incidents';
+
+    function readJSON(key, fallback) {
+      try {
+        const raw = localStorage.getItem(key);
+        const parsed = raw ? JSON.parse(raw) : fallback;
+        return parsed ?? fallback;
+      } catch {
+        return fallback;
+      }
+    }
+
+    function writeJSON(key, value) {
+      localStorage.setItem(key, JSON.stringify(value));
+    }
+
+    function statusFor(c, statusMap) {
+      return statusMap[c.applicationId] || c.status;
+    }
+
+    let activeSessionId = store.getState().activeSessionId || sessions[0]?.sessionId || null;
+
+    function sessionLabel(s) {
+      const c = centerById.get(s.centerId);
+      return `${formatDate(s.date)} · ${s.startTime}–${s.endTime} · ${c?.city || ''}`;
+    }
+
+    function renderSessionSelect() {
+      const ordered = sessions
+        .slice()
+        .sort((a, b) => (a.date + a.startTime).localeCompare(b.date + b.startTime));
+
+      if (!activeSessionId) activeSessionId = ordered[0]?.sessionId || null;
+
+      els.session.innerHTML = ordered
+        .map((s) => `<option value="${s.sessionId}" ${s.sessionId === activeSessionId ? 'selected' : ''}>${sessionLabel(s)}</option>`)
+        .join('');
+    }
+
+    function seatStyle(status) {
+      const base = 'h-10 w-10 rounded-xl border flex items-center justify-center font-mono text-xs transition-colors';
+      if (status === 'checked-in') return `${base} bg-primary-muted border-primary text-primary`;
+      if (status === 'in-progress') return `${base} bg-warning-muted border-warning text-warning`;
+      if (status === 'completed') return `${base} bg-success-muted border-success text-success`;
+      if (status === 'no-show') return `${base} bg-danger-muted border-danger text-danger`;
+      if (status === 'booked') return `${base} bg-info-muted border-info text-info`;
+      return `${base} bg-surface border-border text-ink-3`;
+    }
+
+    function parseSeat(seat) {
+      if (!seat) return null;
+      const m = String(seat).match(/^([A-Z])\s*[- ]\s*(\d+)$/);
+      if (!m) return null;
+      return { row: m[1], n: Number(m[2]) };
+    }
+
+    function renderSeatMap() {
+      const statusMap = readJSON(STATUS_KEY, {});
+      const roster = candidates.filter((c) => c.sessionId === activeSessionId);
+      els.count.textContent = String(roster.length);
+
+      const seatToCandidate = new Map();
+      roster.forEach((c) => seatToCandidate.set(c.seatNumber, c));
+
+      const parsed = roster.map((c) => parseSeat(c.seatNumber)).filter(Boolean);
+      const rows = Array.from(new Set(parsed.map((x) => x.row))).sort();
+      const maxSeat = Math.max(12, ...parsed.map((x) => x.n));
+
+      els.seatMap.innerHTML = rows
+        .map((row) => {
+          const cells = [];
+          for (let i = 1; i <= maxSeat; i += 1) {
+            const seat = `${row}-${String(i).padStart(2, '0')}`;
+            const c = seatToCandidate.get(seat);
+            const st = c ? statusFor(c, statusMap) : 'empty';
+            const label = `${row}-${String(i).padStart(2, '0')}`;
+
+            if (!c) {
+              cells.push(`
+                <div class="relative group">
+                  <button type="button" class="${seatStyle('empty')}" data-seat="${label}" aria-label="${label}">${i}</button>
+                </div>
+              `);
+              continue;
+            }
+
+            const tooltip = `
+              <div class="pointer-events-none absolute left-1/2 -translate-x-1/2 top-full mt-2 w-56 z-10
+                          rounded-2xl border border-border bg-surface px-4 py-3 shadow-sm
+                          opacity-0 group-hover:opacity-100 transition-opacity">
+                <p class="font-mono text-xs text-ink-3">${c.applicationId}</p>
+                <p class="mt-1 font-medium text-ink">${c.name}</p>
+                <div class="mt-2">${StatusPill(st, 'sm')}</div>
+              </div>
+            `;
+
+            cells.push(`
+              <div class="relative group">
+                <button type="button" class="${seatStyle(st)}" data-seat="${label}" data-appid="${c.applicationId}" aria-label="${label} ${c.name}">${i}</button>
+                ${tooltip}
+              </div>
+            `);
+          }
+
+          return `
+            <div class="grid gap-2" style="grid-template-columns: 3rem repeat(${maxSeat}, 2.5rem); align-items: center;">
+              <div class="h-10 w-12 rounded-xl border border-border bg-surface flex items-center justify-center font-mono text-xs text-ink-3">${row}</div>
+              ${cells.join('')}
+            </div>
+          `;
+        })
+        .join('');
+
+      els.seatMap.querySelectorAll('[data-seat][data-appid]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          els.seat.value = btn.getAttribute('data-seat');
+          els.app.value = btn.getAttribute('data-appid');
+          els.notes.focus();
+        });
+      });
+
+      if (!prefersReducedMotion && window.gsap) {
+        window.gsap.fromTo(
+          els.seatMap.querySelectorAll('button'),
+          { opacity: 0, y: 10 },
+          { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out', stagger: 0.006 },
+        );
+      }
+    }
+
+    function incidentRow(i) {
+      const t = new Date(i.timestamp);
+      return `
+        <div class="rounded-2xl border border-border bg-surface px-4 py-4">
+          <div class="flex items-start justify-between gap-4">
+            <div>
+              <p class="font-mono text-xs text-ink-3">${i.seat || '—'} · ${i.applicationId || '—'}</p>
+              <p class="mt-1 font-medium text-ink">${i.type || 'incident'}</p>
+              <p class="mt-2 text-sm text-ink-2">${i.notes || '—'}</p>
+            </div>
+            <div class="text-right">
+              ${StatusPill(i.severity || 'info', 'sm')}
+              <p class="mt-2 font-mono text-xs text-ink-3">${formatRelativeTime(t)}</p>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderIncidents() {
+      const all = readJSON(INCIDENT_KEY, []);
+      const list = Array.isArray(all) ? all.filter((x) => x.sessionId === activeSessionId) : [];
+      els.incCount.textContent = String(list.length);
+      els.incList.innerHTML = list.slice(0, 20).map(incidentRow).join('') || `<p class="text-sm text-ink-3">No incidents.</p>`;
+    }
+
+    function clearForm() {
+      els.seat.value = '';
+      els.app.value = '';
+      els.type.value = '';
+      els.sev.value = 'info';
+      els.notes.value = '';
+    }
+
+    els.form.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const type = els.type.value;
+      if (!type) return;
+
+      const next = {
+        id: `INC-${Date.now().toString(36).toUpperCase()}`,
+        sessionId: activeSessionId,
+        seat: els.seat.value.trim(),
+        applicationId: els.app.value.trim(),
+        type,
+        severity: els.sev.value,
+        notes: els.notes.value.trim(),
+        timestamp: new Date().toISOString(),
+      };
+
+      const all = readJSON(INCIDENT_KEY, []);
+      const list = Array.isArray(all) ? all : [];
+      writeJSON(INCIDENT_KEY, [next, ...list].slice(0, 50));
+
+      clearForm();
+      renderIncidents();
+    });
+
+    els.clear.addEventListener('click', clearForm);
+
+    els.session.addEventListener('change', () => {
+      activeSessionId = els.session.value;
+      store.setState({ activeSessionId });
+      renderSeatMap();
+      renderIncidents();
+    });
+
+    renderSessionSelect();
+    renderSeatMap();
+    renderIncidents();
+  })();
+</script>

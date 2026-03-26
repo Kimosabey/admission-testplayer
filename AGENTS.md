@@ -1238,10 +1238,10 @@ export const store = {
 
 **Goal:** Proctor check-in flow and live seat grid.
 
-- [ ] `pages/proctor/check-in.html` — candidate search (live filter as user types), verify card, "Mark Checked-In" action, QR scan mock
-- [ ] `pages/proctor/monitor.html` — CSS grid seat map, status colors, hover tooltip (CSS), incident log form + list
-- [ ] "Mark Checked-In" updates local data array, GSAP fade-in on status pill change
-- [ ] QR scan: CSS scan-line `@keyframes` animation over SVG camera-outline box
+- [x] `pages/proctor/check-in.html` — candidate search (live filter as user types), verify card, "Mark Checked-In" action, QR scan mock
+- [x] `pages/proctor/monitor.html` — CSS grid seat map, status colors, hover tooltip (CSS), incident log form + list
+- [x] "Mark Checked-In" updates local data array, GSAP fade-in on status pill change
+- [x] QR scan: CSS scan-line `@keyframes` animation over SVG camera-outline box
 
 **Deliverable:** Check-in search works. Seat grid renders correct status colors. Incidents can be logged.
 

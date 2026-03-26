@@ -157,4 +157,39 @@
   animation: pulse 1.4s var(--ease-out) infinite;
 }
 
+@keyframes scanline {
+  0% {
+    transform: translateY(-10%);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.95;
+  }
+  100% {
+    transform: translateY(115%);
+    opacity: 0;
+  }
+}
+
+.scan-frame {
+  position: relative;
+  overflow: hidden;
+}
+
+.scan-frame .scan-line {
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  top: 0;
+  height: 2px;
+  background: var(--color-accent);
+  filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.18));
+  animation: scanline 1.15s linear infinite;
+}
+
+.scan-frame[data-scanning="false"] .scan-line {
+  display: none;
+}
+
+
 

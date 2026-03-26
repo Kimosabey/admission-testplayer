@@ -1,9 +1,385 @@
-<div class="p-8 max-w-6xl mx-auto" data-page="check-in">
-  <h1 class="font-display text-4xl text-primary mb-2">Check-in</h1>
-  <p class="text-ink-2 mb-8">Week 7 deliverable. Placeholder for candidate search + status update.</p>
+<div class="p-8 max-w-screen-2xl mx-auto" data-page="check-in">
+  <header class="mb-8">
+    <p class="font-mono text-xs uppercase track-xxl text-ink-3">PROCTOR</p>
+    <div class="mt-2 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+      <div>
+        <h1 class="font-display text-4xl text-primary">Check-in</h1>
+        <p class="mt-2 max-w-2xl text-ink-2">Search candidates, verify identity, then mark checked-in. QR scan is simulated.</p>
+      </div>
+      <a
+        href="#/monitor"
+        class="inline-flex items-center gap-2 h-10 px-4 rounded-xl border border-border bg-surface hover:bg-primary-muted hover:text-primary transition-colors"
+      >
+        <span class="opacity-70">◲</span>
+        Monitor
+      </a>
+    </div>
+  </header>
 
-  <div class="card">
-    <h2 class="card-title">Coming soon</h2>
-    <p class="card-subtitle">Search, verify, mark checked-in, and QR scan simulation.</p>
-  </div>
+  <section class="flex flex-col gap-6 lg:flex-row">
+    <aside class="card lg:w-96 lg:shrink-0" aria-label="Candidate search">
+      <div class="flex items-start justify-between gap-4">
+        <div>
+          <p class="font-mono text-xs uppercase track-xl text-ink-3">Roster</p>
+          <p class="mt-2 text-sm text-ink-2">Filter by session and search by App ID, name, or seat.</p>
+        </div>
+        <button
+          id="ci-reset"
+          type="button"
+          class="h-9 px-3 rounded-xl border border-border bg-surface hover:bg-primary-muted hover:text-primary transition-colors text-sm"
+        >
+          Reset
+        </button>
+      </div>
+
+      <div class="mt-6 grid gap-4">
+        <div>
+          <p class="font-mono text-xs uppercase track-md text-ink-3">Session</p>
+          <select id="ci-session" class="mt-2 w-full h-10 rounded-xl border border-border bg-surface px-3 text-sm text-ink-2"></select>
+        </div>
+
+        <div>
+          <p class="font-mono text-xs uppercase track-md text-ink-3">Search</p>
+          <input
+            id="ci-search"
+            type="text"
+            placeholder="APP-2024-… / Priya / D-07"
+            class="mt-2 w-full h-10 rounded-xl border border-border bg-surface px-3 text-sm text-ink-2"
+          />
+        </div>
+      </div>
+
+      <div class="mt-6 flex items-center justify-between gap-4">
+        <p class="font-mono text-xs uppercase track-md text-ink-3">Matches</p>
+        <p class="font-mono text-xs text-ink-3"><span id="ci-count">—</span> candidates</p>
+      </div>
+
+      <div id="ci-list" class="mt-4 grid gap-2"></div>
+    </aside>
+
+    <div class="grid gap-6">
+      <article class="card" id="ci-verify" aria-label="Verification card"></article>
+
+      <article class="card" aria-label="QR scan simulation">
+        <div class="flex items-start justify-between gap-4">
+          <div>
+            <p class="font-mono text-xs uppercase track-xl text-ink-3">QR scan</p>
+            <p class="mt-2 text-sm text-ink-2">Simulated scan line over a camera frame.</p>
+          </div>
+          <button
+            id="scan-btn"
+            type="button"
+            class="h-10 px-4 rounded-xl border border-border bg-primary hover:bg-primary-light transition-colors"
+            style="color: var(--color-text-inverse);"
+          >
+            Start scan
+          </button>
+        </div>
+
+        <div class="mt-6 flex flex-col gap-4 md:flex-row md:items-start">
+          <div
+            id="scan-frame"
+            class="scan-frame rounded-2xl border border-border bg-surface-sunken md:w-72 md:shrink-0"
+            data-scanning="false"
+          >
+            <div class="scan-line"></div>
+            <div class="p-4">
+              <div class="rounded-2xl border border-border bg-surface h-44 flex items-center justify-center">
+                <svg width="60" height="60" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="text-ink-3">
+                  <path d="M7 4H6a2 2 0 0 0-2 2v1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                  <path d="M17 4h1a2 2 0 0 1 2 2v1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                  <path d="M7 20H6a2 2 0 0 1-2-2v-1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                  <path d="M17 20h1a2 2 0 0 0 2-2v-1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                  <path d="M8 12h8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                  <path d="M8 9h8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                  <path d="M8 15h8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <p class="font-mono text-xs uppercase track-md text-ink-3">Scan status</p>
+            <p id="scan-status" class="mt-2 text-sm text-ink-2">Idle.</p>
+            <div class="mt-4 rounded-2xl border border-border bg-surface px-4 py-4">
+              <p class="font-mono text-xs uppercase track-md text-ink-3">Hint</p>
+              <p class="mt-2 text-sm text-ink-2">
+                When a candidate is selected, a scan will mark them <span class="font-mono text-xs">checked-in</span>.
+              </p>
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
 </div>
+
+<script data-page-init type="text/javascript">
+  (async function () {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const { fetchData, formatDate } = await import('/js/utils.js');
+    const { store } = await import('/js/store.js');
+    const { StatusPill } = await import('/components/status-pill.js');
+
+    const root = document.querySelector('[data-page="check-in"]');
+    if (!root) return;
+
+    const els = {
+      session: root.querySelector('#ci-session'),
+      search: root.querySelector('#ci-search'),
+      list: root.querySelector('#ci-list'),
+      count: root.querySelector('#ci-count'),
+      verify: root.querySelector('#ci-verify'),
+      reset: root.querySelector('#ci-reset'),
+      scanBtn: root.querySelector('#scan-btn'),
+      scanFrame: root.querySelector('#scan-frame'),
+      scanStatus: root.querySelector('#scan-status'),
+    };
+
+    const [candidates, sessions, centers] = await Promise.all([
+      fetchData('candidates'),
+      fetchData('sessions'),
+      fetchData('centers'),
+    ]);
+
+    const centerById = new Map(centers.map((c) => [c.centerId, c]));
+
+    const STATUS_KEY = 'atp_candidate_status';
+
+    function readStatusMap() {
+      try {
+        const raw = localStorage.getItem(STATUS_KEY);
+        const parsed = raw ? JSON.parse(raw) : {};
+        return parsed && typeof parsed === 'object' ? parsed : {};
+      } catch {
+        return {};
+      }
+    }
+
+    function writeStatusMap(map) {
+      localStorage.setItem(STATUS_KEY, JSON.stringify(map));
+    }
+
+    let statusMap = readStatusMap();
+
+    function statusFor(c) {
+      return statusMap[c.applicationId] || c.status;
+    }
+
+    let activeSessionId =
+      store.getState().activeSessionId || candidates[0]?.sessionId || sessions[0]?.sessionId || null;
+    let selectedAppId = null;
+    let scanning = false;
+
+    function sessionLabel(s) {
+      const c = centerById.get(s.centerId);
+      return `${formatDate(s.date)} · ${s.startTime}–${s.endTime} · ${c?.city || ''} (${s.enrolled}/${s.capacity})`;
+    }
+
+    function renderSessionSelect() {
+      const ordered = sessions
+        .slice()
+        .sort((a, b) => (a.date + a.startTime).localeCompare(b.date + b.startTime));
+
+      if (!activeSessionId) activeSessionId = ordered[0]?.sessionId || null;
+
+      els.session.innerHTML = ordered
+        .map((s) => `<option value="${s.sessionId}" ${s.sessionId === activeSessionId ? 'selected' : ''}>${sessionLabel(s)}</option>`)
+        .join('');
+    }
+
+    function matches(c) {
+      if (activeSessionId && c.sessionId !== activeSessionId) return false;
+
+      const q = els.search.value.trim().toLowerCase();
+      if (!q) return true;
+
+      const hay = [c.applicationId, c.name, c.seatNumber, (c.programs || []).join(' ')]
+        .map((x) => String(x || '').toLowerCase())
+        .join(' ');
+      return hay.includes(q);
+    }
+
+    function listRow(c) {
+      const st = statusFor(c);
+      const active = c.applicationId === selectedAppId;
+
+      return `
+        <button
+          type="button"
+          data-appid="${c.applicationId}"
+          class="ci-row text-left w-full rounded-2xl border border-border px-4 py-4 transition-colors
+                 ${active ? 'bg-primary-muted text-primary' : 'bg-surface hover:bg-primary-muted hover:text-primary'}"
+        >
+          <div class="flex items-start justify-between gap-4">
+            <div>
+              <p class="font-mono text-xs ${active ? 'text-primary' : 'text-ink-3'}">${c.applicationId}</p>
+              <p class="mt-1 font-medium ${active ? 'text-primary' : 'text-ink'}">${c.name}</p>
+              <p class="mt-1 text-xs text-ink-3 font-mono">Seat ${c.seatNumber || '—'}</p>
+            </div>
+            <div class="text-right">
+              ${StatusPill(st, 'sm')}
+              <p class="mt-2 text-xs text-ink-3">${(c.programs || []).join(', ')}</p>
+            </div>
+          </div>
+        </button>
+      `;
+    }
+
+    function renderList() {
+      const filtered = candidates.filter(matches);
+      els.count.textContent = String(filtered.length);
+      els.list.innerHTML = filtered.map(listRow).join('') || `<p class="text-sm text-ink-3">No matches.</p>`;
+
+      els.list.querySelectorAll('[data-appid]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          selectedAppId = btn.getAttribute('data-appid');
+          renderList();
+          renderVerify();
+        });
+      });
+    }
+
+    function verifyCard(c) {
+      const st = statusFor(c);
+      const center = centerById.get(c.centerId);
+      const canCheckIn = st === 'booked';
+
+      return `
+        <div class="flex items-start justify-between gap-4">
+          <div>
+            <p class="font-mono text-xs uppercase track-xl text-ink-3">Verification</p>
+            <h2 class="mt-2 font-display text-3xl text-primary">${c.name}</h2>
+            <p class="mt-2 text-sm text-ink-2">Application <span class="font-mono text-xs">${c.applicationId}</span></p>
+          </div>
+          <div id="ci-status">${StatusPill(st)}</div>
+        </div>
+
+        <div class="mt-6 flex flex-col gap-5 md:flex-row">
+          <div class="rounded-2xl border border-border bg-surface-sunken p-3 md:w-36 md:shrink-0">
+            <img
+              src="${c.photo || '/public/photos/placeholder.svg'}"
+              alt="Candidate photo"
+              class="w-full aspect-[3/4] object-cover rounded-xl border border-border bg-surface"
+              onerror="this.src='/public/photos/placeholder.svg'"
+            />
+            <p class="mt-2 text-xs text-ink-3 font-mono">PHOTO</p>
+          </div>
+
+          <div class="grid gap-3">
+            <div class="rounded-2xl border border-border bg-surface px-5 py-5">
+              <p class="font-mono text-xs uppercase track-md text-ink-3">Seat</p>
+              <p class="mt-2 font-mono text-sm text-ink-2">${c.seatNumber || '—'}</p>
+            </div>
+            <div class="rounded-2xl border border-border bg-surface px-5 py-5">
+              <p class="font-mono text-xs uppercase track-md text-ink-3">Programs</p>
+              <p class="mt-2 text-sm text-ink-2">${(c.programs || []).join(', ') || '—'}</p>
+            </div>
+            <div class="rounded-2xl border border-border bg-surface px-5 py-5">
+              <p class="font-mono text-xs uppercase track-md text-ink-3">Center</p>
+              <p class="mt-2 text-sm text-ink-2">${center ? `${center.name} · ${center.city}` : '—'}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-6 flex items-center justify-end gap-3">
+          <button
+            id="ci-checkin"
+            type="button"
+            class="h-10 px-4 rounded-xl border border-border bg-primary hover:bg-primary-light transition-colors"
+            style="color: var(--color-text-inverse);"
+            ${canCheckIn ? '' : 'disabled'}
+          >
+            Mark Checked-In
+          </button>
+        </div>
+
+        <p class="mt-4 text-xs text-ink-3 font-mono">Last updated: ${new Date().toLocaleString()}</p>
+      `;
+    }
+
+    function renderVerify() {
+      const fallback = candidates.find((x) => x.sessionId === activeSessionId) || candidates[0];
+      const c = candidates.find((x) => x.applicationId === selectedAppId) || fallback;
+      if (!c) return;
+
+      selectedAppId = c.applicationId;
+      els.verify.innerHTML = verifyCard(c);
+
+      const btn = els.verify.querySelector('#ci-checkin');
+      btn?.addEventListener('click', () => {
+        statusMap = { ...statusMap, [c.applicationId]: 'checked-in' };
+        writeStatusMap(statusMap);
+
+        renderList();
+        renderVerify();
+
+        if (!prefersReducedMotion && window.gsap) {
+          const pill = root.querySelector('#ci-status');
+          if (pill) {
+            window.gsap.fromTo(
+              pill,
+              { opacity: 0, y: 10 },
+              { opacity: 1, y: 0, duration: 0.45, ease: 'power2.out' },
+            );
+          }
+        }
+      });
+    }
+
+    async function runScan() {
+      if (scanning) return;
+      scanning = true;
+      els.scanFrame.setAttribute('data-scanning', 'true');
+      els.scanStatus.textContent = 'Scanning…';
+      els.scanBtn.disabled = true;
+      els.scanBtn.classList.add('opacity-50', 'cursor-not-allowed');
+
+      await new Promise((r) => setTimeout(r, 1400));
+
+      const c = candidates.find((x) => x.applicationId === selectedAppId);
+      if (c) {
+        statusMap = { ...statusMap, [c.applicationId]: 'checked-in' };
+        writeStatusMap(statusMap);
+        els.scanStatus.textContent = `Matched ${c.applicationId}. Marked checked-in.`;
+        renderList();
+        renderVerify();
+      } else {
+        els.scanStatus.textContent = 'No candidate selected.';
+      }
+
+      els.scanFrame.setAttribute('data-scanning', 'false');
+      scanning = false;
+      els.scanBtn.disabled = false;
+      els.scanBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+    }
+
+    els.session.addEventListener('change', () => {
+      activeSessionId = els.session.value;
+      store.setState({ activeSessionId });
+      selectedAppId = null;
+      renderList();
+      renderVerify();
+    });
+
+    els.search.addEventListener('input', renderList);
+
+    els.reset.addEventListener('click', () => {
+      els.search.value = '';
+      selectedAppId = null;
+      statusMap = readStatusMap();
+      activeSessionId = store.getState().activeSessionId || activeSessionId;
+      renderSessionSelect();
+      renderList();
+      renderVerify();
+      els.scanStatus.textContent = 'Idle.';
+    });
+
+    els.scanBtn.addEventListener('click', runScan);
+
+    renderSessionSelect();
+    renderList();
+    renderVerify();
+  })();
+</script>
