@@ -277,10 +277,14 @@
           key: 'applicationId',
           label: 'App ID',
           render: (v, row) => `
-            <div class="font-mono text-xs text-ink-3">
-              <span data-appid="${row.applicationId}" class="hidden"></span>
+            <button
+              type="button"
+              data-open="${row.applicationId}"
+              class="font-mono text-xs text-ink-3 hover:text-primary hover:underline underline-offset-4 transition-colors"
+              aria-label="Open details for ${row.applicationId}"
+            >
               ${row.applicationId}
-            </div>
+            </button>
           `,
         },
         { key: 'name', label: 'Name' },
@@ -314,10 +318,19 @@
         tr.classList.add('hover:bg-primary-muted', 'transition-colors');
       });
 
+      tbody?.querySelectorAll('[data-open]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const appId = btn.getAttribute('data-open');
+          if (!appId) return;
+          openDrawer(appId);
+        });
+      });
+
       tbody?.addEventListener('click', (e) => {
         const tr = e.target.closest('tr');
         if (!tr) return;
-        const appId = tr.querySelector('[data-appid]')?.getAttribute('data-appid');
+        const btn = tr.querySelector('[data-open]');
+        const appId = btn?.getAttribute('data-open');
         if (!appId) return;
         openDrawer(appId);
       });

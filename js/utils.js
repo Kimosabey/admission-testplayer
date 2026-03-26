@@ -1,7 +1,11 @@
-export async function fetchData(filename) {
-  const res = await fetch(`/data/${filename}.json`);
-  if (!res.ok) throw new Error(`Failed to load ${filename}.json`);
-  return res.json();
+export async function fetchData(filename, { fallback = [] } = {}) {
+  try {
+    const res = await fetch(`/data/${filename}.json`);
+    if (!res.ok) return fallback;
+    return await res.json();
+  } catch {
+    return fallback;
+  }
 }
 
 export const STATUS_COLORS = {

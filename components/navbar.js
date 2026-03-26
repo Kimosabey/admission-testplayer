@@ -45,19 +45,21 @@ function render() {
             </button>
 
             <div class="relative">
-              <button
+              <a
+                href="#/alerts"
                 class="inline-flex items-center gap-2 h-9 px-3 rounded-xl border border-border bg-surface
                        hover:bg-primary-muted hover:text-primary transition-colors"
-                type="button"
                 aria-label="Alerts"
                 title="Alerts"
               >
                 <span class="opacity-70">◱</span>
                 <span class="hidden sm:inline text-sm">Alerts</span>
-              </button>
+              </a>
               <span
                 class="absolute -top-1.5 -right-1.5 min-w-5 h-5 px-1 rounded-full text-xs font-mono
-                       bg-danger text-[var(--color-text-inverse)] flex items-center justify-center"
+                       bg-danger text-parchment flex items-center justify-center"
+                role="status"
+                aria-live="polite"
                 aria-label="Alert count"
               >
                 ${alertCount}

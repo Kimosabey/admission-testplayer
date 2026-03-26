@@ -149,9 +149,11 @@
             const resolved = isResolved(a);
             const ts = new Date(a.timestamp);
             const leftBorder = borderClass(a.severity);
+            const role = !resolved && a.severity === 'critical' ? 'alert' : 'status';
 
             return `
               <article
+                role="${role}"
                 class="alert-card rounded-2xl border border-border border-l-4 ${leftBorder} bg-surface px-5 py-5
                        ${resolved ? 'opacity-60' : ''}"
               >

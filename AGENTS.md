@@ -1328,18 +1328,18 @@ export const store = {
 
 #### Week 12: Accessibility, Dark Mode & Final QA
 
-- [ ] Dark mode: verify all `[data-theme="dark"]` token overrides correct on every page
-- [ ] Dark mode toggle persists to `localStorage`
-- [ ] WCAG AA contrast audit: all text/bg combos ≥ 4.5:1
-- [ ] `:focus-visible` rings on all interactive elements
-- [ ] Keyboard navigation: Tab through booking wizard, question palette, table headers
-- [ ] ARIA: `role="status"` on auto-save, `aria-label` on icon buttons, `aria-sort` on table headers, `role="alert"` on critical alerts
-- [ ] Mobile (768px): sidebar collapses to hamburger, NOC grid reflows to 2 columns
-- [ ] Cross-persona QA: cycle all 10 personas, no JS errors, correct nav, correct data
-- [ ] `fetch()` error handling: all data loads show empty states on failure, not broken UI
-- [ ] Console is clean (zero warnings, zero errors) on every page
-- [ ] To run: `npx serve .` or `python -m http.server 3000`
-- [ ] Update this `AGENTS.md` with any decisions made during polish
+- [x] Dark mode: verify all `[data-theme="dark"]` token overrides correct on every page
+- [x] Dark mode toggle persists to `localStorage`
+- [x] WCAG AA contrast audit: all text/bg combos ≥ 4.5:1
+- [x] `:focus-visible` rings on all interactive elements
+- [x] Keyboard navigation: Tab through booking wizard, question palette, table headers
+- [x] ARIA: `role="status"` on auto-save, `aria-label` on icon buttons, `aria-sort` on table headers, `role="alert"` on critical alerts
+- [x] Mobile (768px): sidebar collapses to hamburger, NOC grid reflows to 2 columns
+- [x] Cross-persona QA: cycle all 10 personas, no JS errors, correct nav, correct data
+- [x] `fetch()` error handling: all data loads show empty states on failure, not broken UI
+- [x] Console is clean (zero warnings, zero errors) on every page
+- [x] To run: `npx serve .` or `python -m http.server 3000`
+- [x] Update this `AGENTS.md` with any decisions made during polish
 
 **Deliverable:** Production-ready static demo. Serves from any static file server. All personas work. Dark mode polished.
 

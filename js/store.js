@@ -63,9 +63,13 @@ export const store = {
   try {
     _state.darkMode = readStoredTheme();
     _state.persona = readStoredPersona();
+
+    const isMobile = window.matchMedia("(max-width: 767px)").matches;
+    _state.sidebarOpen = !isMobile;
   } catch {
     _state.darkMode = false;
     _state.persona = "candidate";
+    _state.sidebarOpen = true;
   }
 
   applyTheme(_state.darkMode);
