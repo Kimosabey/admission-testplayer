@@ -1,9 +1,215 @@
-<div class="p-8 max-w-6xl mx-auto" data-page="alerts">
-  <h1 class="font-display text-4xl text-primary mb-2">Alerts</h1>
-  <p class="text-ink-2 mb-8">Week 8 deliverable. Placeholder for alert feed + filtering + resolve toggle.</p>
+<div class="p-8 max-w-screen-2xl mx-auto" data-page="alerts">
+  <header class="mb-8">
+    <p class="font-mono text-xs uppercase track-xxl text-ink-3">NETWORK OPERATIONS</p>
+    <div class="mt-2 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+      <div>
+        <h1 class="font-display text-4xl text-primary">Alerts</h1>
+        <p class="mt-2 max-w-2xl text-ink-2">Sorted by timestamp. Use filters to narrow. Resolve is stored locally.</p>
+      </div>
+      <a
+        href="#/noc"
+        class="inline-flex items-center gap-2 h-10 px-4 rounded-xl border border-border bg-surface hover:bg-primary-muted hover:text-primary transition-colors"
+      >
+        <span class="opacity-70">◰</span>
+        Dashboard
+      </a>
+    </div>
+  </header>
 
-  <div class="card">
-    <h2 class="card-title">Coming soon</h2>
-    <p class="card-subtitle">Severity strips, filter controls, and right-to-left entry animation.</p>
-  </div>
+  <section class="card" aria-label="Alert filters">
+    <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+      <div>
+        <p class="font-mono text-xs uppercase track-xl text-ink-3">Filters</p>
+        <p class="mt-2 text-sm text-ink-2">Open alert count updates the global badge.</p>
+      </div>
+
+      <div class="grid gap-4 sm:grid-cols-3">
+        <label class="block">
+          <span class="font-mono text-xs uppercase track-md text-ink-3">Center</span>
+          <select id="af-center" class="mt-2 w-full h-10 rounded-xl border border-border bg-surface px-3 text-sm text-ink-2"></select>
+        </label>
+
+        <label class="block">
+          <span class="font-mono text-xs uppercase track-md text-ink-3">Severity</span>
+          <select id="af-severity" class="mt-2 w-full h-10 rounded-xl border border-border bg-surface px-3 text-sm text-ink-2">
+            <option value="all">All</option>
+            <option value="info">info</option>
+            <option value="warning">warning</option>
+            <option value="critical">critical</option>
+          </select>
+        </label>
+
+        <label class="flex items-center gap-3 rounded-2xl border border-border bg-surface-sunken px-4 py-3">
+          <input id="af-show-resolved" type="checkbox" style="accent-color: var(--color-primary);" />
+          <span class="text-sm text-ink-2">Show resolved</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="mt-6 flex items-center justify-between gap-4">
+      <p class="font-mono text-xs uppercase track-md text-ink-3">Results</p>
+      <p class="font-mono text-xs text-ink-3"><span id="af-count">—</span> alerts</p>
+    </div>
+  </section>
+
+  <section class="mt-6" aria-label="Alert feed">
+    <div id="alert-list" class="grid gap-3"></div>
+  </section>
 </div>
+
+<script data-page-init type="text/javascript">
+  (async function () {
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    const { fetchData, formatDate, formatRelativeTime } = await import("/js/utils.js");
+    const { store } = await import("/js/store.js");
+    const { StatusPill } = await import("/components/status-pill.js");
+
+    const root = document.querySelector('[data-page="alerts"]');
+    if (!root) return;
+
+    const els = {
+      center: root.querySelector('#af-center'),
+      severity: root.querySelector('#af-severity'),
+      showResolved: root.querySelector('#af-show-resolved'),
+      count: root.querySelector('#af-count'),
+      list: root.querySelector('#alert-list'),
+    };
+
+    const [alerts, centers] = await Promise.all([fetchData('alerts'), fetchData('centers')]);
+    const centerById = new Map(centers.map((c) => [c.centerId, c]));
+
+    const RES_KEY = 'atp_alert_resolved';
+
+    function readMap() {
+      try {
+        const raw = localStorage.getItem(RES_KEY);
+        const parsed = raw ? JSON.parse(raw) : {};
+        return parsed && typeof parsed === 'object' ? parsed : {};
+      } catch {
+        return {};
+      }
+    }
+
+    function writeMap(map) {
+      localStorage.setItem(RES_KEY, JSON.stringify(map));
+    }
+
+    let resolvedMap = readMap();
+
+    function isResolved(a) {
+      const v = resolvedMap[a.alertId];
+      if (typeof v === 'boolean') return v;
+      return Boolean(a.resolved);
+    }
+
+    function borderClass(sev) {
+      if (sev === 'critical') return 'border-l-danger';
+      if (sev === 'warning') return 'border-l-warning';
+      return 'border-l-info';
+    }
+
+    function renderCenterOptions() {
+      const ids = Array.from(new Set(alerts.map((a) => a.centerId))).sort();
+      els.center.innerHTML = [
+        '<option value="all">All</option>',
+        ...ids.map((id) => {
+          const c = centerById.get(id);
+          const label = c ? `${c.city} · ${c.name}` : id;
+          return `<option value="${id}">${label}</option>`;
+        }),
+      ].join('');
+    }
+
+    function render() {
+      const centerFilter = els.center.value || 'all';
+      const sevFilter = els.severity.value || 'all';
+      const showResolved = els.showResolved.checked;
+
+      const ordered = alerts
+        .slice()
+        .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+
+      const filtered = ordered.filter((a) => {
+        if (centerFilter !== 'all' && a.centerId !== centerFilter) return false;
+        if (sevFilter !== 'all' && a.severity !== sevFilter) return false;
+        if (!showResolved && isResolved(a)) return false;
+        return true;
+      });
+
+      const openCount = alerts.filter((a) => !isResolved(a)).length;
+      store.setState({ alertCount: openCount });
+
+      els.count.textContent = String(filtered.length);
+
+      els.list.innerHTML =
+        filtered
+          .map((a) => {
+            const c = centerById.get(a.centerId);
+            const resolved = isResolved(a);
+            const ts = new Date(a.timestamp);
+            const leftBorder = borderClass(a.severity);
+
+            return `
+              <article
+                class="alert-card rounded-2xl border border-border border-l-4 ${leftBorder} bg-surface px-5 py-5
+                       ${resolved ? 'opacity-60' : ''}"
+              >
+                <div class="flex items-start justify-between gap-4">
+                  <div>
+                    <p class="font-mono text-xs text-ink-3">${a.alertId} · ${a.centerId}${a.sessionId ? ` · ${a.sessionId}` : ''}</p>
+                    <h3 class="mt-2 font-display text-2xl text-primary">${a.type}</h3>
+                    <p class="mt-2 text-sm text-ink-2">${a.message}</p>
+                    <p class="mt-3 text-xs text-ink-3">${c ? `${c.city} · ${c.name}` : '—'}</p>
+                  </div>
+
+                  <div class="text-right">
+                    ${StatusPill(a.severity, 'sm')}
+                    <p class="mt-2 font-mono text-xs text-ink-3">${formatRelativeTime(ts)}</p>
+                    <p class="mt-1 font-mono text-xs text-ink-3">${formatDate(ts, { time: true })}</p>
+
+                    <button
+                      type="button"
+                      data-toggle="${a.alertId}"
+                      class="mt-4 h-9 px-3 rounded-xl border border-border bg-surface hover:bg-primary-muted hover:text-primary transition-colors text-sm"
+                    >
+                      ${resolved ? 'Reopen' : 'Resolve'}
+                    </button>
+                  </div>
+                </div>
+              </article>
+            `;
+          })
+          .join('') || `<p class="text-sm text-ink-3">No alerts.</p>`;
+
+      els.list.querySelectorAll('[data-toggle]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const id = btn.getAttribute('data-toggle');
+          const alert = alerts.find((x) => x.alertId === id);
+          if (!alert) return;
+
+          const next = !isResolved(alert);
+          resolvedMap = { ...resolvedMap, [id]: next };
+          writeMap(resolvedMap);
+          render();
+        });
+      });
+
+      if (!prefersReducedMotion && window.gsap) {
+        window.gsap.fromTo(
+          els.list.querySelectorAll('.alert-card'),
+          { opacity: 0, x: 46 },
+          { opacity: 1, x: 0, duration: 0.7, ease: 'power2.out', stagger: 0.05 },
+        );
+      }
+    }
+
+    renderCenterOptions();
+
+    ;[els.center, els.severity, els.showResolved].forEach((el) => {
+      el.addEventListener('change', render);
+    });
+
+    render();
+  })();
+</script>

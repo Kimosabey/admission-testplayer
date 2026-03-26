@@ -1,9 +1,381 @@
-<div class="p-8 max-w-6xl mx-auto" data-page="noc">
-  <h1 class="font-display text-4xl text-primary mb-2">NOC Dashboard</h1>
-  <p class="text-ink-2 mb-8">Week 8 deliverable. Placeholder for live monitoring command center.</p>
+<div class="p-8 max-w-screen-2xl mx-auto" data-page="noc">
+  <header class="mb-8">
+    <p class="font-mono text-xs uppercase track-xxl text-ink-3">NETWORK OPERATIONS</p>
+    <div class="mt-2 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+      <div>
+        <h1 class="font-display text-5xl text-primary">NOC Dashboard</h1>
+        <p class="mt-3 max-w-2xl text-ink-2">
+          Live monitoring view for centers and sessions. Charts are simulated from static JSON.
+        </p>
+      </div>
 
-  <div class="card">
-    <h2 class="card-title">Coming soon</h2>
-    <p class="card-subtitle">Pinned stats bar, center health grid, session progress charts, bandwidth telemetry.</p>
-  </div>
+      <a
+        href="#/alerts"
+        class="inline-flex items-center gap-2 h-10 px-4 rounded-xl border border-border bg-surface hover:bg-primary-muted hover:text-primary transition-colors"
+      >
+        <span class="opacity-70">◱</span>
+        Alerts
+      </a>
+    </div>
+  </header>
+
+  <section id="stats-bar" class="card mb-6" aria-label="Pinned stats">
+    <div class="grid gap-4 md:grid-cols-4">
+      <div class="stat">
+        <p class="stat-k">Centers</p>
+        <p id="stat-centers" class="stat-v font-mono text-2xl text-ink">—</p>
+      </div>
+      <div class="stat">
+        <p class="stat-k">Sessions (live)</p>
+        <p id="stat-sessions" class="stat-v font-mono text-2xl text-ink">—</p>
+      </div>
+      <div class="stat">
+        <p class="stat-k">Checked-in</p>
+        <p id="stat-checkin" class="stat-v font-mono text-2xl text-ink">—</p>
+      </div>
+      <div class="stat">
+        <p class="stat-k">Open alerts</p>
+        <p id="stat-alerts" class="stat-v font-mono text-2xl text-ink">—</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="grid gap-6 xl:grid-cols-2" aria-label="Telemetry">
+    <article class="card">
+      <div class="flex items-start justify-between gap-4">
+        <div>
+          <p class="font-mono text-xs uppercase track-xl text-ink-3">Session progress</p>
+          <h2 class="mt-2 font-display text-3xl text-primary">Check-in timeline</h2>
+          <p class="mt-2 text-sm text-ink-2">Simulated check-ins for the last hour.</p>
+        </div>
+        <p id="chart-note" class="text-xs text-ink-3 font-mono">—</p>
+      </div>
+      <div class="mt-6 rounded-2xl border border-border bg-surface px-4 py-4" style="height: 300px;">
+        <canvas id="chart-session"></canvas>
+      </div>
+    </article>
+
+    <article class="card">
+      <div class="flex items-start justify-between gap-4">
+        <div>
+          <p class="font-mono text-xs uppercase track-xl text-ink-3">Bandwidth</p>
+          <h2 class="mt-2 font-display text-3xl text-primary">Telemetry</h2>
+          <p class="mt-2 text-sm text-ink-2">Three center series (simulated).</p>
+        </div>
+        <p class="text-xs text-ink-3 font-mono">Mbps</p>
+      </div>
+      <div class="mt-6 rounded-2xl border border-border bg-surface px-4 py-4" style="height: 300px;">
+        <canvas id="chart-bandwidth"></canvas>
+      </div>
+    </article>
+  </section>
+
+  <section class="mt-6" aria-label="Center health grid">
+    <div class="flex items-end justify-between gap-4">
+      <div>
+        <p class="font-mono text-xs uppercase track-xl text-ink-3">Centers</p>
+        <h2 class="mt-2 font-display text-3xl text-primary">Health</h2>
+      </div>
+      <p class="text-xs text-ink-3 font-mono">Updated <span id="last-updated">—</span></p>
+    </div>
+
+    <div id="center-grid" class="mt-4 grid gap-4 md:grid-cols-2 2xl:grid-cols-3"></div>
+  </section>
 </div>
+
+<script data-page-init type="text/javascript">
+  (async function () {
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    const { fetchData } = await import("/js/utils.js");
+    const { CountUp } = await import("/components/count-up.js");
+    const { StatusPill } = await import("/components/status-pill.js");
+
+    const root = document.querySelector('[data-page="noc"]');
+
+    const { store } = await import("/js/store.js");
+
+    if (!root) return;
+
+    const els = {
+      centers: root.querySelector('#stat-centers'),
+      sessions: root.querySelector('#stat-sessions'),
+      checkin: root.querySelector('#stat-checkin'),
+      alerts: root.querySelector('#stat-alerts'),
+      statsBar: root.querySelector('#stats-bar'),
+      lastUpdated: root.querySelector('#last-updated'),
+      grid: root.querySelector('#center-grid'),
+      chartNote: root.querySelector('#chart-note'),
+      chartSession: root.querySelector('#chart-session'),
+      chartBandwidth: root.querySelector('#chart-bandwidth'),
+    };
+
+    const [centers, sessions, alerts, candidates] = await Promise.all([
+      fetchData('centers'),
+      fetchData('sessions'),
+      fetchData('alerts'),
+      fetchData('candidates'),
+    ]);
+
+
+    const STATUS_KEY = 'atp_candidate_status';
+    const ALERT_KEY = 'atp_alert_resolved';
+
+    function readMap(key) {
+      try {
+        const raw = localStorage.getItem(key);
+        const parsed = raw ? JSON.parse(raw) : {};
+        return parsed && typeof parsed === 'object' ? parsed : {};
+      } catch {
+        return {};
+      }
+    }
+
+    const statusMap = readMap(STATUS_KEY);
+    const alertMap = readMap(ALERT_KEY);
+
+    function statusFor(c) {
+      return statusMap[c.applicationId] || c.status;
+    }
+
+    function isResolved(a) {
+      const v = alertMap[a.alertId];
+      if (typeof v === 'boolean') return v;
+      return Boolean(a.resolved);
+    }
+
+    function cssVar(name) {
+      return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    }
+
+    const palette = {
+      primary: cssVar('--color-primary'),
+      primaryLight: cssVar('--color-primary-light'),
+      accent: cssVar('--color-accent'),
+      info: cssVar('--color-info'),
+      warning: cssVar('--color-warning'),
+      danger: cssVar('--color-danger'),
+      success: cssVar('--color-success'),
+      border: cssVar('--color-border'),
+      text: cssVar('--color-text-muted'),
+    };
+
+    function stat(el, target) {
+      if (!el) return;
+      if (!prefersReducedMotion && window.gsap && window.ScrollTrigger) {
+        CountUp(el, target, { duration: 1.4 });
+      } else {
+        el.textContent = String(target);
+      }
+    }
+
+    function computeStats() {
+      const liveSessions = sessions.filter((s) => s.status === 'live').length;
+      const checkedIn = candidates.filter((c) => statusFor(c) === 'checked-in').length;
+      const openAlerts = alerts.filter((a) => !isResolved(a)).length;
+
+      store.setState({ alertCount: openAlerts });
+
+      stat(els.centers, centers.length);
+      stat(els.sessions, liveSessions);
+      stat(els.checkin, checkedIn);
+      stat(els.alerts, openAlerts);
+
+      els.lastUpdated.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      els.chartNote.textContent = `Data: ${liveSessions ? 'live session(s)' : 'no live sessions'}`;
+    }
+
+    function clamp01(x) {
+      return Math.max(0, Math.min(1, x));
+    }
+
+    function bar(widthPct, color) {
+      const pct = clamp01(widthPct);
+      return `
+        <div class="h-2 rounded-full bg-surface overflow-hidden">
+          <div class="h-full rounded-full" style="width:${pct * 100}%; background:${color};"></div>
+        </div>
+      `;
+    }
+
+    function severityForCenter(centerId) {
+      const centerAlerts = alerts.filter((a) => a.centerId === centerId && !isResolved(a));
+      if (centerAlerts.some((a) => a.severity === 'critical')) return 'critical';
+      if (centerAlerts.some((a) => a.severity === 'warning')) return 'warning';
+      if (centerAlerts.length) return 'info';
+      return 'ok';
+    }
+
+    function healthPill(sev) {
+      if (sev === 'critical') return StatusPill('critical', 'sm');
+      if (sev === 'warning') return StatusPill('warning', 'sm');
+      if (sev === 'info') return StatusPill('info', 'sm');
+      return `
+        <span class="inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-mono bg-success-muted text-success border-border">
+          <span class="h-1.5 w-1.5 rounded-full" style="background:${palette.success}"></span>
+          ok
+        </span>
+      `;
+    }
+
+    function renderCenterCard(center) {
+      const centerSessions = sessions.filter((s) => s.centerId === center.centerId);
+      const session = centerSessions.find((s) => s.status === 'live') || centerSessions[0];
+
+      const roster = candidates.filter(
+        (c) => c.centerId === center.centerId && (!session || c.sessionId === session.sessionId),
+      );
+      const checkedIn = roster.filter((c) => statusFor(c) === 'checked-in').length;
+      const total = roster.length || 1;
+
+      const progress = session ? session.enrolled / session.capacity : 0;
+      const checkinPct = checkedIn / total;
+
+      const sev = severityForCenter(center.centerId);
+      const heartbeatSec = 10 + ((Number(center.centerId.replace(/\D/g, '').slice(-2)) || 0) % 30);
+
+      return `
+        <article class="noc-center card-compact rounded-2xl border border-border bg-surface">
+          <div class="flex items-start justify-between gap-4">
+            <div>
+              <p class="font-mono text-xs text-ink-3">${center.centerId}</p>
+              <h3 class="mt-2 font-display text-2xl text-primary">${center.city}</h3>
+              <p class="mt-1 text-sm text-ink-2">${center.name}</p>
+            </div>
+            <div class="text-right">
+              ${healthPill(sev)}
+              <p class="mt-2 text-xs text-ink-3 font-mono">heartbeat ${heartbeatSec}s</p>
+            </div>
+          </div>
+
+          <div class="mt-5 grid gap-4">
+            <div>
+              <p class="font-mono text-xs uppercase track-md text-ink-3">Session load</p>
+              <p class="mt-1 text-xs text-ink-3 font-mono">${session ? `${session.sessionId} · ${session.enrolled}/${session.capacity}` : '—'}</p>
+              ${bar(progress, palette.primary)}
+            </div>
+
+            <div>
+              <p class="font-mono text-xs uppercase track-md text-ink-3">Check-in</p>
+              <p class="mt-1 text-xs text-ink-3 font-mono">${checkedIn}/${roster.length || 0} candidates</p>
+              ${bar(checkinPct, palette.accent)}
+            </div>
+          </div>
+
+          <div class="mt-5 flex items-center justify-between gap-3">
+            <p class="text-xs text-ink-3">${center.timezone}</p>
+            <p class="text-xs text-ink-3">${center.contact}</p>
+          </div>
+        </article>
+      `;
+    }
+
+    function renderCenterGrid() {
+      els.grid.innerHTML = centers.map(renderCenterCard).join('');
+
+      if (!prefersReducedMotion && window.gsap && window.ScrollTrigger) {
+        window.gsap.fromTo(
+          els.grid.querySelectorAll('.noc-center'),
+          { opacity: 0, y: 26 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.7,
+            ease: 'power2.out',
+            stagger: 0.06,
+            scrollTrigger: { trigger: els.grid, start: 'top 85%' },
+          },
+        );
+      }
+    }
+
+    function simulateSeries(points, start, variance) {
+      const out = [];
+      let v = start;
+      for (let i = 0; i < points; i += 1) {
+        const step = (Math.random() - 0.5) * variance;
+        v = Math.max(0, v + step);
+        out.push(Math.round(v));
+      }
+      return out;
+    }
+
+    function buildCharts() {
+      if (!window.Chart) return;
+
+      const labels = Array.from({ length: 12 }, (_, i) => `${(55 - i * 5).toString().padStart(2, '0')}m`).reverse();
+
+      // eslint-disable-next-line no-undef
+      new Chart(els.chartSession.getContext('2d'), {
+        type: 'line',
+        data: {
+          labels,
+          datasets: [
+            {
+              label: 'check-ins',
+              data: simulateSeries(labels.length, 12, 6),
+              borderColor: palette.primary,
+              backgroundColor: palette.primaryLight,
+              fill: true,
+              tension: 0.35,
+              pointRadius: 0,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { ticks: { color: palette.text }, grid: { color: palette.border } },
+            y: { ticks: { color: palette.text }, grid: { color: palette.border } },
+          },
+        },
+      });
+
+      const topCenters = centers.slice(0, 3);
+      const ds = topCenters.map((c, idx) => {
+        const colors = [palette.info, palette.warning, palette.accent];
+        return {
+          label: c.city,
+          data: simulateSeries(labels.length, 40 + idx * 12, 14),
+          borderColor: colors[idx % colors.length],
+          backgroundColor: colors[idx % colors.length],
+          tension: 0.35,
+          pointRadius: 0,
+        };
+      });
+
+      // eslint-disable-next-line no-undef
+      new Chart(els.chartBandwidth.getContext('2d'), {
+        type: 'line',
+        data: { labels, datasets: ds },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { position: 'bottom', labels: { color: palette.text, boxWidth: 12 } } },
+          scales: {
+            x: { ticks: { color: palette.text }, grid: { color: palette.border } },
+            y: { ticks: { color: palette.text }, grid: { color: palette.border } },
+          },
+        },
+      });
+    }
+
+    function pinStatsBar() {
+      if (prefersReducedMotion || !window.ScrollTrigger) return;
+      window.ScrollTrigger.create({
+        trigger: els.statsBar,
+        start: 'top top',
+        end: 'bottom+=600 top',
+        pin: true,
+        pinSpacing: false,
+      });
+    }
+
+    computeStats();
+    pinStatsBar();
+    buildCharts();
+    renderCenterGrid();
+  })();
+</script>

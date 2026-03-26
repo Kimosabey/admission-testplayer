@@ -1251,14 +1251,14 @@ export const store = {
 
 **Goal:** Flagship view — full operations command center.
 
-- [ ] `pages/noc/dashboard.html` — loads `centers.json`, `sessions.json`, `alerts.json`, `candidates.json`
-- [ ] `#stats-bar`: 4 CountUp stats, pinned via `ScrollTrigger.create({ pin: true })`
-- [ ] Center health grid: card per center with session progress bar, check-in bar, health status pill, heartbeat timestamp
-- [ ] Session progress Chart.js line chart (simulated check-in over time)
-- [ ] Bandwidth monitor Chart.js line chart (3 center series)
-- [ ] GSAP: staggered center card reveals, CountUp on stat numbers
-- [ ] `pages/noc/alerts.html` — alert cards with severity left-border strip, filter controls, resolve toggle
-- [ ] GSAP: alert cards slide in from right on load (`stagger: 0.05`)
+- [x] `pages/noc/dashboard.html` — loads `centers.json`, `sessions.json`, `alerts.json`, `candidates.json`
+- [x] `#stats-bar`: 4 CountUp stats, pinned via `ScrollTrigger.create({ pin: true })`
+- [x] Center health grid: card per center with session progress bar, check-in bar, health status pill, heartbeat timestamp
+- [x] Session progress Chart.js line chart (simulated check-in over time)
+- [x] Bandwidth monitor Chart.js line chart (3 center series)
+- [x] GSAP: staggered center card reveals, CountUp on stat numbers
+- [x] `pages/noc/alerts.html` — alert cards with severity left-border strip, filter controls, resolve toggle
+- [x] GSAP: alert cards slide in from right on load (`stagger: 0.05`)
 
 **Deliverable:** NOC dashboard is visually rich. Stats bar pins. All center cards render. Alerts are filterable.
 
