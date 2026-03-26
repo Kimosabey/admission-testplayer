@@ -1,6 +1,19 @@
 import { store } from "/js/store.js";
 import { PERSONA_ROUTES } from "/js/router.js";
 
+
+const PERSONA_LABELS = {
+  candidate: "Candidate",
+  callCenter: "Candidate Verifier",
+  admissionsAdmin: "Admissions Admin",
+  centerAdmin: "Center Admin",
+  proctor: "Proctor",
+  itemAuthor: "Item Author",
+  examOps: "Test Delivery",
+  scoreAnalyst: "Score Analyst",
+  superAdmin: "Super Admin",
+};
+
 function isActive(path) {
   const current = (location.hash || "").replace(/^#/, "") || "/";
   if (path === "/dashboard" && (current === "/" || current === "/dashboard")) return true;
@@ -10,6 +23,7 @@ function isActive(path) {
 function render() {
   const { persona, sidebarOpen } = store.getState();
   const routes = PERSONA_ROUTES[persona] ?? PERSONA_ROUTES.candidate;
+  const personaLabel = PERSONA_LABELS[persona] ?? persona;
 
   document.getElementById("sidebar-mount").innerHTML = `
     <div class="md:hidden ${sidebarOpen ? "fixed" : "hidden"} inset-0 z-30 bg-ink/40" id="sidebar-overlay"></div>
@@ -26,7 +40,7 @@ function render() {
           <span class="font-display text-2xl text-primary">ATP</span>
           <span class="text-xs text-ink-3 font-mono track-xl">NAV</span>
         </div>
-        <p class="mt-2 text-sm text-ink-2">Persona: <span class="font-mono text-xs track-sm">${persona}</span></p>
+        <p class="mt-2 text-sm text-ink-2">Role: <span class="font-mono text-xs track-sm">${personaLabel}</span></p>
       </div>
 
       <nav class="flex-1 py-4">

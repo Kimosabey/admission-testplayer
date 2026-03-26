@@ -176,13 +176,31 @@
       incList: root.querySelector('#inc-list'),
     };
 
-    const [candidates, sessions, centers] = await Promise.all([
+    let [candidates, sessions, centers] = await Promise.all([
       fetchData('candidates'),
       fetchData('sessions'),
       fetchData('centers'),
     ]);
 
     const centerById = new Map(centers.map((c) => [c.centerId, c]));
+
+
+    const state = store.getState();
+    if (state.persona === 'centerAdmin') {
+      let myCenterId = state.activeCenterId;
+
+      if (!myCenterId) {
+        const sid = state.activeSessionId || sessions[0]?.sessionId;
+        const s = sessions.find((x) => x.sessionId === sid);
+        myCenterId = s?.centerId || candidates[0]?.centerId || centers[0]?.centerId || null;
+        if (myCenterId) store.setState({ activeCenterId: myCenterId });
+      }
+
+      if (myCenterId) {
+        sessions = sessions.filter((s) => s.centerId === myCenterId);
+        candidates = candidates.filter((c) => c.centerId === myCenterId);
+      }
+    }
 
     const STATUS_KEY = 'atp_candidate_status';
     const INCIDENT_KEY = 'atp_incidents';
@@ -217,7 +235,9 @@
         .slice()
         .sort((a, b) => (a.date + a.startTime).localeCompare(b.date + b.startTime));
 
-      if (!activeSessionId) activeSessionId = ordered[0]?.sessionId || null;
+      if (!activeSessionId || !ordered.some((s) => s.sessionId === activeSessionId)) {
+        activeSessionId = ordered[0]?.sessionId || null;
+      }
 
       els.session.innerHTML = ordered
         .map((s) => `<option value="${s.sessionId}" ${s.sessionId === activeSessionId ? 'selected' : ''}>${sessionLabel(s)}</option>`)

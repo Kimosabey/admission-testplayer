@@ -62,6 +62,7 @@
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     const { fetchData, formatDate } = await import('/js/utils.js');
+    const { store } = await import('/js/store.js');
     const root = document.querySelector('[data-page="centers"]');
     if (!root) return;
 
@@ -72,7 +73,28 @@
       grid: root.querySelector('#centers-grid'),
     };
 
-    const [centers, sessions] = await Promise.all([fetchData('centers'), fetchData('sessions')]);
+    let [centers, sessions] = await Promise.all([fetchData('centers'), fetchData('sessions')]);
+
+    const state = store.getState();
+    if (state.persona === 'centerAdmin') {
+      let myCenterId = state.activeCenterId;
+
+      if (!myCenterId) {
+        const sid = state.activeSessionId || sessions[0]?.sessionId;
+        const s = sessions.find((x) => x.sessionId === sid);
+        myCenterId = s?.centerId || centers[0]?.centerId || null;
+
+        if (myCenterId) {
+          store.setState({ activeCenterId: myCenterId });
+        }
+      }
+
+      if (myCenterId) {
+        centers = centers.filter((c) => c.centerId === myCenterId);
+        sessions = sessions.filter((s) => s.centerId === myCenterId);
+      }
+    }
+
 
     const sessionsByCenter = new Map();
     sessions.forEach((s) => {

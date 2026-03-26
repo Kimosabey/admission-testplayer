@@ -39,10 +39,14 @@ export const PERSONA_ROUTES = {
     { path: "/report", label: "Report", icon: "◪" },
   ],
   callCenter: [{ path: "/roster", label: "Candidate Roster", icon: "◫" }],
-  bookingAdmin: [
+  admissionsAdmin: [
     { path: "/roster", label: "Roster", icon: "◫" },
     { path: "/centers", label: "Centers", icon: "◎" },
     { path: "/calendar", label: "Calendar", icon: "◰" },
+    { path: "/noc", label: "NOC Dashboard", icon: "◰" },
+    { path: "/alerts", label: "Alerts", icon: "◱" },
+    { path: "/results", label: "Results", icon: "◫" },
+    { path: "/export", label: "CRM Export", icon: "◎" },
   ],
   centerAdmin: [
     { path: "/centers", label: "My Center", icon: "◎" },
@@ -63,10 +67,6 @@ export const PERSONA_ROUTES = {
   scoreAnalyst: [
     { path: "/results", label: "Results", icon: "◫" },
     { path: "/export", label: "CRM Export", icon: "◎" },
-  ],
-  noc: [
-    { path: "/noc", label: "NOC Dashboard", icon: "◰" },
-    { path: "/alerts", label: "Alerts", icon: "◱" },
   ],
   superAdmin: [
     { path: "/dashboard", label: "Dashboard", icon: "◈" },

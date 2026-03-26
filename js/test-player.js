@@ -186,13 +186,15 @@ export async function mountTestPlayer() {
   }
 
   const allQuestions = await fetchData("questions");
-  const questions = selectQuestions(allQuestions, 25);
+  const qById = new Map((allQuestions || []).map((q) => [q.id, q]));
+
+  const freshQuestionIds = selectQuestions(allQuestions || [], 25).map((q) => q.id);
 
   const baseAttempt = {
     idx: 0,
     answers: {},
     marked: [],
-    questionIds: questions.map((q) => q.id),
+    questionIds: freshQuestionIds,
     startedAt: Date.now(),
     endAt: Date.now() + DURATION_SEC * 1000,
     submitted: false,
@@ -201,22 +203,46 @@ export async function mountTestPlayer() {
     savedAt: null,
   };
 
-  let attempt = { ...baseAttempt, ...safeParse(localStorage.getItem(attemptKey), {}) };
-
-  attempt.idx = clamp(Number(attempt.idx) || 0, 0, Math.max(0, questions.length - 1));
-  if (!attempt.endAt || attempt.endAt < Date.now()) attempt.endAt = Date.now() + DURATION_SEC * 1000;
-
+  const storedAttempt = safeParse(localStorage.getItem(attemptKey), null);
+  let attempt = { ...baseAttempt, ...(storedAttempt || {}) };
 
   if (!attempt.questionIds || !Array.isArray(attempt.questionIds) || !attempt.questionIds.length) {
-    attempt.questionIds = questions.map((q) => q.id);
+    attempt.questionIds = freshQuestionIds;
   }
 
   if (!attempt.startedAt) {
     attempt.startedAt = Date.now();
   }
 
+  function questionForId(id) {
+    const q = qById.get(id);
+    if (q) return q;
+
+    return {
+      id,
+      type: "MCQ",
+      domain: "Question",
+      subdomain: "",
+      difficulty: "medium",
+      bloomLevel: "",
+      language: "English",
+      exposureCount: 0,
+      status: "published",
+      body: "Question record missing from dataset.",
+      options: [],
+      answer: null,
+      authorId: "",
+      year: new Date().getFullYear(),
+    };
+  }
+
+  let questions = attempt.questionIds.map(questionForId);
+
+  attempt.idx = clamp(Number(attempt.idx) || 0, 0, Math.max(0, questions.length - 1));
+  if (!attempt.endAt || attempt.endAt < Date.now()) attempt.endAt = Date.now() + DURATION_SEC * 1000;
+
   const timers = new Set();
-  const qid = (i) => attempt.questionIds?.[i] || questions[i]?.id || String(i + 1);
+  const qid = (i) => attempt.questionIds?.[i] || String(i + 1);
 
   function saveText() {
     if (!attempt.savedAt) {
@@ -304,9 +330,7 @@ export async function mountTestPlayer() {
         const marked = ms.has(id);
         const answered = answeredForIndex(i);
 
-        return `<button type="button" data-jump="${i}" class="${paletteClass({ active, marked, answered })}" ${
-          attempt.submitted ? "disabled" : ""
-        }>
+        return `<button type="button" data-jump="${i}" class="${paletteClass({ active, marked, answered })}">
           ${i + 1}
           ${marked ? '<span class="absolute -top-1 -right-1 text-xs leading-none">⚑</span>' : ""}
         </button>`;
@@ -315,7 +339,6 @@ export async function mountTestPlayer() {
 
     els.pal.querySelectorAll("[data-jump]").forEach((b) => {
       b.addEventListener("click", () => {
-        if (attempt.submitted) return;
         attempt.idx = Number(b.getAttribute("data-jump")) || 0;
         writeAttempt(attemptKey, attempt);
         render();
@@ -472,7 +495,7 @@ export async function mountTestPlayer() {
           id="tp-prev"
           type="button"
           class="h-10 px-4 rounded-xl border border-border bg-surface hover:bg-primary-muted hover:text-primary transition-colors"
-          ${attempt.idx === 0 || attempt.submitted ? "disabled" : ""}
+          ${attempt.idx === 0 ? "disabled" : ""}
         >
           Prev
         </button>
@@ -481,7 +504,7 @@ export async function mountTestPlayer() {
           id="tp-next"
           type="button"
           class="h-10 px-4 rounded-xl border border-border bg-surface hover:bg-primary-muted hover:text-primary transition-colors"
-          ${attempt.idx === questions.length - 1 || attempt.submitted ? "disabled" : ""}
+          ${attempt.idx === questions.length - 1 ? "disabled" : ""}
         >
           Next
         </button>
@@ -550,14 +573,14 @@ export async function mountTestPlayer() {
     }
 
     els.q.querySelector("#tp-prev")?.addEventListener("click", () => {
-      if (attempt.submitted || attempt.idx === 0) return;
+      if (attempt.idx === 0) return;
       attempt.idx -= 1;
       writeAttempt(attemptKey, attempt);
       render();
     });
 
     els.q.querySelector("#tp-next")?.addEventListener("click", () => {
-      if (attempt.submitted || attempt.idx >= questions.length - 1) return;
+      if (attempt.idx >= questions.length - 1) return;
       attempt.idx += 1;
       writeAttempt(attemptKey, attempt);
       render();
@@ -574,8 +597,9 @@ export async function mountTestPlayer() {
     } else {
       els.submit.disabled = false;
       els.submit.classList.remove("opacity-50", "cursor-not-allowed");
-      renderQuestion();
     }
+
+    renderQuestion();
 
     saveText();
   }
@@ -607,7 +631,22 @@ export async function mountTestPlayer() {
 
   els.reset.addEventListener("click", () => {
     localStorage.removeItem(attemptKey);
-    attempt = { ...baseAttempt, endAt: Date.now() + DURATION_SEC * 1000 };
+
+    const nextQuestionIds = selectQuestions(allQuestions || [], 25).map((q) => q.id);
+    attempt = {
+      ...baseAttempt,
+      idx: 0,
+      answers: {},
+      marked: [],
+      questionIds: nextQuestionIds,
+      startedAt: Date.now(),
+      endAt: Date.now() + DURATION_SEC * 1000,
+      submitted: false,
+      submittedAt: null,
+      submittedReason: null,
+    };
+    questions = attempt.questionIds.map(questionForId);
+
     writeAttempt(attemptKey, attempt);
     render();
   });

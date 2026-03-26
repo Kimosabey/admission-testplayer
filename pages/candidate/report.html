@@ -105,15 +105,27 @@
 
     const attempt = safeParse(localStorage.getItem(attemptKey), null);
     if (!attempt) {
+      els.meta.textContent = `${sessionId} · no attempt`;
+
       els.summary.innerHTML = `
         <div class="rounded-2xl border border-border bg-surface-sunken px-5 py-5">
-          <p class="text-sm text-ink-2">No attempt data found for <span class="font-mono text-xs">${sessionId}</span>.</p>
-          <a href="#/session/${sessionId}" class="mt-4 inline-flex items-center gap-2 h-10 px-4 rounded-xl border border-border bg-surface hover:bg-primary-muted hover:text-primary transition-colors">
-            <span class="opacity-70">◲</span>
-            Open secure test
+          <p class="font-mono text-xs uppercase track-md text-ink-3">Report unavailable</p>
+          <h2 class="mt-2 font-display text-3xl text-primary">Please take the test to generate a report</h2>
+          <p class="mt-2 text-sm text-ink-2">Session: <span class="font-mono text-xs">${sessionId}</span></p>
+
+          <a href="#/session/${sessionId}" class="mt-5 inline-flex items-center gap-2 h-10 px-4 rounded-xl border border-border bg-primary hover:bg-primary-light transition-colors" style="color: var(--color-text-inverse);">
+            <span class="opacity-80">◲</span>
+            Start secure test
           </a>
         </div>
       `;
+
+      els.widgets.innerHTML = `
+        <p class="font-mono text-xs uppercase track-xl text-ink-3">Next step</p>
+        <h3 class="mt-2 font-display text-2xl text-primary">Generate an attempt</h3>
+        <p class="mt-3 text-sm text-ink-2">Complete and submit the secure test to see charts and breakdowns here.</p>
+      `;
+
       return;
     }
 

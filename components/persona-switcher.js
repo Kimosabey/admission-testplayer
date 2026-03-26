@@ -3,14 +3,12 @@ import { PERSONA_ROUTES } from "/js/router.js";
 
 const PERSONAS = [
   { key: "candidate", label: "Candidate" },
-  { key: "callCenter", label: "Call Center" },
-  { key: "bookingAdmin", label: "Booking Admin" },
+  { key: "callCenter", label: "Candidate Verifier" },
+  { key: "admissionsAdmin", label: "Admissions Admin" },
   { key: "centerAdmin", label: "Center Admin" },
-  { key: "proctor", label: "Proctor" },
   { key: "itemAuthor", label: "Item Author" },
-  { key: "examOps", label: "Exam Ops" },
+  { key: "examOps", label: "Test Delivery" },
   { key: "scoreAnalyst", label: "Score Analyst" },
-  { key: "noc", label: "NOC" },
   { key: "superAdmin", label: "Super Admin" },
 ];
 

@@ -1,6 +1,7 @@
 const STORAGE_KEYS = {
   theme: "atp_theme",
   persona: "atp_persona",
+  center: "atp_center_id",
 };
 
 function readStoredTheme() {
@@ -10,8 +11,26 @@ function readStoredTheme() {
   return false;
 }
 
+function normalisePersona(key) {
+  if (key === "bookingAdmin" || key === "noc") return "admissionsAdmin";
+  if (key === "proctor") return "centerAdmin";
+  if (key === "examOps") return "examOps";
+  if (key === "callCenter") return "callCenter";
+  if (key === "centerAdmin") return "centerAdmin";
+  if (key === "itemAuthor") return "itemAuthor";
+  if (key === "scoreAnalyst") return "scoreAnalyst";
+  if (key === "superAdmin") return "superAdmin";
+  if (key === "admissionsAdmin") return "admissionsAdmin";
+  return "candidate";
+}
+
 function readStoredPersona() {
-  return localStorage.getItem(STORAGE_KEYS.persona) || "candidate";
+  const raw = localStorage.getItem(STORAGE_KEYS.persona) || "candidate";
+  return normalisePersona(raw);
+}
+
+function readStoredCenterId() {
+  return localStorage.getItem(STORAGE_KEYS.center) || null;
 }
 
 function applyTheme(darkMode) {
@@ -22,6 +41,7 @@ const _state = {
   persona: "candidate",
   candidateId: "APP-2024-00001",
   activeSessionId: null,
+  activeCenterId: null,
   sidebarOpen: true,
   alertCount: 0,
   darkMode: false,
@@ -38,6 +58,7 @@ export const store = {
     const next = { ..._state, ...patch };
     const themeChanged = next.darkMode !== _state.darkMode;
     const personaChanged = next.persona !== _state.persona;
+    const centerChanged = next.activeCenterId !== _state.activeCenterId;
 
     Object.assign(_state, patch);
 
@@ -49,6 +70,12 @@ export const store = {
     if (personaChanged) {
       localStorage.setItem(STORAGE_KEYS.persona, _state.persona);
     }
+
+    if (centerChanged) {
+      if (_state.activeCenterId) localStorage.setItem(STORAGE_KEYS.center, _state.activeCenterId);
+      else localStorage.removeItem(STORAGE_KEYS.center);
+    }
+
 
     _listeners.forEach((fn) => fn(_state));
   },
@@ -64,11 +91,15 @@ export const store = {
     _state.darkMode = readStoredTheme();
     _state.persona = readStoredPersona();
 
+    _state.activeCenterId = readStoredCenterId();
+
+
     const isMobile = window.matchMedia("(max-width: 767px)").matches;
     _state.sidebarOpen = !isMobile;
   } catch {
     _state.darkMode = false;
     _state.persona = "candidate";
+    _state.activeCenterId = null;
     _state.sidebarOpen = true;
   }
 
