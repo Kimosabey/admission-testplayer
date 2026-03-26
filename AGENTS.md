@@ -1217,16 +1217,16 @@ export const store = {
 
 **Goal:** Pack dashboard + 4-step assembly wizard.
 
-- [ ] `pages/exam-ops/test-packs.html` — loads `test-packs.json`, `sessions.json`, `blueprints.json`
-- [ ] Pack cards: session date, center, blueprint name, status pill, item count, hash (mono), copy button
-- [ ] JIT countdown: live `setInterval` MM:SS to `openWindowStart`
-- [ ] Open window indicator: pulsing green dot (`@keyframes pulse`) when `status === 'open'`
-- [ ] `pages/exam-ops/assembly.html` — 4-step wizard:
+- [x] `pages/exam-ops/test-packs.html` — loads `test-packs.json`, `sessions.json`, `blueprints.json`
+- [x] Pack cards: session date, center, blueprint name, status pill, item count, hash (mono), copy button
+- [x] JIT countdown: live `setInterval` MM:SS to `openWindowStart`
+- [x] Open window indicator: pulsing green dot (`@keyframes pulse`) when `status === 'open'`
+- [x] `pages/exam-ops/assembly.html` — 4-step wizard:
   1. Select blueprint + session
   2. Preview section breakdown table
   3. Generate — GSAP progress bar `scaleX`, 2s simulated delay, hash via `Date.now().toString(36)`
   4. Seal — SVG lock animation (GSAP rotation), "Pack sealed" confirmation
-- [ ] ScrollTrigger: staggered pack card reveals
+- [x] ScrollTrigger: staggered pack card reveals
 
 **Deliverable:** Pack dashboard loads. Assembly wizard completes all 4 steps.
 

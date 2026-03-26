@@ -1,9 +1,524 @@
-<div class="p-8 max-w-5xl mx-auto" data-page="assembly">
-  <h1 class="font-display text-4xl text-primary mb-2">Assembly</h1>
-  <p class="text-ink-2 mb-8">Week 6 deliverable. Placeholder for 4-step pack generation wizard.</p>
+<div class="p-8 max-w-6xl mx-auto" data-page="assembly">
+  <header class="mb-8">
+    <p class="font-mono text-xs uppercase track-xxl text-ink-3">EXAM OPS</p>
+    <div class="mt-2 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+      <div>
+        <h1 class="font-display text-4xl text-primary">Assembly</h1>
+        <p class="mt-2 max-w-2xl text-ink-2">4-step pack generation wizard: blueprint → preview → generate → seal.</p>
+      </div>
+      <a
+        href="#/test-packs"
+        class="inline-flex items-center gap-2 h-10 px-4 rounded-xl border border-border bg-surface hover:bg-primary-muted hover:text-primary transition-colors"
+      >
+        <span class="opacity-70">◉</span>
+        Test packs
+      </a>
+    </div>
+  </header>
 
-  <div class="card">
-    <h2 class="card-title">Coming soon</h2>
-    <p class="card-subtitle">Select blueprint → preview → generate hash → seal with GSAP lock animation.</p>
-  </div>
+  <section class="card" aria-label="Assembly wizard">
+    <div id="asm-summary" class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between"></div>
+
+    <div class="mt-8">
+      <div class="flex items-center justify-between gap-4">
+        <p class="text-sm text-ink-2">
+          <span class="font-mono text-xs uppercase track-md text-ink-3">STEP</span>
+          <span id="asm-step-count" class="ml-2 font-mono text-xs text-ink-2"></span>
+        </p>
+        <p id="asm-step-title" class="text-sm text-ink-2"></p>
+      </div>
+
+      <div class="relative mt-4 px-1" aria-hidden="true">
+        <div class="absolute left-2 right-2 top-1/2 -translate-y-1/2 h-px bg-border"></div>
+        <div
+          id="asm-line-fill"
+          class="absolute left-2 top-1/2 -translate-y-1/2 h-px bg-primary origin-left scale-x-0"
+          style="width: calc(100% - 1rem);"
+        ></div>
+
+        <div class="relative flex items-center justify-between">
+          <div data-asm-dot="1"></div>
+          <div data-asm-dot="2"></div>
+          <div data-asm-dot="3"></div>
+          <div data-asm-dot="4"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="asm-panel" class="mt-8"></div>
+
+    <div class="mt-10 flex items-center justify-between gap-3">
+      <button
+        id="asm-back"
+        type="button"
+        class="h-10 px-4 rounded-xl border border-border bg-surface hover:bg-primary-muted hover:text-primary transition-colors"
+      >
+        Back
+      </button>
+
+      <button
+        id="asm-next"
+        type="button"
+        class="h-10 px-4 rounded-xl border border-border bg-primary hover:bg-primary-light transition-colors"
+        style="color: var(--color-text-inverse);"
+      >
+        Continue
+      </button>
+    </div>
+  </section>
 </div>
+
+<script data-page-init type="text/javascript">
+  (async function () {
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    const { fetchData, formatDate } = await import("/js/utils.js");
+    const { HashDisplay, mountHashCopy } = await import("/components/hash-display.js");
+
+    const root = document.querySelector('[data-page="assembly"]');
+    if (!root) return;
+
+    const els = {
+      summary: root.querySelector("#asm-summary"),
+      stepCount: root.querySelector("#asm-step-count"),
+      stepTitle: root.querySelector("#asm-step-title"),
+      lineFill: root.querySelector("#asm-line-fill"),
+      panel: root.querySelector("#asm-panel"),
+      back: root.querySelector("#asm-back"),
+      next: root.querySelector("#asm-next"),
+      dots: Array.from(root.querySelectorAll("[data-asm-dot]")),
+    };
+
+    const [blueprints, sessions, centers, questions] = await Promise.all([
+      fetchData("blueprints"),
+      fetchData("sessions"),
+      fetchData("centers"),
+      fetchData("questions"),
+    ]);
+
+    const centerById = new Map(centers.map((c) => [c.centerId, c]));
+    const sessionById = new Map(sessions.map((s) => [s.sessionId, s]));
+
+    let step = 1;
+    let blueprintId = blueprints[0]?.id || null;
+    let sessionId = sessions[0]?.sessionId || null;
+
+    let generated = null;
+    let sealing = false;
+
+    function dotClass(state) {
+      const base =
+        "h-10 w-10 rounded-full border flex items-center justify-center font-mono text-sm transition-colors";
+
+      if (state === "complete") return `${base} bg-primary border-primary text-parchment`;
+      if (state === "active") return `${base} bg-primary-muted border-primary text-primary`;
+      return `${base} bg-surface border-border text-ink-2`;
+    }
+
+    function renderRail() {
+      els.stepCount.textContent = `${step} / 4`;
+
+      const titles = {
+        1: "Select",
+        2: "Preview",
+        3: "Generate",
+        4: "Seal",
+      };
+
+      els.stepTitle.textContent = titles[step] || "";
+
+      const progress = (step - 1) / 3;
+      els.lineFill.style.transform = `scaleX(${progress})`;
+
+      els.dots.forEach((d) => {
+        const idx = Number(d.getAttribute("data-asm-dot"));
+        const s = idx < step ? "complete" : idx === step ? "active" : "idle";
+        d.className = dotClass(s);
+        d.textContent = idx;
+      });
+    }
+
+    function animatePanelIn(dir) {
+      if (prefersReducedMotion || !window.gsap) return;
+
+      window.gsap.fromTo(
+        els.panel.querySelector(".asm-panel"),
+        { opacity: 0, x: dir * 40 },
+        { opacity: 1, x: 0, duration: 0.55, ease: "power2.out" },
+      );
+
+      window.gsap.to(els.lineFill, {
+        scaleX: (step - 1) / 3,
+        duration: 0.5,
+        ease: "power2.out",
+        overwrite: true,
+      });
+    }
+
+    function currentBlueprint() {
+      return blueprints.find((b) => b.id === blueprintId) || blueprints[0];
+    }
+
+    function currentSession() {
+      return sessionById.get(sessionId) || sessions[0];
+    }
+
+    function renderSummary() {
+      const bp = currentBlueprint();
+      const s = currentSession();
+      const c = s ? centerById.get(s.centerId) : null;
+
+      els.summary.innerHTML = `
+        <div>
+          <p class="font-mono text-xs uppercase track-md text-ink-3">Selection</p>
+          <p class="mt-2 text-sm text-ink-2">${bp ? bp.name : "—"} · ${s ? `${formatDate(s.date)} ${s.startTime}` : "—"}</p>
+          <p class="mt-1 text-sm text-ink-2">${c ? `${c.city} · ${c.name}` : "—"}</p>
+        </div>
+        <div class="text-right">
+          <p class="font-mono text-xs uppercase track-md text-ink-3">Pack</p>
+          <p class="mt-2 font-mono text-xs text-ink-3">${generated?.packId || "—"}</p>
+        </div>
+      `;
+    }
+
+    function renderStep1() {
+      const bpOpts = blueprints
+        .map((b) => `<option value="${b.id}" ${b.id === blueprintId ? "selected" : ""}>${b.name}</option>`)
+        .join("");
+
+      const sessionOpts = sessions
+        .slice()
+        .sort((a, b) => (a.date + a.startTime).localeCompare(b.date + b.startTime))
+        .map((s) => {
+          const c = centerById.get(s.centerId);
+          const full = s.enrolled >= s.capacity;
+          const label = `${formatDate(s.date)} · ${s.startTime}–${s.endTime} · ${c?.city || ""} (${s.enrolled}/${s.capacity})`;
+          return `<option value="${s.sessionId}" ${s.sessionId === sessionId ? "selected" : ""} ${full ? "disabled" : ""}>${full ? "FULL — " : ""}${label}</option>`;
+        })
+        .join("");
+
+      els.panel.innerHTML = `
+        <div class="asm-panel" data-step="1">
+          <h2 class="font-display text-3xl text-primary">Select blueprint & session</h2>
+          <p class="mt-2 text-ink-2">This wizard simulates pack generation without mutating JSON files.</p>
+
+          <div class="mt-6 grid gap-4 md:grid-cols-2">
+            <div>
+              <p class="font-mono text-xs uppercase track-md text-ink-3">Blueprint</p>
+              <select id="asm-bp" class="mt-2 w-full h-10 rounded-xl border border-border bg-surface px-3 text-sm text-ink-2">
+                ${bpOpts}
+              </select>
+            </div>
+            <div>
+              <p class="font-mono text-xs uppercase track-md text-ink-3">Session</p>
+              <select id="asm-session" class="mt-2 w-full h-10 rounded-xl border border-border bg-surface px-3 text-sm text-ink-2">
+                ${sessionOpts}
+              </select>
+              <p class="mt-2 text-xs text-ink-3">Full sessions are disabled.</p>
+            </div>
+          </div>
+        </div>
+      `;
+
+      els.panel.querySelector("#asm-bp").addEventListener("change", (e) => {
+        blueprintId = e.target.value;
+        renderSummary();
+      });
+      els.panel.querySelector("#asm-session").addEventListener("change", (e) => {
+        sessionId = e.target.value;
+        renderSummary();
+      });
+    }
+
+    function renderStep2() {
+      const bp = currentBlueprint();
+      const totalItems = (bp.sections || []).reduce((a, s) => a + (s.itemCount || 0), 0);
+      const totalTime = (bp.sections || []).reduce((a, s) => a + (s.timeMinutes || 0), 0);
+
+      const rows = (bp.sections || [])
+        .map((s) => {
+          const d = s.difficultyDistribution || {};
+          return `
+            <tr class="border-t border-border">
+              <td class="px-4 py-3 text-sm text-ink">${s.name}</td>
+              <td class="px-4 py-3 text-sm text-ink-2">${s.itemCount}</td>
+              <td class="px-4 py-3 text-sm text-ink-2">${s.timeMinutes}</td>
+              <td class="px-4 py-3 text-sm text-ink-2 font-mono text-xs">${d.easy ?? 0}</td>
+              <td class="px-4 py-3 text-sm text-ink-2 font-mono text-xs">${d.medium ?? 0}</td>
+              <td class="px-4 py-3 text-sm text-ink-2 font-mono text-xs">${d.hard ?? 0}</td>
+            </tr>
+          `;
+        })
+        .join("");
+
+      els.panel.innerHTML = `
+        <div class="asm-panel" data-step="2">
+          <h2 class="font-display text-3xl text-primary">Preview</h2>
+          <p class="mt-2 text-ink-2">Section breakdown for the selected blueprint.</p>
+
+          <div class="mt-6 rounded-2xl border border-border bg-surface overflow-hidden">
+            <table class="w-full">
+              <thead class="bg-surface-sunken">
+                <tr>
+                  <th class="px-4 py-3 text-left text-xs font-mono track-md text-ink-3">Section</th>
+                  <th class="px-4 py-3 text-left text-xs font-mono track-md text-ink-3">Items</th>
+                  <th class="px-4 py-3 text-left text-xs font-mono track-md text-ink-3">Minutes</th>
+                  <th class="px-4 py-3 text-left text-xs font-mono track-md text-ink-3">Easy</th>
+                  <th class="px-4 py-3 text-left text-xs font-mono track-md text-ink-3">Med</th>
+                  <th class="px-4 py-3 text-left text-xs font-mono track-md text-ink-3">Hard</th>
+                </tr>
+              </thead>
+              <tbody>${rows}</tbody>
+            </table>
+          </div>
+
+          <div class="mt-6 grid gap-3 sm:grid-cols-2">
+            <div class="rounded-2xl border border-border bg-surface-sunken px-5 py-5">
+              <p class="font-mono text-xs uppercase track-md text-ink-3">Totals</p>
+              <p class="mt-2 text-sm text-ink-2">${totalItems} items · ${totalTime} minutes</p>
+            </div>
+            <div class="rounded-2xl border border-border bg-surface-sunken px-5 py-5">
+              <p class="font-mono text-xs uppercase track-md text-ink-3">Rules</p>
+              <p class="mt-2 text-sm text-ink-2">Navigation: ${bp.navigationRules} · Calculator: ${bp.calculatorAllowed ? "allowed" : "not allowed"}</p>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function pickQuestionIds(count) {
+      const ids = questions.map((q) => q.id);
+      if (!ids.length) return [];
+
+      const out = [];
+      for (let i = 0; i < count; i += 1) {
+        out.push(ids[i % ids.length]);
+      }
+      return out;
+    }
+
+    function computeOpenWindow(session) {
+      if (!session?.date || !session?.startTime) return { start: null, end: null };
+      const startLocal = new Date(`${session.date}T${session.startTime}:00`);
+      const start = new Date(startLocal.getTime() - 5 * 60000);
+      const end = startLocal;
+      return { start, end };
+    }
+
+    function startGenerate() {
+      const bp = currentBlueprint();
+      const s = currentSession();
+      if (!bp || !s) return;
+
+      const itemCount = (bp.sections || []).reduce((a, x) => a + (x.itemCount || 0), 0);
+      const questionIds = pickQuestionIds(itemCount);
+
+      const { start, end } = computeOpenWindow(s);
+
+      const hash = `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 8)}`;
+      const packId = `PACK-LOCAL-${Date.now().toString(36).toUpperCase()}`;
+
+      generated = {
+        packId,
+        sessionId: s.sessionId,
+        blueprintId: bp.id,
+        questionIds,
+        generatedAt: new Date().toISOString(),
+        hash,
+        status: "assembling",
+        openWindowStart: start ? start.toISOString() : null,
+        openWindowEnd: end ? end.toISOString() : null,
+      };
+    }
+
+    async function runGenerate() {
+      if (sealing) return;
+      sealing = true;
+      syncControls();
+
+      const bar = els.panel.querySelector("#gen-bar");
+      const label = els.panel.querySelector("#gen-label");
+
+      if (!prefersReducedMotion && window.gsap && bar) {
+        window.gsap.set(bar, { scaleX: 0, transformOrigin: "0% 50%" });
+        window.gsap.to(bar, { scaleX: 1, duration: 2, ease: "power2.out" });
+      }
+
+      if (label) label.textContent = "Generating…";
+
+      await new Promise((r) => setTimeout(r, 2000));
+      startGenerate();
+      renderSummary();
+
+      sealing = false;
+      syncControls();
+    }
+
+    function renderStep3() {
+      const bp = currentBlueprint();
+      const itemCount = (bp.sections || []).reduce((a, x) => a + (x.itemCount || 0), 0);
+
+      els.panel.innerHTML = `
+        <div class="asm-panel" data-step="3">
+          <h2 class="font-display text-3xl text-primary">Generate</h2>
+          <p class="mt-2 text-ink-2">Simulated generation delay and cryptographic hash placeholder.</p>
+
+          <div class="mt-6 rounded-2xl border border-border bg-surface-sunken px-5 py-5">
+            <div class="flex items-center justify-between gap-4">
+              <p class="font-mono text-xs uppercase track-md text-ink-3">Progress</p>
+              <p id="gen-label" class="text-sm text-ink-2">Ready</p>
+            </div>
+            <div class="mt-3 h-2 rounded-full bg-surface overflow-hidden">
+              <div id="gen-bar" class="h-full w-full bg-primary origin-left scale-x-0"></div>
+            </div>
+            <p class="mt-3 text-xs text-ink-3">Will allocate approximately <span class="font-mono">${itemCount}</span> question IDs.</p>
+          </div>
+
+          <div class="mt-6 rounded-2xl border border-border bg-surface px-5 py-5">
+            <p class="font-mono text-xs uppercase track-md text-ink-3">Output</p>
+            <div class="mt-4 grid gap-3">
+              <div class="text-sm text-ink-2">Pack ID: <span class="font-mono text-xs">${generated?.packId || "—"}</span></div>
+              <div class="text-sm text-ink-2">Hash: <span class="font-mono text-xs">${generated?.hash || "—"}</span></div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function persistSealedPack() {
+      if (!generated) return;
+      const sealed = { ...generated, status: "sealed" };
+
+      let list = [];
+      try {
+        list = JSON.parse(localStorage.getItem("atp_extra_packs") || "[]");
+        if (!Array.isArray(list)) list = [];
+      } catch {
+        list = [];
+      }
+
+      const next = [sealed, ...list].slice(0, 20);
+      localStorage.setItem("atp_extra_packs", JSON.stringify(next));
+      generated = sealed;
+    }
+
+    function renderStep4() {
+      els.panel.innerHTML = `
+        <div class="asm-panel" data-step="4">
+          <h2 class="font-display text-3xl text-primary">Seal</h2>
+          <p class="mt-2 text-ink-2">Final step: apply seal and confirm pack readiness.</p>
+
+          <div class="mt-6 grid gap-4 md:grid-cols-2">
+            <div class="rounded-2xl border border-border bg-surface px-5 py-5">
+              <p class="font-mono text-xs uppercase track-md text-ink-3">Seal animation</p>
+              <div class="mt-4 flex items-center gap-4">
+                <div id="lock-wrap" class="h-14 w-14 rounded-2xl border border-border bg-surface-sunken flex items-center justify-center">
+                  <svg width="34" height="34" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path id="lock-shackle" d="M8 11V8a4 4 0 0 1 8 0v3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                    <rect x="6.5" y="11" width="11" height="9" rx="2" stroke="currentColor" stroke-width="1.6"/>
+                    <path d="M12 14.2v3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                  </svg>
+                </div>
+                <div>
+                  <p class="text-sm text-ink-2">Rotate shackle to indicate sealing.</p>
+                  <p class="mt-1 text-xs text-ink-3 font-mono">Status: <span id="seal-status">${generated?.status || "—"}</span></p>
+                </div>
+              </div>
+            </div>
+
+            <div class="rounded-2xl border border-border bg-surface px-5 py-5">
+              <p class="font-mono text-xs uppercase track-md text-ink-3">Pack hash</p>
+              <div class="mt-4">${generated ? HashDisplay(generated.hash, { label: "hash" }) : "—"}</div>
+            </div>
+          </div>
+
+          <div class="mt-6 rounded-2xl border border-border bg-surface-sunken px-5 py-5">
+            <p class="font-mono text-xs uppercase track-md text-ink-3">Next</p>
+            <p class="mt-2 text-sm text-ink-2">Sealed packs appear in Test Packs (stored locally for this demo).</p>
+            <a
+              href="#/test-packs"
+              class="mt-4 inline-flex items-center gap-2 h-10 px-4 rounded-xl border border-border bg-surface hover:bg-primary-muted hover:text-primary transition-colors"
+            >
+              <span class="opacity-70">◉</span>
+              View packs
+            </a>
+          </div>
+        </div>
+      `;
+
+      mountHashCopy(document);
+    }
+
+    function syncControls() {
+      const canBack = step > 1 && !sealing;
+      els.back.disabled = !canBack;
+      els.back.classList.toggle("opacity-50", !canBack);
+      els.back.classList.toggle("cursor-not-allowed", !canBack);
+
+      let canNext = true;
+      if (step === 1) canNext = Boolean(blueprintId) && Boolean(sessionId);
+      if (step === 3) canNext = !sealing;
+      if (step === 4) canNext = Boolean(generated) && generated.status !== "sealed";
+
+      els.next.disabled = !canNext;
+      els.next.classList.toggle("opacity-50", !canNext);
+      els.next.classList.toggle("cursor-not-allowed", !canNext);
+
+      els.next.textContent =
+        step === 1 ? "Continue" : step === 2 ? "Continue" : step === 3 ? "Generate" : "Seal pack";
+    }
+
+    function render(dir = 1) {
+      renderSummary();
+      renderRail();
+
+      if (step === 1) renderStep1();
+      if (step === 2) renderStep2();
+      if (step === 3) renderStep3();
+      if (step === 4) renderStep4();
+
+      syncControls();
+      animatePanelIn(dir);
+    }
+
+    els.back.addEventListener("click", () => {
+      if (els.back.disabled) return;
+      step -= 1;
+      render(-1);
+    });
+
+    els.next.addEventListener("click", async () => {
+      if (els.next.disabled) return;
+
+      if (step === 3) {
+        await runGenerate();
+        if (generated) {
+          step = 4;
+          render(1);
+        }
+        return;
+      }
+
+      if (step === 4) {
+        persistSealedPack();
+
+        const shackle = root.querySelector("#lock-shackle");
+        const status = root.querySelector("#seal-status");
+
+        if (!prefersReducedMotion && window.gsap && shackle) {
+          window.gsap.to(shackle, { rotate: -18, transformOrigin: "50% 50%", duration: 0.6, ease: "power2.out" });
+        }
+
+        if (status) status.textContent = "sealed";
+
+        syncControls();
+        return;
+      }
+
+      step += 1;
+      render(1);
+    });
+
+    render(1);
+  })();
+</script>
