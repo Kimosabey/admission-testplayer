@@ -1,7 +1,6 @@
 import { store } from "/js/store.js";
 import { PERSONA_ROUTES } from "/js/router.js";
 
-
 const PERSONA_LABELS = {
   candidate: "Candidate",
   callCenter: "Candidate Verifier",
@@ -16,7 +15,8 @@ const PERSONA_LABELS = {
 
 function isActive(path) {
   const current = (location.hash || "").replace(/^#/, "") || "/";
-  if (path === "/dashboard" && (current === "/" || current === "/dashboard")) return true;
+  if (path === "/dashboard" && (current === "/" || current === "/dashboard"))
+    return true;
   return current === path || current.startsWith(path + "/");
 }
 
@@ -46,11 +46,9 @@ function render() {
       <div class="${headerPad} border-b border-border">
         <div class="flex items-center justify-between gap-3">
           <div class="flex items-center gap-3">
-            <img src="/public/edtechh-mark.svg" alt="" class="h-7 w-7" aria-hidden="true" />
             <div class="${labelCls}">
               <div class="flex items-baseline gap-2">
-                <span class="font-display text-2xl text-primary">ATP</span>
-                <span class="text-xs text-ink-3 font-mono track-xl">NAV</span>
+                <span class="font-display text-2xl text-primary">Admission Test System</span>
               </div>
               <p class="mt-2 text-sm text-ink-2">Role: <span class="font-mono text-xs track-sm">${personaLabel}</span></p>
             </div>
@@ -76,7 +74,9 @@ function render() {
             const active = isActive(r.path);
             const linkBase = `flex items-center ${collapsed ? "justify-center" : ""} gap-3 ${asidePad} py-3 text-sm text-ink-2
                               hover:bg-primary-muted hover:text-primary transition-colors`;
-            const linkActive = active ? "bg-primary-muted text-primary font-medium border-r-2 border-primary" : "";
+            const linkActive = active
+              ? "bg-primary-muted text-primary font-medium border-r-2 border-primary"
+              : "";
 
             return `
               <a
@@ -100,7 +100,9 @@ function render() {
   `;
 
   const overlay = document.getElementById("sidebar-overlay");
-  overlay?.addEventListener("click", () => store.setState({ sidebarOpen: false }));
+  overlay?.addEventListener("click", () =>
+    store.setState({ sidebarOpen: false }),
+  );
 
   document.getElementById("sidebar-collapse")?.addEventListener("click", () => {
     const { sidebarCollapsed: c } = store.getState();

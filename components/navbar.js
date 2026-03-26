@@ -22,9 +22,9 @@ function render() {
 
             <a href="#/" class="flex items-center gap-3 group" aria-label="Home">
               <img
-                src="/public/edtechh-logo.svg"
-                alt="EDTECHH"
-                class="h-7 w-auto"
+                src="/public/image.png"
+                alt="Examic EdTech"
+                class="h-12 w-auto"
                 style="filter: drop-shadow(0 1px 0 rgba(0,0,0,0.04));"
               />
               <span class="hidden sm:inline font-mono text-xs track-xl text-ink-3 group-hover:text-primary transition-colors">
