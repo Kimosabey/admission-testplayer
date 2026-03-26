@@ -1309,15 +1309,15 @@ export const store = {
 
 #### Week 11: Motion Polish Pass
 
-- [ ] Grep all files: zero `IntersectionObserver` for animation triggers
-- [ ] Grep all `.css`: zero `scroll-behavior: smooth`
-- [ ] Grep all GSAP calls: no animation of `width`, `height`, `top`, `left`, `margin`
-- [ ] Verify `ScrollTrigger.getAll().forEach(t => t.kill())` fires in router `navigate()` on every route change
-- [ ] Test Lenis lerp feel on Chrome, Firefox, Safari
-- [ ] NOC: verify stats bar pin timing at 768px, 1280px, 1920px viewports
-- [ ] Test player: confirm `lenis.stop()` / `lenis.start()` fires correctly on entry/exit
-- [ ] Hall-ticket: stamp entrance animation is snappy (~400ms), not sluggish
-- [ ] Add `prefers-reduced-motion` guard on all GSAP animations:
+- [x] Grep all files: zero `IntersectionObserver` for animation triggers
+- [x] Grep all `.css`: zero `scroll-behavior: smooth`
+- [x] Grep all GSAP calls: no animation of `width`, `height`, `top`, `left`, `margin`
+- [x] Verify `ScrollTrigger.getAll().forEach(t => t.kill())` fires in router `navigate()` on every route change
+- [x] Test Lenis lerp feel on Chrome, Firefox, Safari
+- [x] NOC: verify stats bar pin timing at 768px, 1280px, 1920px viewports
+- [x] Test player: confirm `lenis.stop()` / `lenis.start()` fires correctly on entry/exit
+- [x] Hall-ticket: stamp entrance animation is snappy (~400ms), not sluggish
+- [x] Add `prefers-reduced-motion` guard on all GSAP animations:
   ```javascript
   if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
     // gsap animation here
