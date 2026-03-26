@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="520" viewBox="0 0 900 520">
+  <rect width="900" height="520" rx="28" fill="#EDE9DF"/>
+  <rect x="24" y="24" width="852" height="472" rx="20" fill="#FFFFFF" stroke="#D8D4C8"/>
+  <path d="M110 140 C 210 80, 320 220, 420 160 S 630 260, 760 190" fill="none" stroke="#1B5E93" stroke-width="6" opacity="0.55"/>
+  <path d="M160 320 C 250 260, 330 390, 470 320 S 640 360, 770 300" fill="none" stroke="#1A6B38" stroke-width="6" opacity="0.55"/>
+  <circle cx="520" cy="240" r="14" fill="#C8A84B" stroke="#B8B4A8" stroke-width="2"/>
+  <text x="520" y="275" font-family="JetBrains Mono, monospace" font-size="12" text-anchor="middle" fill="#7A7A73" letter-spacing="2">CENTER</text>
+  <text x="450" y="470" font-family="JetBrains Mono, monospace" font-size="12" text-anchor="middle" fill="#7A7A73" letter-spacing="2">MAP PLACEHOLDER</text>
+</svg>

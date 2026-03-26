@@ -1122,15 +1122,15 @@ export const store = {
 
 **Goal:** Open `index.html` in a browser, see a styled parchment shell with working Lenis scroll.
 
-- [ ] Create `index.html` with all CDN `<script>` and `<link>` tags from Section 3
-- [ ] Configure `tailwind.config` block inline — full color/font token extension
-- [ ] Create `styles/tokens.css` — all CSS custom properties (colors, motion vars, dark theme)
-- [ ] Create `styles/typography.css` — font assignments and type scale (h1–h4, body, mono)
-- [ ] Create `styles/components.css` — base component styles (card, table, pill, badge, drawer)
-- [ ] Create `js/scroll.js` — canonical Lenis + GSAP boilerplate (lerp 0.08, autoRaf false, lagSmoothing(0), `window.__lenis`)
-- [ ] Create `js/utils.js` — `fetchData()`, `STATUS_COLORS`, status enums, `formatDate()`, `formatRelativeTime()`
-- [ ] Seed all 10 JSON files in `/data/` with 20–50 realistic records each
-- [ ] Smoke test: scroll feels weighted and smooth. No `scroll-behavior` in any `.css`.
+- [x] Create `index.html` with all CDN `<script>` and `<link>` tags from Section 3
+- [x] Configure `tailwind.config` block inline — full color/font token extension
+- [x] Create `styles/tokens.css` — all CSS custom properties (colors, motion vars, dark theme)
+- [x] Create `styles/typography.css` — font assignments and type scale (h1–h4, body, mono)
+- [x] Create `styles/components.css` — base component styles (card, table, pill, badge, drawer)
+- [x] Create `js/scroll.js` — canonical Lenis + GSAP boilerplate (lerp 0.08, autoRaf false, lagSmoothing(0), `window.__lenis`)
+- [x] Create `js/utils.js` — `fetchData()`, `STATUS_COLORS`, status enums, `formatDate()`, `formatRelativeTime()`
+- [x] Seed all 10 JSON files in `/data/` with 20–50 realistic records each
+- [x] Smoke test: scroll feels weighted and smooth. No `scroll-behavior` in any `.css`.
 
 **Deliverable:** `index.html` opens in browser. Parchment background. Cormorant Garamond font loads. Lenis scroll works.
 
@@ -1140,21 +1140,21 @@ export const store = {
 
 **Goal:** Full navigation shell operational. All 10 personas switchable. All placeholder pages reachable.
 
-- [ ] Create `js/store.js` — pub/sub singleton
-- [ ] Create `js/router.js` — hash router: route map, HTML partial fetch, URL param extraction, ScrollTrigger cleanup on navigate
-- [ ] Create `components/navbar.js` — ATP logotype, PersonaSwitcher, dark mode toggle, alert count badge
-- [ ] Create `components/sidebar.js` — persona-aware nav items, active state highlight, collapse on mobile
-- [ ] Create `components/persona-switcher.js` — `<select>` triggers store update, sidebar re-render, redirect to `#/`
-- [ ] Create placeholder partials for all 16 routes (just heading + "coming soon" copy)
-- [ ] Build all UI primitives:
-  - [ ] `components/status-pill.js` — dot + label, status-to-color map
-  - [ ] `components/badge.js` — program/cycle tags
-  - [ ] `components/count-up.js` — GSAP + ScrollTrigger count-up
-  - [ ] `components/hash-display.js` — JetBrains Mono hash + copy button
-  - [ ] `components/qr-block.js` — QRCode.js wrapper
-  - [ ] `components/data-table.js` — sortable table builder
-- [ ] Dark mode: `data-theme="dark"` on `<html>`, persisted via `localStorage`
-- [ ] Verify all 10 personas render correct sidebar nav items
+- [x] Create `js/store.js` — pub/sub singleton
+- [x] Create `js/router.js` — hash router: route map, HTML partial fetch, URL param extraction, ScrollTrigger cleanup on navigate
+- [x] Create `components/navbar.js` — ATP logotype, PersonaSwitcher, dark mode toggle, alert count badge
+- [x] Create `components/sidebar.js` — persona-aware nav items, active state highlight, collapse on mobile
+- [x] Create `components/persona-switcher.js` — `<select>` triggers store update, sidebar re-render, redirect to `#/`
+- [x] Create placeholder partials for all 16 routes (just heading + "coming soon" copy)
+- [x] Build all UI primitives:
+  - [x] `components/status-pill.js` — dot + label, status-to-color map
+  - [x] `components/badge.js` — program/cycle tags
+  - [x] `components/count-up.js` — GSAP + ScrollTrigger count-up
+  - [x] `components/hash-display.js` — JetBrains Mono hash + copy button
+  - [x] `components/qr-block.js` — QRCode.js wrapper
+  - [x] `components/data-table.js` — sortable table builder
+- [x] Dark mode: `data-theme="dark"` on `<html>`, persisted via `localStorage`
+- [x] Verify all 10 personas render correct sidebar nav items
 
 **Deliverable:** Shell complete. Persona switcher works. Dark mode works. All 16 placeholder pages load.
 
@@ -1166,15 +1166,15 @@ export const store = {
 
 **Goal:** Full 3-step booking flow navigable end-to-end.
 
-- [ ] `pages/candidate/booking.html` — 3-step wizard markup + `data-page-init` script
-- [ ] Step 1 — Program selector: multi-checkbox, attempt count note, cycle label badge
-- [ ] Step 2 — Session grid: loads `sessions.json` + `centers.json`, capacity fill bar (green <60%, amber 60–85%, red >85%)
-- [ ] Step 3 — Confirm: booking summary card, policy notice, CTA
-- [ ] Step indicator: progress dots + connecting line, GSAP `scaleX` on fill
-- [ ] Step transition: GSAP `fromTo` slide (x: 40→0, opacity: 0→1) on step panels
-- [ ] Disable/lock full sessions (capacity === enrolled)
-- [ ] On confirm: store update → redirect to `#/hall-ticket/<id>`
-- [ ] `pages/candidate/dashboard.html` — upcoming session card, attempt history list, status tracker
+- [x] `pages/candidate/booking.html` — 3-step wizard markup + `data-page-init` script
+- [x] Step 1 — Program selector: multi-checkbox, attempt count note, cycle label badge
+- [x] Step 2 — Session grid: loads `sessions.json` + `centers.json`, capacity fill bar (green <60%, amber 60–85%, red >85%)
+- [x] Step 3 — Confirm: booking summary card, policy notice, CTA
+- [x] Step indicator: progress dots + connecting line, GSAP `scaleX` on fill
+- [x] Step transition: GSAP `fromTo` slide (x: 40→0, opacity: 0→1) on step panels
+- [x] Disable/lock full sessions (capacity === enrolled)
+- [x] On confirm: store update → redirect to `#/hall-ticket/<id>`
+- [x] `pages/candidate/dashboard.html` — upcoming session card, attempt history list, status tracker
 
 **Deliverable:** All 3 booking steps navigate. Capacity is visually represented.
 
@@ -1184,13 +1184,13 @@ export const store = {
 
 **Goal:** Print-quality hall-ticket with live QR code.
 
-- [ ] `pages/candidate/hall-ticket.html` — loads `hall-tickets.json` + `candidates.json` by URL param
-- [ ] Hall-ticket layout: university header strip, candidate photo, App ID (mono), program, session, QR code, permissible items, signature strip
-- [ ] QRCode.js renders from `qrData` field into a `<div id="qr-canvas">`
-- [ ] GSAP entrance: stamp-like `scale(0.92→1)` + `opacity(0→1)` on page load (~400ms)
-- [ ] ScrollTrigger: section-by-section reveal as user reads down
-- [ ] `@media print` in `tokens.css`: hide sidebar/navbar, print `.hall-ticket-body` only
-- [ ] Call center reschedule: slide-out drawer, re-selector, reason dropdown, policy acknowledgment
+- [x] `pages/candidate/hall-ticket.html` — loads `hall-tickets.json` + `candidates.json` by URL param
+- [x] Hall-ticket layout: university header strip, candidate photo, App ID (mono), program, session, QR code, permissible items, signature strip
+- [x] QRCode.js renders from `qrData` field into a `<div id="qr-canvas">`
+- [x] GSAP entrance: stamp-like `scale(0.92→1)` + `opacity(0→1)` on page load (~400ms)
+- [x] ScrollTrigger: section-by-section reveal as user reads down
+- [x] `@media print` in `tokens.css`: hide sidebar/navbar, print `.hall-ticket-body` only
+- [x] Call center reschedule: slide-out drawer, re-selector, reason dropdown, policy acknowledgment
 
 **Deliverable:** Hall-ticket renders with live QR. Print layout clean. Reschedule drawer opens.
 

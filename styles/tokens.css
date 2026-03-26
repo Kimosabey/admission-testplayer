@@ -125,8 +125,32 @@ body {
 }
 
 @media print {
+  body {
+    background: var(--color-surface) !important;
+  }
+
   #navbar-mount,
   #sidebar-mount {
     display: none !important;
+  }
+
+  .hall-ticket-print-hide {
+    display: none !important;
+  }
+
+  [data-page="hall-ticket"] {
+    padding: 0 !important;
+    max-width: none !important;
+  }
+
+  .hall-ticket-body {
+    border: 0 !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    background: transparent !important;
+  }
+
+  .hall-ticket-body .card {
+    box-shadow: none !important;
   }
 }
